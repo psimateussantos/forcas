@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B0D12">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Forças</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0D12; --card:#141821; --card2:#1A1F2B; --linha:#232938;
+  --texto:#EDEEF3; --texto2:#C3C7D4; --mudo:#8A90A3; --mudo2:#5A6076;
+  --exec:#A987E8; --estr:#43C79A; --rel:#5FABF5; --infl:#F09A55;
+  --ok:#43C79A; --raio:14px;
+  --safe-top:env(safe-area-inset-top,0px); --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--texto);
+  font-family:'Inter',system-ui,-apple-system,'Roboto',sans-serif;
+  font-size:15px;line-height:1.55;overscroll-behavior-y:none}
+body{padding-top:var(--safe-top)}
+h1,h2,.serif{font-family:'Fraunces',Georgia,serif;font-weight:650;letter-spacing:-0.01em}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+button:focus-visible,textarea:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--rel);outline-offset:2px}
+textarea,input,select{font-family:inherit;color:var(--texto)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* Layout */
+#app{max-width:640px;margin:0 auto;padding:18px 16px calc(88px + var(--safe-bottom))}
+header.topo{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px}
+.eyebrow{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mudo);margin-bottom:4px}
+h1{font-size:30px;margin:0}
+.sub{font-size:12.5px;color:var(--mudo);margin-top:3px}
+.faseBadge{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  border:1px solid var(--linha);border-radius:99px;padding:6px 12px;color:var(--texto2);white-space:nowrap;margin-top:6px}
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--linha);border-radius:var(--raio);padding:18px;margin-bottom:14px}
+.cardEyebrow{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mudo);margin-bottom:12px}
+.borda-exec{border-left:3px solid var(--exec)} .borda-estr{border-left:3px solid var(--estr)}
+.borda-rel{border-left:3px solid var(--rel)} .borda-infl{border-left:3px solid var(--infl)}
+
+/* Ação do dia */
+.acaoLinha{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
+.rank{font-family:'Fraunces',Georgia,serif;font-weight:650;font-size:38px;line-height:1;min-width:30px}
+.forcaNome{font-family:'Fraunces',Georgia,serif;font-size:18px;font-weight:650;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.domTag{font-family:'Inter',sans-serif;font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  border:1px solid;border-radius:99px;padding:2px 8px}
+.acaoTexto{font-size:15px;line-height:1.55;color:var(--texto2);margin:6px 0 0}
+.btn{border-radius:10px;padding:12px 18px;font-size:14px;font-weight:600;width:100%;transition:filter .15s,transform .06s}
+.btn:active{transform:scale(.985)}
+.btnPrim{background:var(--texto);color:var(--bg)}
+.btnFeito{background:rgba(67,199,154,.13);color:var(--ok);border:1px solid var(--ok)}
+.btnGhost{background:transparent;border:1px solid var(--linha);color:var(--texto2)}
+.btnPerigo{background:transparent;border:1px solid #B0455A;color:#E58AA0}
+
+/* Chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.chip{border:1px solid var(--linha);border-radius:99px;padding:10px 15px;font-size:13.5px;color:var(--texto2);
+  background:transparent;transition:all .15s;display:flex;align-items:center;gap:7px}
+.chip b{font-family:'Fraunces',Georgia,serif;font-size:14px}
+textarea{width:100%;background:var(--bg);border:1px solid var(--linha);border-radius:10px;
+  font-size:14px;padding:12px;line-height:1.5;resize:vertical;min-height:74px}
+.hint{font-size:12px;color:var(--mudo);margin-top:8px}
+
+/* Plano */
+.faseHeader{display:flex;justify-content:space-between;align-items:baseline;margin:22px 0 10px}
+.faseTitulo{font-family:'Fraunces',Georgia,serif;font-size:17px;font-weight:650}
+.faseStatus{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.planoCard{background:var(--card);border:1px solid var(--linha);border-radius:var(--raio);padding:15px 16px;margin-bottom:10px}
+.planoTopo{display:flex;gap:13px;align-items:flex-start;width:100%;text-align:left;padding:0}
+.planoTopo .seta{color:var(--mudo);font-size:18px;transition:transform .2s;margin-left:auto;flex:none;align-self:center}
+.planoCard.aberta .seta{transform:rotate(90deg)}
+.planoCorpo{display:none;margin-top:13px;padding-top:13px;border-top:1px solid var(--linha)}
+.planoCard.aberta .planoCorpo{display:block}
+.secTitulo{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mudo);margin:12px 0 6px}
+.secTitulo:first-child{margin-top:0}
+ul.lista{margin:0;padding-left:18px}
+ul.lista li{font-size:14px;line-height:1.6;color:var(--texto2);margin-bottom:5px}
+p.texto{font-size:14px;line-height:1.6;color:var(--texto2);margin:0}
+
+/* Progresso */
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.kpi{background:var(--card);border:1px solid var(--linha);border-radius:var(--raio);padding:14px 16px}
+.kpiValor{font-family:'Fraunces',Georgia,serif;font-size:26px;font-weight:650;line-height:1.1}
+.kpiLabel{font-size:11.5px;color:var(--mudo);margin-top:3px}
+.heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);gap:3px;justify-content:start}
+.heat div{width:13px;height:13px;border-radius:3.5px;background:var(--card2)}
+.heatLeg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mudo);margin-top:10px}
+.heatLeg span{width:11px;height:11px;border-radius:3px;display:inline-block}
+.histLinha{padding:11px 0;border-bottom:1px solid var(--linha)}
+.histLinha:last-child{border-bottom:none}
+.histData{font-size:12px;color:var(--mudo);font-variant-numeric:tabular-nums;margin-bottom:5px}
+.histTags{display:flex;flex-wrap:wrap;gap:6px}
+.histTag{font-size:11.5px;border:1px solid var(--linha);border-radius:99px;padding:2px 9px}
+.histNota{font-size:12.5px;color:var(--texto2);font-style:italic;margin-top:6px}
+svg text{font-family:'Inter',sans-serif}
+
+/* Ajustes */
+.ajLinha{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--linha)}
+.ajLinha:last-child{border-bottom:none}
+.ajTitulo{font-size:14px;font-weight:600}
+.ajDesc{font-size:12px;color:var(--mudo);margin-top:2px;line-height:1.45}
+.seg{display:flex;gap:6px}
+.segBtn{border:1px solid var(--linha);border-radius:9px;padding:8px 13px;font-size:12.5px;color:var(--mudo)}
+.segBtn.on{background:var(--texto);color:var(--bg);border-color:var(--texto);font-weight:600}
+input[type=time]{background:var(--bg);border:1px solid var(--linha);border-radius:9px;padding:8px 10px;font-size:14px;color-scheme:dark}
+.switch{position:relative;width:46px;height:26px;border-radius:99px;background:var(--card2);border:1px solid var(--linha);transition:background .2s;flex:none}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:var(--mudo);transition:all .2s}
+.switch.on{background:rgba(67,199,154,.25);border-color:var(--ok)}
+.switch.on::after{left:22px;background:var(--ok)}
+
+/* Nav inferior */
+nav.baixo{position:fixed;bottom:0;left:0;right:0;background:rgba(11,13,18,.92);backdrop-filter:blur(14px);
+  border-top:1px solid var(--linha);display:flex;justify-content:space-around;
+  padding:8px 8px calc(8px + var(--safe-bottom));z-index:20}
+nav.baixo button{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;font-weight:600;
+  letter-spacing:.04em;color:var(--mudo2);padding:6px 16px;border-radius:12px;transition:color .15s}
+nav.baixo button.on{color:var(--texto)}
+nav.baixo svg{width:21px;height:21px}
+.pagina{display:none}.pagina.on{display:block;animation:surge .22s ease}
+@keyframes surge{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* Toast e banner */
+#toast{position:fixed;left:50%;bottom:calc(96px + var(--safe-bottom));transform:translateX(-50%) translateY(12px);
+  background:var(--card2);border:1px solid var(--linha);border-radius:99px;padding:10px 18px;font-size:13px;
+  color:var(--texto);opacity:0;pointer-events:none;transition:all .25s;z-index:30;white-space:nowrap}
+#toast.on{opacity:1;transform:translateX(-50%)}
+#bannerInstalar{display:none;align-items:center;gap:12px}
+#bannerInstalar.on{display:flex}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="topo">
+    <div>
+      <div class="eyebrow">PDI · CliftonStrengths 34</div>
+      <h1>Forças</h1>
+      <div class="sub">Mateus Santos · Domínio líder: Execução</div>
+    </div>
+    <div class="faseBadge" id="badgeFase"></div>
+  </header>
+
+  <div class="card" id="bannerInstalar">
+    <div style="flex:1">
+      <div class="ajTitulo">Instalar na tela inicial</div>
+      <div class="ajDesc">Vira um app de verdade: ícone próprio, tela cheia e funciona offline.</div>
+    </div>
+    <button class="btn btnPrim" style="width:auto" id="btnInstalar">Instalar</button>
+  </div>
+
+  <!-- ===== HOJE ===== -->
+  <section class="pagina on" id="pg-hoje">
+    <div class="card" id="cardAcao"></div>
+    <div class="card">
+      <div class="cardEyebrow">Check-in do dia</div>
+      <p class="texto" style="margin-bottom:12px">Quais forças você praticou de forma intencional hoje?</p>
+      <div class="chips" id="chipsForcas"></div>
+      <textarea id="nota" placeholder="Registro do dia: onde a força apareceu, o que funcionou, o que ajustar amanhã..."></textarea>
+      <div class="hint" id="resumoHoje"></div>
+    </div>
+  </section>
+
+  <!-- ===== PLANO ===== -->
+  <section class="pagina" id="pg-plano"></section>
+
+  <!-- ===== PROGRESSO ===== -->
+  <section class="pagina" id="pg-progresso"></section>
+
+  <!-- ===== AJUSTES ===== -->
+  <section class="pagina" id="pg-ajustes">
+    <div class="card">
+      <div class="cardEyebrow">Plano</div>
+      <div class="ajLinha">
+        <div><div class="ajTitulo">Fase ativa</div><div class="ajDesc">Fase 1: forças 1 a 5 (90 dias). Fase 2: forças 6 a 10.</div></div>
+        <div class="seg">
+          <button class="segBtn" id="segF1" onclick="mudarFase(1)">Fase 1</button>
+          <button class="segBtn" id="segF2" onclick="mudarFase(2)">Fase 2</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="cardEyebrow">Lembrete diário</div>
+      <div class="ajLinha">
+        <div><div class="ajTitulo">Notificações</div><div class="ajDesc">Aviso no horário escolhido se o check-in do dia ainda estiver aberto.</div></div>
+        <button class="switch" id="swNotif" onclick="toggleNotif()" aria-label="Ativar notificações"></button>
+      </div>
+      <div class="ajLinha">
+        <div><div class="ajTitulo">Horário</div><div class="ajDesc">Sugestão: fim do expediente.</div></div>
+        <input type="time" id="horaLembrete" onchange="salvarHora(this.value)">
+      </div>
+      <div class="hint">O lembrete em segundo plano depende do Android permitir a sincronização periódica do app instalado. Com o app aberto, o aviso é garantido.</div>
+    </div>
+    <div class="card">
+      <div class="cardEyebrow">Dados</div>
+      <div class="ajLinha">
+        <div><div class="ajTitulo">Exportar backup</div><div class="ajDesc">Baixa um arquivo .json com todo o histórico.</div></div>
+        <button class="btn btnGhost" style="width:auto;padding:9px 15px" onclick="exportar()">Exportar</button>
+      </div>
+      <div class="ajLinha">
+        <div><div class="ajTitulo">Importar backup</div><div class="ajDesc">Restaura um arquivo exportado antes.</div></div>
+        <button class="btn btnGhost" style="width:auto;padding:9px 15px" onclick="document.getElementById('arqImport').click()">Importar</button>
+        <input type="file" id="arqImport" accept="application/json" style="display:none" onchange="importar(this)">
+      </div>
+      <div class="ajLinha">
+        <div><div class="ajTitulo">Zerar dados</div><div class="ajDesc">Apaga todo o histórico deste aparelho. Sem volta.</div></div>
+        <button class="btn btnPerigo" style="width:auto;padding:9px 15px" onclick="zerar()">Zerar</button>
+      </div>
+    </div>
+    <p class="hint" style="text-align:center">Base: relatório CliftonStrengths 34 (Gallup) · Seus dados ficam apenas neste aparelho.</p>
+  </section>
+</div>
+
+<nav class="baixo">
+  <button data-pg="hoje" class="on" onclick="irPara('hoje')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Hoje</button>
+  <button data-pg="plano" onclick="irPara('plano')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h14v16H5z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>Plano</button>
+  <button data-pg="progresso" onclick="irPara('progresso')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V10M10 19V5M16 19v-7M22 19H2"/></svg>Progresso</button>
+  <button data-pg="ajustes" onclick="irPara('ajustes')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.2 3h-4l-.4 2.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.7h4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/></svg>Ajustes</button>
+</nav>
+<div id="toast"></div>
+
+<script>
+"use strict";
+/* ================= DADOS DO PDI ================= */
+const DOM = {
+  execucao:{nome:"Execução",cor:"var(--exec)",hex:"#A987E8",cls:"borda-exec"},
+  estrategico:{nome:"Pensamento Estratégico",cor:"var(--estr)",hex:"#43C79A",cls:"borda-estr"},
+  relacionamento:{nome:"Relacionamento",cor:"var(--rel)",hex:"#5FABF5",cls:"borda-rel"},
+  influencia:{nome:"Influência",cor:"var(--infl)",hex:"#F09A55",cls:"borda-infl"}
+};
+const FORCAS = [
+ {id:"prudencia",rank:1,nome:"Prudência",dom:"execucao",fase:1,
+  objetivo:"Transformar a cautela em vantagem decisória percebida, sem ser lido como lento ou distante.",
+  acoes:["Reservar 20 minutos do dia para organizar decisões pendentes, mapeando opções e riscos",
+   "Ao apresentar uma recomendação, explicar em uma frase o processo de avaliação por trás dela",
+   "Atuar como caixa de ressonância de riscos para um colega ou gestor nesta semana",
+   "Antes de uma decisão relevante, listar os 3 principais riscos e como mitigá-los"],
+  pontoCego:"Cuidado ao pensar pode ser interpretado como medo de agir. Antecipe a leitura explicando que você está avaliando os próximos passos.",
+  indicador:"Decisões relevantes documentadas com premissas e riscos (meta: 2 por semana)."},
+ {id:"analitico",rank:2,nome:"Analítico",dom:"estrategico",fase:1,
+  objetivo:"Converter capacidade analítica em influência: análise que termina em recomendação, não em mais análise.",
+  acoes:["Definir antes de analisar o que é dado suficiente para decidir, e parar quando chegar lá",
+   "Compartilhar um insight de dados com o time ou gestor nesta semana",
+   "Entrar na fase de planejamento de uma iniciativa para avaliar viabilidade cedo",
+   "Fechar toda análise com uma recomendação clara em uma frase"],
+  pontoCego:"Perguntas em excesso podem soar como ceticismo ou desconfiança. Explique sua análise para que confiem no processo.",
+  indicador:"Insights compartilhados que geraram decisão ou mudança (meta: 1 por semana)."},
+ {id:"relacionamento",rank:3,nome:"Relacionamento",dom:"relacionamento",fase:1,
+  objetivo:"Aprofundar vínculos estratégicos de forma deliberada, um a um, dentro e fora do círculo próximo.",
+  acoes:["Fazer uma conversa individual significativa com alguém do time nesta semana",
+   "Dedicar tempo de mentoria ou apoio a uma pessoa em desenvolvimento",
+   "Conversar com uma pessoa fora do círculo próximo, ampliando a rede com intenção",
+   "Reconhecer de forma específica a contribuição de um colega hoje"],
+  pontoCego:"Preferir o círculo próximo pode passar imagem de exclusividade. Amplie o círculo de forma seletiva e intencional.",
+  indicador:"Conversas 1:1 significativas (meta: 2 por semana, 1 fora do círculo por mês)."},
+ {id:"realizacao",rank:4,nome:"Realização",dom:"execucao",fase:1,
+  objetivo:"Canalizar a energia de entrega para o que mais importa e celebrar conclusões antes de seguir.",
+  acoes:["Definir as 3 prioridades do dia logo pela manhã, antes de abrir e-mails",
+   "Ao concluir uma entrega relevante, pausar alguns minutos para registrar e reconhecer o resultado",
+   "Antes de aceitar uma nova demanda, verificar agenda e capacidade real",
+   "Fazer a revisão semanal do que foi entregue versus o planejado"],
+  pontoCego:"Seu ritmo não é o padrão dos outros. Calibre expectativas para não soar exigente demais e não assumir compromissos sem medir o custo.",
+  indicador:"Taxa de conclusão das 3 prioridades diárias (meta: 80% dos dias)."},
+ {id:"foco",rank:5,nome:"Foco",dom:"execucao",fase:1,
+  objetivo:"Proteger tempo de concentração profunda e manter metas escritas com prazo e revisão.",
+  acoes:["Bloquear 1 hora de foco total no dia, sem notificações, para o objetivo mais importante",
+   "Revisar as metas escritas do trimestre e ajustar prioridades se algo mudou",
+   "Em uma reunião, assumir o papel de resumir decisões, responsáveis e prazos",
+   "Antes de mergulhar em uma tarefa, confirmar se ela ainda é a prioridade certa"],
+  pontoCego:"Quando absorvido, você pode parecer distante e não notar mudanças de prioridade. Pare periodicamente para reavaliar e responder às pessoas.",
+  indicador:"Horas de foco protegido cumpridas (meta: 5 por semana)."},
+ {id:"organizacao",rank:6,nome:"Organização",dom:"execucao",fase:2,
+  objetivo:"Usar a coordenação de pessoas e recursos como diferencial visível em projetos multitarefa.",
+  acoes:["Assumir a orquestração de um projeto com várias partes móveis",
+   "Ao reorganizar um plano, explicar ao time o porquê da mudança antes de executá-la",
+   "Mapear recursos subutilizados no time e propor uma realocação"],
+  pontoCego:"Reorganizar continuamente pode confundir os outros e assumir o controle sem perguntar pode irritar. Comunique antes de mover as peças.",
+  indicador:"Projetos coordenados com plano comunicado e cumprido."},
+ {id:"responsabilidade",rank:7,nome:"Responsabilidade",dom:"execucao",fase:2,
+  objetivo:"Manter a confiabilidade como marca pessoal sem cair em sobrecarga.",
+  acoes:["Antes de aceitar algo novo, verificar agenda e, se necessário, abrir mão de um compromisso",
+   "Dizer não (ou negociar prazo) para uma demanda que não cabe, de forma transparente",
+   "Revisar compromissos assumidos e sinalizar proativamente qualquer risco de atraso"],
+  pontoCego:"A dificuldade de recusar leva ao excesso de compromissos. Desista de algo antes de assumir o próximo.",
+  indicador:"Zero compromissos atrasados sem sinalização prévia."},
+ {id:"restauracao",rank:8,nome:"Restauração",dom:"execucao",fase:2,
+  objetivo:"Posicionar-se como referência em resolver problemas difíceis que outros evitam.",
+  acoes:["Assumir um problema ou processo travado que ninguém quer pegar",
+   "Ao apoiar alguém, dar espaço para a pessoa encontrar a própria solução antes de resolver por ela",
+   "Registrar e celebrar um problema resolvido, mesmo os simples de grande impacto"],
+  pontoCego:"Foco no que está errado pode soar como crítica constante. Reconheça também o que está funcionando e elogie sucessos.",
+  indicador:"Problemas estruturais resolvidos e documentados por mês."},
+ {id:"crenca",rank:9,nome:"Crença",dom:"execucao",fase:2,
+  objetivo:"Usar valores como filtro explícito de escolha de projetos e como fonte de estabilidade.",
+  acoes:["Escrever ou revisar a missão pessoal e mantê-la visível",
+   "Antes de aceitar um projeto, avaliar o alinhamento com seus valores e o impacto pretendido",
+   "Proteger um espaço fixo de vida pessoal na agenda desta semana"],
+  pontoCego:"Paixão pelas próprias crenças pode ser lida como teimosia. Respeite sistemas de valores diferentes do seu, mesmo discordando.",
+  indicador:"Projetos avaliados pelo filtro de valores antes do aceite."},
+ {id:"excelencia",rank:10,nome:"Excelência",dom:"influencia",fase:2,
+  objetivo:"Elevar o padrão do time potencializando forças, com maturidade para aceitar o suficiente quando apropriado.",
+  acoes:["Escolher um talento próprio para maximizar no mês e praticar deliberadamente",
+   "Ajudar um colega a reconhecer e usar melhor um ponto forte dele",
+   "Identificar uma entrega em que bom o suficiente é a resposta certa, e encerrá-la sem retrabalho"],
+  pontoCego:"Buscar sempre o ideal pode frustrar quem precisa concluir e seguir. Nem toda entrega pede o nível máximo.",
+  indicador:"1 talento em desenvolvimento ativo por mês, com prática registrada."}
+];
+
+/* ================= ESTADO ================= */
+const CHAVE = "forcas_pdi_v2";
+const hoje = () => { const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); };
+const fmtBR = iso => { const [a,m,d]=iso.split("-"); return d+"/"+m+"/"+a; };
+let dados = carregar();
+function carregar(){
+  try{ const r = localStorage.getItem(CHAVE); if(r) return JSON.parse(r); }catch(e){}
+  return { fase:1, inicio:hoje(), checkins:{}, config:{ hora:"18:00", notif:false, ultimoLembrete:"" } };
+}
+function salvar(){ try{ localStorage.setItem(CHAVE, JSON.stringify(dados)); }catch(e){ toast("Falha ao salvar. Verifique o espaço do navegador."); } }
+function ci(){ if(!dados.checkins[hoje()]) dados.checkins[hoje()]={praticadas:[],acaoFeita:false,nota:""}; return dados.checkins[hoje()]; }
+function vibrar(ms){ if(navigator.vibrate) navigator.vibrate(ms); }
+function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(t._tm); t._tm=setTimeout(()=>t.classList.remove("on"),2200); }
+
+/* ================= AÇÃO DO DIA ================= */
+function acaoDoDia(){
+  const pool=[]; FORCAS.filter(f=>f.fase===dados.fase).forEach(f=>f.acoes.forEach(a=>pool.push({f,a})));
+  const d=hoje(); let h=0; for(let i=0;i<d.length;i++) h=(h*31+d.charCodeAt(i))>>>0;
+  return pool[h%pool.length];
+}
+
+/* ================= RENDER: HOJE ================= */
+function renderHoje(){
+  const {f,a}=acaoDoDia(); const c=ci(); const D=DOM[f.dom];
+  document.getElementById("cardAcao").className="card "+D.cls;
+  document.getElementById("cardAcao").innerHTML =
+    '<div class="cardEyebrow">Ação do dia · '+fmtBR(hoje())+'</div>'+
+    '<div class="acaoLinha"><span class="rank" style="color:'+D.cor+'">'+f.rank+'</span>'+
+    '<div><div class="forcaNome">'+f.nome+'<span class="domTag" style="color:'+D.cor+';border-color:'+D.cor+'">'+D.nome+'</span></div>'+
+    '<p class="acaoTexto">'+a+'</p></div></div>'+
+    '<button class="btn '+(c.acaoFeita?"btnFeito":"btnPrim")+'" onclick="toggleAcao()">'+(c.acaoFeita?"Concluída hoje ✓":"Marcar como feita")+'</button>';
+
+  const chips=document.getElementById("chipsForcas"); chips.innerHTML="";
+  FORCAS.filter(x=>x.fase===dados.fase).forEach(x=>{
+    const on=c.praticadas.includes(x.id); const cor=DOM[x.dom].hex;
+    const b=document.createElement("button"); b.className="chip";
+    if(on){ b.style.borderColor=cor; b.style.color=cor; b.style.background=cor+"20"; }
+    b.innerHTML="<b>"+x.rank+"</b>"+x.nome;
+    b.onclick=()=>{ togglePratica(x.id); };
+    chips.appendChild(b);
+  });
+  const nota=document.getElementById("nota");
+  if(document.activeElement!==nota) nota.value=c.nota||"";
+  const total=c.praticadas.length+(c.acaoFeita?1:0);
+  document.getElementById("resumoHoje").textContent =
+    total>0 ? total+(total===1?" prática registrada hoje.":" práticas registradas hoje.") : "Nenhuma prática registrada ainda hoje.";
+  document.getElementById("badgeFase").textContent="Fase "+dados.fase+" · Forças "+(dados.fase===1?"1 a 5":"6 a 10");
+}
+function toggleAcao(){ const c=ci(); c.acaoFeita=!c.acaoFeita; if(c.acaoFeita) vibrar(18); salvar(); renderHoje(); renderProgresso(); }
+function togglePratica(id){ const c=ci();
+  c.praticadas = c.praticadas.includes(id)? c.praticadas.filter(x=>x!==id) : [...c.praticadas,id];
+  vibrar(12); salvar(); renderHoje(); renderProgresso(); }
+document.getElementById("nota").addEventListener("blur", e=>{ ci().nota=e.target.value.trim(); salvar(); renderHoje(); renderProgresso(); });
+
+/* ================= RENDER: PLANO ================= */
+function renderPlano(){
+  const pg=document.getElementById("pg-plano"); pg.innerHTML="";
+  [1,2].forEach(f=>{
+    const head=document.createElement("div"); head.className="faseHeader";
+    const st = dados.fase===f?["Em andamento","var(--ok)"] : f<dados.fase?["Concluída","var(--mudo)"]:["Planejada","var(--mudo)"];
+    head.innerHTML='<span class="faseTitulo">Fase '+f+' · '+(f===1?"Curto prazo (90 dias)":"Médio prazo (dias 91 a 180)")+'</span>'+
+      '<span class="faseStatus" style="color:'+st[1]+'">'+st[0]+'</span>';
+    pg.appendChild(head);
+    FORCAS.filter(x=>x.fase===f).forEach(x=>{
+      const D=DOM[x.dom];
+      const card=document.createElement("div"); card.className="planoCard "+D.cls;
+      card.innerHTML =
+       '<button class="planoTopo"><span class="rank" style="color:'+D.cor+';font-size:28px">'+x.rank+'</span>'+
+       '<div style="flex:1"><div class="forcaNome" style="font-size:16.5px">'+x.nome+
+       '<span class="domTag" style="color:'+D.cor+';border-color:'+D.cor+'">'+D.nome+'</span></div>'+
+       '<p class="texto" style="margin-top:4px">'+x.objetivo+'</p></div><span class="seta">›</span></button>'+
+       '<div class="planoCorpo"><div class="secTitulo">Ações de prática</div><ul class="lista">'+
+       x.acoes.map(a=>"<li>"+a+"</li>").join("")+'</ul>'+
+       '<div class="secTitulo">Ponto cego a gerenciar</div><p class="texto">'+x.pontoCego+'</p>'+
+       '<div class="secTitulo">Indicador de acompanhamento</div><p class="texto">'+x.indicador+'</p></div>';
+      card.querySelector(".planoTopo").onclick=()=>card.classList.toggle("aberta");
+      pg.appendChild(card);
+    });
+  });
+}
+
+/* ================= RENDER: PROGRESSO ================= */
+function diasComPratica(){
+  return Object.keys(dados.checkins).filter(d=>{
+    const c=dados.checkins[d]; return (c.praticadas&&c.praticadas.length>0)||c.acaoFeita||(c.nota&&c.nota.length>0);
+  }).sort();
+}
+function calcStreak(){
+  let s=0; const dt=new Date();
+  for(;;){
+    const iso=dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0");
+    const c=dados.checkins[iso];
+    if(c&&((c.praticadas&&c.praticadas.length>0)||c.acaoFeita)){ s++; dt.setDate(dt.getDate()-1); }
+    else if(iso===hoje()){ dt.setDate(dt.getDate()-1); }
+    else break;
+  }
+  return s;
+}
+function renderProgresso(){
+  const pg=document.getElementById("pg-progresso");
+  const dias=diasComPratica(); const streak=calcStreak();
+  const totalPraticas=dias.reduce((a,d)=>a+(dados.checkins[d].praticadas?dados.checkins[d].praticadas.length:0)+(dados.checkins[d].acaoFeita?1:0),0);
+
+  /* Heatmap 12 semanas */
+  let heat=""; const fim=new Date(); const diaSem=fim.getDay();
+  const inicio=new Date(fim); inicio.setDate(fim.getDate()-(11*7+diaSem));
+  const cur=new Date(inicio);
+  while(cur<=fim){
+    const iso=cur.getFullYear()+"-"+String(cur.getMonth()+1).padStart(2,"0")+"-"+String(cur.getDate()).padStart(2,"0");
+    const c=dados.checkins[iso]; const n=c?((c.praticadas?c.praticadas.length:0)+(c.acaoFeita?1:0)):0;
+    let cor="var(--card2)";
+    if(n>=4) cor="#43C79A"; else if(n>=2) cor="#2E8A6B"; else if(n>=1) cor="#1E5A47";
+    heat+='<div style="background:'+cor+'" title="'+fmtBR(iso)+": "+n+'"></div>';
+    cur.setDate(cur.getDate()+1);
+  }
+
+  /* Barras por força */
+  const porForca=FORCAS.map(f=>({f,total:dias.reduce((a,d)=>a+((dados.checkins[d].praticadas||[]).includes(f.id)?1:0),0)}));
+  const maxB=Math.max(1,...porForca.map(x=>x.total));
+  const barras=porForca.map(({f,total})=>{
+    const pct=Math.round(total/maxB*100);
+    return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:9px">'+
+      '<span style="font-size:12px;color:var(--texto2);width:118px;flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+
+      '<b class="serif" style="color:'+DOM[f.dom].hex+'">'+f.rank+'</b> '+f.nome+'</span>'+
+      '<div style="flex:1;height:12px;background:var(--card2);border-radius:6px;overflow:hidden">'+
+      '<div style="width:'+pct+'%;height:100%;background:'+DOM[f.dom].hex+';border-radius:6px;transition:width .3s"></div></div>'+
+      '<span style="font-size:12px;color:var(--mudo);width:22px;text-align:right;font-variant-numeric:tabular-nums">'+total+'</span></div>';
+  }).join("");
+
+  /* Consistência 8 semanas (SVG) */
+  const sems=[]; const ref=new Date();
+  for(let w=7;w>=0;w--){
+    const f2=new Date(ref); f2.setDate(ref.getDate()-w*7);
+    const i2=new Date(f2); i2.setDate(f2.getDate()-6);
+    const tot=dias.filter(d=>{ const dt=new Date(d+"T12:00:00"); return dt>=i2&&dt<=f2; }).length;
+    sems.push({lab:String(f2.getDate()).padStart(2,"0")+"/"+String(f2.getMonth()+1).padStart(2,"0"),v:tot});
+  }
+  const W=560,H=170,pad=28;
+  const px=i=>pad+i*(W-2*pad)/(sems.length-1), py=v=>H-22-(v/7)*(H-50);
+  const pts=sems.map((s,i)=>px(i)+","+py(s.v)).join(" ");
+  const area="M"+px(0)+","+(H-22)+" L"+sems.map((s,i)=>px(i)+","+py(s.v)).join(" L")+" L"+px(sems.length-1)+","+(H-22)+" Z";
+  const linha='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto">'+
+    [0,7].map(v=>'<line x1="'+pad+'" y1="'+py(v)+'" x2="'+(W-pad)+'" y2="'+py(v)+'" stroke="#232938" stroke-dasharray="3 4"/><text x="'+(pad-8)+'" y="'+(py(v)+4)+'" fill="#5A6076" font-size="10" text-anchor="end">'+v+'</text>').join("")+
+    '<path d="'+area+'" fill="rgba(67,199,154,.10)"/>'+
+    '<polyline points="'+pts+'" fill="none" stroke="#43C79A" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>'+
+    sems.map((s,i)=>'<circle cx="'+px(i)+'" cy="'+py(s.v)+'" r="3.4" fill="#43C79A"/><text x="'+px(i)+'" y="'+(H-6)+'" fill="#5A6076" font-size="9.5" text-anchor="middle">'+s.lab+'</text>').join("")+
+    '</svg>';
+
+  /* Histórico */
+  const hist=[...dias].reverse().slice(0,14).map(d=>{
+    const c=dados.checkins[d];
+    const tags=(c.praticadas||[]).map(id=>{ const f=FORCAS.find(x=>x.id===id);
+      return '<span class="histTag" style="color:'+DOM[f.dom].hex+'">'+f.nome+'</span>'; }).join("")+
+      (c.acaoFeita?'<span class="histTag" style="color:var(--texto)">Ação do dia ✓</span>':"");
+    return '<div class="histLinha"><div class="histData">'+fmtBR(d)+'</div><div class="histTags">'+tags+'</div>'+
+      (c.nota?'<div class="histNota">'+escapar(c.nota)+'</div>':"")+'</div>';
+  }).join("") || '<p class="texto">Nenhum registro ainda. Comece pelo check-in de hoje.</p>';
+
+  pg.innerHTML =
+   '<div class="kpis">'+
+   '<div class="kpi"><div class="kpiValor">'+streak+'</div><div class="kpiLabel">'+(streak===1?"dia em sequência":"dias em sequência")+'</div></div>'+
+   '<div class="kpi"><div class="kpiValor">'+dias.length+'</div><div class="kpiLabel">dias com prática</div></div>'+
+   '<div class="kpi"><div class="kpiValor">'+totalPraticas+'</div><div class="kpiLabel">práticas registradas</div></div>'+
+   '<div class="kpi"><div class="kpiValor">Fase '+dados.fase+'</div><div class="kpiLabel">desde '+fmtBR(dados.inicio)+'</div></div></div>'+
+   '<div class="card"><div class="cardEyebrow">Mapa de constância · últimas 12 semanas</div>'+
+   '<div style="overflow-x:auto"><div class="heat">'+heat+'</div></div>'+
+   '<div class="heatLeg">Menos <span style="background:var(--card2)"></span><span style="background:#1E5A47"></span><span style="background:#2E8A6B"></span><span style="background:#43C79A"></span> Mais</div></div>'+
+   '<div class="card"><div class="cardEyebrow">Práticas por força · acumulado</div>'+barras+'</div>'+
+   '<div class="card"><div class="cardEyebrow">Consistência semanal · dias com prática</div>'+linha+'</div>'+
+   '<div class="card"><div class="cardEyebrow">Histórico recente</div>'+hist+'</div>';
+}
+function escapar(s){ const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
+
+/* ================= AJUSTES ================= */
+function renderAjustes(){
+  document.getElementById("segF1").classList.toggle("on",dados.fase===1);
+  document.getElementById("segF2").classList.toggle("on",dados.fase===2);
+  document.getElementById("swNotif").classList.toggle("on",dados.config.notif);
+  document.getElementById("horaLembrete").value=dados.config.hora||"18:00";
+}
+function mudarFase(f){ dados.fase=f; salvar(); renderTudo(); toast("Fase "+f+" ativada."); vibrar(12); }
+function salvarHora(v){ dados.config.hora=v; salvar(); toast("Lembrete definido para "+v+"."); }
+async function toggleNotif(){
+  if(!dados.config.notif){
+    if(!("Notification" in window)){ toast("Este navegador não suporta notificações."); return; }
+    const perm=await Notification.requestPermission();
+    if(perm!=="granted"){ toast("Permissão negada nas configurações do Android."); return; }
+    dados.config.notif=true; salvar(); renderAjustes(); toast("Notificações ativadas.");
+    registrarSyncPeriodico();
+    notificarSW("Forças em prática","Lembretes ativados. Bom desenvolvimento!");
+  } else { dados.config.notif=false; salvar(); renderAjustes(); toast("Notificações desativadas."); }
+}
+async function registrarSyncPeriodico(){
+  try{
+    const reg=await navigator.serviceWorker.ready;
+    if("periodicSync" in reg){
+      const status=await navigator.permissions.query({name:"periodic-background-sync"});
+      if(status.state==="granted") await reg.periodicSync.register("lembrete-forcas",{minInterval:12*60*60*1000});
+    }
+  }catch(e){}
+}
+function notificarSW(titulo,corpo){
+  if(navigator.serviceWorker&&navigator.serviceWorker.controller)
+    navigator.serviceWorker.controller.postMessage({type:"notificar",titulo,corpo});
+}
+/* Lembrete com o app aberto: verifica a cada minuto */
+setInterval(()=>{
+  if(!dados.config.notif) return;
+  const agora=new Date();
+  const hm=String(agora.getHours()).padStart(2,"0")+":"+String(agora.getMinutes()).padStart(2,"0");
+  const c=dados.checkins[hoje()];
+  const feito=c&&((c.praticadas&&c.praticadas.length>0)||c.acaoFeita);
+  if(hm>=dados.config.hora && !feito && dados.config.ultimoLembrete!==hoje()){
+    dados.config.ultimoLembrete=hoje(); salvar();
+    notificarSW("Forças em prática","Seu check-in de hoje ainda está aberto. Qual força você praticou?");
+  }
+},60000);
+
+/* Backup */
+function exportar(){
+  const blob=new Blob([JSON.stringify(dados,null,2)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+  a.download="forcas_backup_"+hoje()+".json"; a.click(); URL.revokeObjectURL(a.href);
+  toast("Backup exportado.");
+}
+function importar(input){
+  const arq=input.files[0]; if(!arq) return;
+  const r=new FileReader();
+  r.onload=()=>{ try{
+      const d=JSON.parse(r.result);
+      if(!d.checkins||!d.fase) throw 0;
+      dados=d; if(!dados.config) dados.config={hora:"18:00",notif:false,ultimoLembrete:""};
+      salvar(); renderTudo(); toast("Backup restaurado.");
+    }catch(e){ toast("Arquivo inválido."); } };
+  r.readAsText(arq); input.value="";
+}
+function zerar(){
+  if(confirm("Apagar todo o histórico deste aparelho? Esta ação não tem volta.")){
+    dados={fase:1,inicio:hoje(),checkins:{},config:{hora:"18:00",notif:false,ultimoLembrete:""}};
+    salvar(); renderTudo(); toast("Dados zerados.");
+  }
+}
+
+/* ================= NAVEGAÇÃO / PWA ================= */
+function irPara(pg){
+  document.querySelectorAll(".pagina").forEach(p=>p.classList.toggle("on",p.id==="pg-"+pg));
+  document.querySelectorAll("nav.baixo button").forEach(b=>b.classList.toggle("on",b.dataset.pg===pg));
+  window.scrollTo({top:0});
+}
+function renderTudo(){ renderHoje(); renderPlano(); renderProgresso(); renderAjustes(); }
+renderTudo();
+
+if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
+
+let promptInstalar=null;
+window.addEventListener("beforeinstallprompt",e=>{
+  e.preventDefault(); promptInstalar=e;
+  document.getElementById("bannerInstalar").classList.add("on");
+});
+document.getElementById("btnInstalar").onclick=async()=>{
+  if(!promptInstalar) return;
+  promptInstalar.prompt(); await promptInstalar.userChoice;
+  promptInstalar=null; document.getElementById("bannerInstalar").classList.remove("on");
+};
+window.addEventListener("appinstalled",()=>{ document.getElementById("bannerInstalar").classList.remove("on"); toast("App instalado."); });
+
+/* Atualiza o dia se o app ficar aberto durante a virada */
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden) renderTudo(); });
+</script>
+</body>
+</html>

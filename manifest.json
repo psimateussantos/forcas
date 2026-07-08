@@ -1,0 +1,17 @@
+{
+  "name": "Forças - PDI CliftonStrengths",
+  "short_name": "Forças",
+  "description": "Plano de Desenvolvimento Individual baseado no CliftonStrengths 34 de Mateus Santos",
+  "lang": "pt-BR",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0B0D12",
+  "theme_color": "#0B0D12",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
