@@ -9,6 +9,10 @@
   "orientation": "portrait",
   "background_color": "#0B0D12",
   "theme_color": "#0B0D12",
+  "shortcuts": [
+    { "name": "Fazer check-in", "url": "./index.html#hoje", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] },
+    { "name": "Ver progresso", "url": "./index.html#progresso", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] }
+  ],
   "icons": [
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },

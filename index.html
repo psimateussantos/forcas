@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0B0D12">
+<meta name="theme-color" content="#0B0D12" id="metaTema">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Forças</title>
@@ -14,127 +14,147 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
+:root, [data-tema="escuro"]{
   --bg:#0B0D12; --card:#141821; --card2:#1A1F2B; --linha:#232938;
   --texto:#EDEEF3; --texto2:#C3C7D4; --mudo:#8A90A3; --mudo2:#5A6076;
   --exec:#A987E8; --estr:#43C79A; --rel:#5FABF5; --infl:#F09A55;
-  --ok:#43C79A; --raio:14px;
-  --safe-top:env(safe-area-inset-top,0px); --safe-bottom:env(safe-area-inset-bottom,0px);
+  --ok:#43C79A; --okSoft:rgba(67,199,154,.10);
+  --heat1:#1E5A47; --heat2:#2E8A6B; --heat3:#43C79A;
+  --sombra:0 1px 2px rgba(0,0,0,.4);
 }
+[data-tema="claro"]{
+  --bg:#F3F4F7; --card:#FFFFFF; --card2:#E9EBF1; --linha:#E0E3EA;
+  --texto:#171B26; --texto2:#3E4557; --mudo:#666E82; --mudo2:#9AA1B2;
+  --exec:#8256D9; --estr:#149A72; --rel:#2578D6; --infl:#DE7420;
+  --ok:#149A72; --okSoft:rgba(20,154,114,.10);
+  --heat1:#BFE8D8; --heat2:#66C9A4; --heat3:#149A72;
+  --sombra:0 1px 3px rgba(23,27,38,.08);
+}
+:root{ --raio:14px; --safe-top:env(safe-area-inset-top,0px); --safe-bottom:env(safe-area-inset-bottom,0px); }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--texto);
   font-family:'Inter',system-ui,-apple-system,'Roboto',sans-serif;
-  font-size:15px;line-height:1.55;overscroll-behavior-y:none}
+  font-size:15px;line-height:1.55;overscroll-behavior-y:none;
+  transition:background .25s,color .25s}
 body{padding-top:var(--safe-top)}
 h1,h2,.serif{font-family:'Fraunces',Georgia,serif;font-weight:650;letter-spacing:-0.01em}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
-button:focus-visible,textarea:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--rel);outline-offset:2px}
-textarea,input,select{font-family:inherit;color:var(--texto)}
+button:focus-visible,textarea:focus-visible,input:focus-visible{outline:2px solid var(--rel);outline-offset:2px}
+textarea,input{font-family:inherit;color:var(--texto)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
-/* Layout */
 #app{max-width:640px;margin:0 auto;padding:18px 16px calc(88px + var(--safe-bottom))}
 header.topo{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px}
 .eyebrow{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mudo);margin-bottom:4px}
 h1{font-size:30px;margin:0}
 .sub{font-size:12.5px;color:var(--mudo);margin-top:3px}
 .faseBadge{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
-  border:1px solid var(--linha);border-radius:99px;padding:6px 12px;color:var(--texto2);white-space:nowrap;margin-top:6px}
+  border:1px solid var(--linha);border-radius:99px;padding:6px 12px;color:var(--texto2);white-space:nowrap;margin-top:6px;background:var(--card)}
 
-/* Cards */
-.card{background:var(--card);border:1px solid var(--linha);border-radius:var(--raio);padding:18px;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--linha);border-radius:var(--raio);padding:18px;margin-bottom:14px;
+  box-shadow:var(--sombra);transition:background .25s,border-color .25s}
 .cardEyebrow{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mudo);margin-bottom:12px}
 .borda-exec{border-left:3px solid var(--exec)} .borda-estr{border-left:3px solid var(--estr)}
 .borda-rel{border-left:3px solid var(--rel)} .borda-infl{border-left:3px solid var(--infl)}
 
-/* Ação do dia */
+/* Entrada escalonada dos cards */
+.pagina{display:none}.pagina.on{display:block}
+.pagina.on>.card,.pagina.on>.kpis,.pagina.on>.faseHeader,.pagina.on>.planoCard{animation:surge .4s cubic-bezier(.2,.7,.3,1) both}
+.pagina.on>*:nth-child(1){animation-delay:.02s}.pagina.on>*:nth-child(2){animation-delay:.06s}
+.pagina.on>*:nth-child(3){animation-delay:.10s}.pagina.on>*:nth-child(4){animation-delay:.14s}
+.pagina.on>*:nth-child(5){animation-delay:.18s}.pagina.on>*:nth-child(6){animation-delay:.22s}
+@keyframes surge{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
 .acaoLinha{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
 .rank{font-family:'Fraunces',Georgia,serif;font-weight:650;font-size:38px;line-height:1;min-width:30px}
 .forcaNome{font-family:'Fraunces',Georgia,serif;font-size:18px;font-weight:650;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .domTag{font-family:'Inter',sans-serif;font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
   border:1px solid;border-radius:99px;padding:2px 8px}
 .acaoTexto{font-size:15px;line-height:1.55;color:var(--texto2);margin:6px 0 0}
-.btn{border-radius:10px;padding:12px 18px;font-size:14px;font-weight:600;width:100%;transition:filter .15s,transform .06s}
-.btn:active{transform:scale(.985)}
+.btn{border-radius:10px;padding:12px 18px;font-size:14px;font-weight:600;width:100%;transition:filter .15s,transform .1s cubic-bezier(.2,.7,.3,1)}
+.btn:active{transform:scale(.97)}
 .btnPrim{background:var(--texto);color:var(--bg)}
-.btnFeito{background:rgba(67,199,154,.13);color:var(--ok);border:1px solid var(--ok)}
+.btnFeito{background:var(--okSoft);color:var(--ok);border:1px solid var(--ok)}
 .btnGhost{background:transparent;border:1px solid var(--linha);color:var(--texto2)}
-.btnPerigo{background:transparent;border:1px solid #B0455A;color:#E58AA0}
-
-/* Chips */
+.btnPerigo{background:transparent;border:1px solid #B0455A;color:#D06A82}
+.duplo{display:flex;gap:8px}.duplo .btn{flex:1}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
 .chip{border:1px solid var(--linha);border-radius:99px;padding:10px 15px;font-size:13.5px;color:var(--texto2);
-  background:transparent;transition:all .15s;display:flex;align-items:center;gap:7px}
+  background:transparent;transition:all .18s;display:flex;align-items:center;gap:7px}
+.chip:active{transform:scale(.95)}
 .chip b{font-family:'Fraunces',Georgia,serif;font-size:14px}
 textarea{width:100%;background:var(--bg);border:1px solid var(--linha);border-radius:10px;
-  font-size:14px;padding:12px;line-height:1.5;resize:vertical;min-height:74px}
+  font-size:14px;padding:12px;line-height:1.5;resize:vertical;min-height:74px;transition:background .25s}
 .hint{font-size:12px;color:var(--mudo);margin-top:8px}
 
-/* Plano */
 .faseHeader{display:flex;justify-content:space-between;align-items:baseline;margin:22px 0 10px}
 .faseTitulo{font-family:'Fraunces',Georgia,serif;font-size:17px;font-weight:650}
 .faseStatus{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
-.planoCard{background:var(--card);border:1px solid var(--linha);border-radius:var(--raio);padding:15px 16px;margin-bottom:10px}
+.planoCard{background:var(--card);border:1px solid var(--linha);border-radius:var(--raio);padding:15px 16px;margin-bottom:10px;box-shadow:var(--sombra)}
 .planoTopo{display:flex;gap:13px;align-items:flex-start;width:100%;text-align:left;padding:0}
-.planoTopo .seta{color:var(--mudo);font-size:18px;transition:transform .2s;margin-left:auto;flex:none;align-self:center}
+.planoTopo .seta{color:var(--mudo);font-size:18px;transition:transform .25s;margin-left:auto;flex:none;align-self:center}
 .planoCard.aberta .seta{transform:rotate(90deg)}
-.planoCorpo{display:none;margin-top:13px;padding-top:13px;border-top:1px solid var(--linha)}
-.planoCard.aberta .planoCorpo{display:block}
+.planoCorpo{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s cubic-bezier(.2,.7,.3,1)}
+.planoCorpo>div{overflow:hidden}
+.planoCard.aberta .planoCorpo{grid-template-rows:1fr}
+.planoCard.aberta .planoCorpo>div{margin-top:13px;padding-top:13px;border-top:1px solid var(--linha)}
 .secTitulo{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mudo);margin:12px 0 6px}
 .secTitulo:first-child{margin-top:0}
 ul.lista{margin:0;padding-left:18px}
 ul.lista li{font-size:14px;line-height:1.6;color:var(--texto2);margin-bottom:5px}
 p.texto{font-size:14px;line-height:1.6;color:var(--texto2);margin:0}
 
-/* Progresso */
 .kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-.kpi{background:var(--card);border:1px solid var(--linha);border-radius:var(--raio);padding:14px 16px}
+.kpi{background:var(--card);border:1px solid var(--linha);border-radius:var(--raio);padding:14px 16px;box-shadow:var(--sombra)}
 .kpiValor{font-family:'Fraunces',Georgia,serif;font-size:26px;font-weight:650;line-height:1.1}
 .kpiLabel{font-size:11.5px;color:var(--mudo);margin-top:3px}
 .heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);gap:3px;justify-content:start}
 .heat div{width:13px;height:13px;border-radius:3.5px;background:var(--card2)}
+.heat .n1{background:var(--heat1)}.heat .n2{background:var(--heat2)}.heat .n3{background:var(--heat3)}
 .heatLeg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mudo);margin-top:10px}
 .heatLeg span{width:11px;height:11px;border-radius:3px;display:inline-block}
+.barraFundo{flex:1;height:12px;background:var(--card2);border-radius:6px;overflow:hidden}
+.barraFundo>div{height:100%;border-radius:6px;transition:width .5s cubic-bezier(.2,.7,.3,1)}
 .histLinha{padding:11px 0;border-bottom:1px solid var(--linha)}
 .histLinha:last-child{border-bottom:none}
 .histData{font-size:12px;color:var(--mudo);font-variant-numeric:tabular-nums;margin-bottom:5px}
 .histTags{display:flex;flex-wrap:wrap;gap:6px}
 .histTag{font-size:11.5px;border:1px solid var(--linha);border-radius:99px;padding:2px 9px}
-.histNota{font-size:12.5px;color:var(--texto2);font-style:italic;margin-top:6px}
+.histNota{font-size:12.5px;color:var(--texto2);font-style:italic;margin-top:6px;white-space:pre-line}
 svg text{font-family:'Inter',sans-serif}
 
-/* Ajustes */
 .ajLinha{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--linha)}
 .ajLinha:last-child{border-bottom:none}
 .ajTitulo{font-size:14px;font-weight:600}
 .ajDesc{font-size:12px;color:var(--mudo);margin-top:2px;line-height:1.45}
-.seg{display:flex;gap:6px}
-.segBtn{border:1px solid var(--linha);border-radius:9px;padding:8px 13px;font-size:12.5px;color:var(--mudo)}
+.seg{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.segBtn{border:1px solid var(--linha);border-radius:9px;padding:8px 13px;font-size:12.5px;color:var(--mudo);transition:all .15s}
 .segBtn.on{background:var(--texto);color:var(--bg);border-color:var(--texto);font-weight:600}
-input[type=time]{background:var(--bg);border:1px solid var(--linha);border-radius:9px;padding:8px 10px;font-size:14px;color-scheme:dark}
+input[type=time]{background:var(--bg);border:1px solid var(--linha);border-radius:9px;padding:8px 10px;font-size:14px}
+[data-tema="escuro"] input[type=time]{color-scheme:dark}
 .switch{position:relative;width:46px;height:26px;border-radius:99px;background:var(--card2);border:1px solid var(--linha);transition:background .2s;flex:none}
-.switch::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:var(--mudo);transition:all .2s}
-.switch.on{background:rgba(67,199,154,.25);border-color:var(--ok)}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:var(--mudo);transition:all .2s cubic-bezier(.2,.7,.3,1)}
+.switch.on{background:var(--okSoft);border-color:var(--ok)}
 .switch.on::after{left:22px;background:var(--ok)}
 
-/* Nav inferior */
-nav.baixo{position:fixed;bottom:0;left:0;right:0;background:rgba(11,13,18,.92);backdrop-filter:blur(14px);
-  border-top:1px solid var(--linha);display:flex;justify-content:space-around;
-  padding:8px 8px calc(8px + var(--safe-bottom));z-index:20}
+nav.baixo{position:fixed;bottom:0;left:0;right:0;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(14px);border-top:1px solid var(--linha);display:flex;justify-content:space-around;
+  padding:8px 8px calc(8px + var(--safe-bottom));z-index:20;transition:background .25s}
 nav.baixo button{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;font-weight:600;
-  letter-spacing:.04em;color:var(--mudo2);padding:6px 16px;border-radius:12px;transition:color .15s}
+  letter-spacing:.04em;color:var(--mudo2);padding:6px 16px;border-radius:12px;transition:color .18s,transform .1s}
+nav.baixo button:active{transform:scale(.92)}
 nav.baixo button.on{color:var(--texto)}
 nav.baixo svg{width:21px;height:21px}
-.pagina{display:none}.pagina.on{display:block;animation:surge .22s ease}
-@keyframes surge{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 
-/* Toast e banner */
 #toast{position:fixed;left:50%;bottom:calc(96px + var(--safe-bottom));transform:translateX(-50%) translateY(12px);
   background:var(--card2);border:1px solid var(--linha);border-radius:99px;padding:10px 18px;font-size:13px;
-  color:var(--texto);opacity:0;pointer-events:none;transition:all .25s;z-index:30;white-space:nowrap}
+  color:var(--texto);opacity:0;pointer-events:none;transition:all .25s;z-index:30;white-space:nowrap;box-shadow:var(--sombra)}
 #toast.on{opacity:1;transform:translateX(-50%)}
 #bannerInstalar{display:none;align-items:center;gap:12px}
 #bannerInstalar.on{display:flex}
+.confete{position:fixed;top:-14px;width:9px;height:14px;border-radius:2px;z-index:50;pointer-events:none;
+  animation:cair 1.5s cubic-bezier(.3,.6,.6,1) forwards}
+@keyframes cair{to{transform:translateY(105vh) rotate(660deg);opacity:.15}}
 </style>
 </head>
 <body>
@@ -158,6 +178,8 @@ nav.baixo svg{width:21px;height:21px}
 
   <!-- ===== HOJE ===== -->
   <section class="pagina on" id="pg-hoje">
+    <div class="card" id="cardSemana" style="display:flex;align-items:center;gap:16px;padding:14px 18px"></div>
+    <div class="card" id="cardResumo" style="display:none"></div>
     <div class="card" id="cardAcao"></div>
     <div class="card">
       <div class="cardEyebrow">Check-in do dia</div>
@@ -165,6 +187,14 @@ nav.baixo svg{width:21px;height:21px}
       <div class="chips" id="chipsForcas"></div>
       <textarea id="nota" placeholder="Registro do dia: onde a força apareceu, o que funcionou, o que ajustar amanhã..."></textarea>
       <div class="hint" id="resumoHoje"></div>
+    </div>
+    <div class="card">
+      <div class="cardEyebrow">Onde encaixa?</div>
+      <p class="texto" style="margin-bottom:10px">Fez algo e não sabe em qual força registrar? Descreva que eu sugiro.</p>
+      <textarea id="txtClass" placeholder="Ex.: ajudei um colega a estruturar a triagem de uma vaga travada..." style="min-height:60px"></textarea>
+      <button class="btn btnGhost" style="margin-top:10px" onclick="classificar()">Sugerir força</button>
+      <div id="resClass"></div>
+      <div class="hint">Método: correspondência local de palavras-chave. Nada sai do seu aparelho.</div>
     </div>
   </section>
 
@@ -177,6 +207,13 @@ nav.baixo svg{width:21px;height:21px}
   <!-- ===== AJUSTES ===== -->
   <section class="pagina" id="pg-ajustes">
     <div class="card">
+      <div class="cardEyebrow">Aparência</div>
+      <div class="ajLinha">
+        <div><div class="ajTitulo">Tema</div><div class="ajDesc">Seguir o sistema respeita o modo do Android.</div></div>
+        <div class="seg" id="segTema"></div>
+      </div>
+    </div>
+    <div class="card">
       <div class="cardEyebrow">Plano</div>
       <div class="ajLinha">
         <div><div class="ajTitulo">Fase ativa</div><div class="ajDesc">Fase 1: forças 1 a 5 (90 dias). Fase 2: forças 6 a 10.</div></div>
@@ -185,23 +222,38 @@ nav.baixo svg{width:21px;height:21px}
           <button class="segBtn" id="segF2" onclick="mudarFase(2)">Fase 2</button>
         </div>
       </div>
+      <div class="ajLinha">
+        <div><div class="ajTitulo">Meta semanal</div><div class="ajDesc">Dias de prática por semana. Constância vale mais que perfeição.</div></div>
+        <div class="seg" id="segMeta"></div>
+      </div>
     </div>
     <div class="card">
-      <div class="cardEyebrow">Lembrete diário</div>
+      <div class="cardEyebrow">Lembretes</div>
       <div class="ajLinha">
-        <div><div class="ajTitulo">Notificações</div><div class="ajDesc">Aviso no horário escolhido se o check-in do dia ainda estiver aberto.</div></div>
+        <div><div class="ajTitulo">Notificações</div><div class="ajDesc">Ação do dia pela manhã e check-in à tarde, se ainda estiver aberto.</div></div>
         <button class="switch" id="swNotif" onclick="toggleNotif()" aria-label="Ativar notificações"></button>
       </div>
       <div class="ajLinha">
-        <div><div class="ajTitulo">Horário</div><div class="ajDesc">Sugestão: fim do expediente.</div></div>
-        <input type="time" id="horaLembrete" onchange="salvarHora(this.value)">
+        <div><div class="ajTitulo">Início do expediente</div><div class="ajDesc">Aviso da ação do dia.</div></div>
+        <input type="time" id="horaManha" onchange="salvarHora('horaManha',this.value)">
       </div>
-      <div class="hint">O lembrete em segundo plano depende do Android permitir a sincronização periódica do app instalado. Com o app aberto, o aviso é garantido.</div>
+      <div class="ajLinha">
+        <div><div class="ajTitulo">Fim do expediente</div><div class="ajDesc">Aviso do check-in.</div></div>
+        <input type="time" id="horaTarde" onchange="salvarHora('horaTarde',this.value)">
+      </div>
+      <div class="hint">No smartwatch: ative o espelhamento do Chrome (ou do app Forças) nas notificações do app do relógio. Em segundo plano, o aviso depende da sincronização periódica do Android; com o app aberto, é garantido.</div>
+    </div>
+    <div class="card">
+      <div class="cardEyebrow">Preferências</div>
+      <div class="ajLinha">
+        <div><div class="ajTitulo">Vibração</div><div class="ajDesc">Resposta tátil ao registrar práticas.</div></div>
+        <button class="switch" id="swVibra" onclick="toggleVibra()" aria-label="Ativar vibração"></button>
+      </div>
     </div>
     <div class="card">
       <div class="cardEyebrow">Dados</div>
       <div class="ajLinha">
-        <div><div class="ajTitulo">Exportar backup</div><div class="ajDesc">Baixa um arquivo .json com todo o histórico.</div></div>
+        <div><div class="ajTitulo">Exportar backup</div><div class="ajDesc">Baixa um .json com todo o histórico. Faça 1 vez por mês.</div></div>
         <button class="btn btnGhost" style="width:auto;padding:9px 15px" onclick="exportar()">Exportar</button>
       </div>
       <div class="ajLinha">
@@ -214,7 +266,10 @@ nav.baixo svg{width:21px;height:21px}
         <button class="btn btnPerigo" style="width:auto;padding:9px 15px" onclick="zerar()">Zerar</button>
       </div>
     </div>
-    <p class="hint" style="text-align:center">Base: relatório CliftonStrengths 34 (Gallup) · Seus dados ficam apenas neste aparelho.</p>
+    <div class="card">
+      <div class="cardEyebrow">Sobre</div>
+      <p class="texto">Forças 3.0 · PDI pessoal baseado no relatório CliftonStrengths 34 (Gallup) de Mateus Santos. Fase 1: forças 1 a 5. Fase 2: forças 6 a 10. Seus dados ficam apenas neste aparelho.</p>
+    </div>
   </section>
 </div>
 
@@ -234,10 +289,10 @@ nav.baixo svg{width:21px;height:21px}
 "use strict";
 /* ================= DADOS DO PDI ================= */
 const DOM = {
-  execucao:{nome:"Execução",cor:"var(--exec)",hex:"#A987E8",cls:"borda-exec"},
-  estrategico:{nome:"Pensamento Estratégico",cor:"var(--estr)",hex:"#43C79A",cls:"borda-estr"},
-  relacionamento:{nome:"Relacionamento",cor:"var(--rel)",hex:"#5FABF5",cls:"borda-rel"},
-  influencia:{nome:"Influência",cor:"var(--infl)",hex:"#F09A55",cls:"borda-infl"}
+  execucao:{nome:"Execução",cor:"var(--exec)",cls:"borda-exec"},
+  estrategico:{nome:"Pensamento Estratégico",cor:"var(--estr)",cls:"borda-estr"},
+  relacionamento:{nome:"Relacionamento",cor:"var(--rel)",cls:"borda-rel"},
+  influencia:{nome:"Influência",cor:"var(--infl)",cls:"borda-infl"}
 };
 const FORCAS = [
  {id:"prudencia",rank:1,nome:"Prudência",dom:"execucao",fase:1,
@@ -317,59 +372,291 @@ const FORCAS = [
   indicador:"1 talento em desenvolvimento ativo por mês, com prática registrada."}
 ];
 
+/* ===== Repertório de ações do dia (8 por força) ===== */
+const ACOES_DIA = {
+ prudencia:[
+  "Antes da primeira decisão do dia, escreva em 3 linhas: opções, risco principal e mitigação",
+  "Em uma reunião hoje, seja a voz que pergunta: o que pode dar errado neste plano?",
+  "Identifique uma decisão que você vem adiando e marque o prazo dela para esta semana",
+  "Ao emitir um parecer hoje, inclua explicitamente uma linha de premissas e riscos",
+  "Reserve 20 minutos para revisar um projeto em andamento buscando riscos não mapeados",
+  "Explique a alguém o porquê de uma cautela sua, transformando prudência em credibilidade",
+  "Escolha uma decisão de baixo impacto e tome-a rápido de propósito, calibrando seu tempo de resposta",
+  "Registre a lição de um risco que se concretizou no passado e o que fazer diferente agora"],
+ analitico:[
+  "Pegue um indicador que você acompanha e investigue a causa por trás do número",
+  "Transforme uma análise em recomendação de uma frase e envie a quem decide",
+  "Questione um dado que todos aceitam como verdade: a fonte sustenta a conclusão?",
+  "Defina o critério de dado suficiente antes de abrir a próxima planilha",
+  "Encontre um padrão nos seus processos recentes e registre o insight",
+  "Ensine a um colega como você chegou a uma conclusão, mostrando o método",
+  "Compare duas abordagens para um problema atual usando prós, contras e dados",
+  "Automatize ou simplifique uma análise recorrente que consome seu tempo"],
+ relacionamento:[
+  "Chame alguém do time para uma conversa de 15 minutos sem pauta de trabalho",
+  "Envie uma mensagem de reconhecimento específico a um colega hoje",
+  "Pergunte a alguém próximo como ele está de verdade, e escute sem tentar resolver",
+  "Dedique 20 minutos de mentoria a alguém em desenvolvimento",
+  "Conecte duas pessoas da sua rede que se beneficiariam de se conhecer",
+  "Converse com alguém fora do seu círculo habitual, com curiosidade genuína",
+  "Retome contato com alguém importante com quem você não fala há tempos",
+  "Em uma conversa hoje, compartilhe algo pessoal apropriado, aprofundando a confiança"],
+ realizacao:[
+  "Escreva as 3 prioridades do dia antes de abrir e-mails e mensagens",
+  "Conclua hoje a tarefa que você vem empurrando há dias",
+  "Ao fechar uma entrega, pare 2 minutos e registre o valor que ela gerou",
+  "Recuse ou renegocie uma demanda que não cabe na sua capacidade real",
+  "Quebre um projeto grande em 3 entregas menores com datas definidas",
+  "Termine o expediente listando o que foi concluído, não o que faltou",
+  "Faça a revisão semanal: entregue versus planejado, e o porquê dos desvios",
+  "Elimine da sua lista uma tarefa que não precisa ser feita por ninguém"],
+ foco:[
+  "Bloqueie agora 1 hora de foco total na agenda, sem notificações",
+  "Releia suas metas do trimestre e confirme se esta semana aponta para elas",
+  "Em uma reunião hoje, resuma decisões, responsáveis e prazos ao final",
+  "Identifique sua maior distração de ontem e neutralize-a hoje",
+  "Diga não a uma solicitação que desvia do seu objetivo principal",
+  "Antes de começar qualquer tarefa, pergunte: isto é prioridade agora?",
+  "Defina uma meta com prazo para algo que está solto e sem dono",
+  "Execute a tarefa mais importante do dia na sua primeira hora útil"],
+ organizacao:[
+  "Reorganize a agenda da semana em blocos por tipo de trabalho",
+  "Delegue ou redistribua uma tarefa que outra pessoa faria melhor",
+  "Mapeie as partes móveis de um projeto e confirme quem cuida de cada uma",
+  "Simplifique um fluxo de trabalho eliminando uma etapa desnecessária",
+  "Antes de mudar um plano, comunique o porquê a quem é afetado",
+  "Monte um modelo reutilizável para uma demanda que sempre se repete",
+  "Combine duas reuniões ou tarefas que podem virar uma só",
+  "Revise a distribuição de demandas do time e proponha um ajuste"],
+ responsabilidade:[
+  "Antes de aceitar algo novo hoje, verifique a agenda e informe o prazo real",
+  "Sinalize proativamente um risco de atraso antes que perguntem",
+  "Cumpra hoje uma promessa pequena feita a alguém",
+  "Abra mão formalmente de um compromisso que não faz mais sentido",
+  "Diga não (ou negocie) uma vez hoje, com transparência sobre o motivo",
+  "Revise os compromissos da semana e confirme que todos têm data viável",
+  "Assuma publicamente a responsabilidade por um resultado, bom ou ruim",
+  "Ajude o time a definir donos claros para tarefas que estão soltas"],
+ restauracao:[
+  "Escolha um processo travado e dê o primeiro passo para destravá-lo hoje",
+  "Resolva de vez um problema pequeno e recorrente que incomoda todo mundo",
+  "Ao apoiar alguém, pergunte o que a pessoa já tentou antes de dar a solução",
+  "Liste os 3 problemas mais críticos da sua área e priorize um",
+  "Documente a solução de um problema resolvido para que não se repita",
+  "Elogie hoje algo que está funcionando bem, não só o que precisa de conserto",
+  "Transforme uma reclamação recente em proposta concreta de melhoria",
+  "Revisite um problema tido como sem solução com olhos novos por 15 minutos"],
+ crenca:[
+  "Releia sua missão pessoal (ou escreva a primeira versão em 3 linhas)",
+  "Avalie um projeto atual pelo filtro: isto está alinhado aos meus valores?",
+  "Tome hoje uma decisão pequena guiada por princípio, não por conveniência",
+  "Proteja na agenda um compromisso pessoal inegociável desta semana",
+  "Reconheça, com respeito, um valor diferente do seu em ação num colega",
+  "Conecte uma tarefa rotineira ao propósito maior que ela serve",
+  "Diga não a algo que conflita com um valor seu, explicando com calma",
+  "Escreva por que o seu trabalho importa para além do resultado"],
+ excelencia:[
+  "Escolha um talento seu e pratique-o deliberadamente por 30 minutos",
+  "Aponte a alguém do time uma força que ele tem e talvez não enxergue",
+  "Eleve o padrão de uma entrega recorrente com um ajuste de qualidade",
+  "Encerre hoje uma entrega em que bom o suficiente é a resposta certa",
+  "Neutralize uma fraqueza sua com o apoio de alguém forte nela",
+  "Estude por 20 minutos algo que aprofunde sua maior força",
+  "Dê um feedback focado no que a pessoa faz de melhor",
+  "Compare uma prática sua com a melhor referência do mercado e anote 1 ajuste"]
+};
+
 /* ================= ESTADO ================= */
 const CHAVE = "forcas_pdi_v2";
 const hoje = () => { const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); };
 const fmtBR = iso => { const [a,m,d]=iso.split("-"); return d+"/"+m+"/"+a; };
 let dados = carregar();
+migrar(dados);
 function carregar(){
   try{ const r = localStorage.getItem(CHAVE); if(r) return JSON.parse(r); }catch(e){}
-  return { fase:1, inicio:hoje(), checkins:{}, config:{ hora:"18:00", notif:false, ultimoLembrete:"" } };
+  return { fase:1, inicio:hoje(), checkins:{}, config:{} };
+}
+function migrar(d){
+  if(!d.config) d.config={};
+  const c=d.config;
+  if(c.hora && !c.horaTarde){ c.horaTarde=c.hora; delete c.hora; }
+  if(!c.horaManha) c.horaManha="08:30";
+  if(!c.horaTarde) c.horaTarde="18:00";
+  if(c.notif===undefined) c.notif=false;
+  if(!c.meta) c.meta=5;
+  if(!c.tema) c.tema="sistema";
+  if(c.vibra===undefined) c.vibra=true;
+  if(c.ultimoManha===undefined) c.ultimoManha="";
+  if(c.ultimoTarde===undefined) c.ultimoTarde="";
+  if(c.celebrou===undefined) c.celebrou="";
 }
 function salvar(){ try{ localStorage.setItem(CHAVE, JSON.stringify(dados)); }catch(e){ toast("Falha ao salvar. Verifique o espaço do navegador."); } }
-function ci(){ if(!dados.checkins[hoje()]) dados.checkins[hoje()]={praticadas:[],acaoFeita:false,nota:""}; return dados.checkins[hoje()]; }
-function vibrar(ms){ if(navigator.vibrate) navigator.vibrate(ms); }
+function ci(){ if(!dados.checkins[hoje()]) dados.checkins[hoje()]={praticadas:[],acaoFeita:false,nota:"",acaoIdx:0}; return dados.checkins[hoje()]; }
+function vibrar(ms){ if(dados.config.vibra!==false && navigator.vibrate) navigator.vibrate(ms); }
 function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(t._tm); t._tm=setTimeout(()=>t.classList.remove("on"),2200); }
+function escapar(s){ const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
+
+/* ================= TEMA ================= */
+function aplicarTema(){
+  const pref=dados.config.tema||"sistema";
+  const escuro = pref==="escuro" || (pref==="sistema" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  document.documentElement.dataset.tema = escuro ? "escuro" : "claro";
+  document.getElementById("metaTema").setAttribute("content", escuro ? "#0B0D12" : "#F3F4F7");
+}
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ()=>{ if((dados.config.tema||"sistema")==="sistema"){ aplicarTema(); renderTudo(); } });
+function mudarTema(t){ dados.config.tema=t; salvar(); aplicarTema(); renderTudo(); toast(t==="sistema"?"Seguindo o tema do sistema.":"Tema "+t+" ativado."); }
 
 /* ================= AÇÃO DO DIA ================= */
-function acaoDoDia(){
-  const pool=[]; FORCAS.filter(f=>f.fase===dados.fase).forEach(f=>f.acoes.forEach(a=>pool.push({f,a})));
-  const d=hoje(); let h=0; for(let i=0;i<d.length;i++) h=(h*31+d.charCodeAt(i))>>>0;
-  return pool[h%pool.length];
+function seed(str){ let h=0; for(let i=0;i<str.length;i++) h=(h*31+str.charCodeAt(i))>>>0; return h; }
+function embaralhar(arr, s){
+  const a=arr.slice(); let x=s||1;
+  for(let i=a.length-1;i>0;i--){ x=(x*1103515245+12345)>>>0; const j=x%(i+1); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
 }
+function poolDoDia(){
+  const pool=[]; FORCAS.filter(f=>f.fase===dados.fase).forEach(f=>ACOES_DIA[f.id].forEach(a=>pool.push({f,a})));
+  return embaralhar(pool, seed(hoje()+"|f"+dados.fase));
+}
+function acaoDoDia(){
+  const pool=poolDoDia(); const idx=((ci().acaoIdx||0)%pool.length+pool.length)%pool.length;
+  return { ...pool[idx], idx, total:pool.length };
+}
+function trocarAcao(){ const c=ci(); c.acaoIdx=(c.acaoIdx||0)+1; vibrar(8); salvar(); renderHoje(); }
 
 /* ================= RENDER: HOJE ================= */
 function renderHoje(){
-  const {f,a}=acaoDoDia(); const c=ci(); const D=DOM[f.dom];
+  const {f,a,idx,total}=acaoDoDia(); const c=ci(); const D=DOM[f.dom];
   document.getElementById("cardAcao").className="card "+D.cls;
   document.getElementById("cardAcao").innerHTML =
-    '<div class="cardEyebrow">Ação do dia · '+fmtBR(hoje())+'</div>'+
+    '<div class="cardEyebrow">Ação do dia · '+fmtBR(hoje())+' · opção '+((idx%total)+1)+' de '+total+'</div>'+
     '<div class="acaoLinha"><span class="rank" style="color:'+D.cor+'">'+f.rank+'</span>'+
     '<div><div class="forcaNome">'+f.nome+'<span class="domTag" style="color:'+D.cor+';border-color:'+D.cor+'">'+D.nome+'</span></div>'+
     '<p class="acaoTexto">'+a+'</p></div></div>'+
-    '<button class="btn '+(c.acaoFeita?"btnFeito":"btnPrim")+'" onclick="toggleAcao()">'+(c.acaoFeita?"Concluída hoje ✓":"Marcar como feita")+'</button>';
+    '<div class="duplo">'+
+    '<button class="btn '+(c.acaoFeita?"btnFeito":"btnPrim")+'" onclick="toggleAcao()">'+(c.acaoFeita?"Concluída ✓":"Marcar como feita")+'</button>'+
+    '<button class="btn btnGhost" style="flex:0 0 auto;width:auto" onclick="trocarAcao()">Trocar ↻</button></div>';
 
   const chips=document.getElementById("chipsForcas"); chips.innerHTML="";
   FORCAS.filter(x=>x.fase===dados.fase).forEach(x=>{
-    const on=c.praticadas.includes(x.id); const cor=DOM[x.dom].hex;
+    const on=c.praticadas.includes(x.id); const cor=DOM[x.dom].cor;
     const b=document.createElement("button"); b.className="chip";
-    if(on){ b.style.borderColor=cor; b.style.color=cor; b.style.background=cor+"20"; }
+    if(on){ b.style.borderColor=cor; b.style.color=cor; b.style.background="color-mix(in srgb, "+cor+" 13%, transparent)"; }
     b.innerHTML="<b>"+x.rank+"</b>"+x.nome;
     b.onclick=()=>{ togglePratica(x.id); };
     chips.appendChild(b);
   });
   const nota=document.getElementById("nota");
   if(document.activeElement!==nota) nota.value=c.nota||"";
-  const total=c.praticadas.length+(c.acaoFeita?1:0);
+  const totalHoje=c.praticadas.length+(c.acaoFeita?1:0);
   document.getElementById("resumoHoje").textContent =
-    total>0 ? total+(total===1?" prática registrada hoje.":" práticas registradas hoje.") : "Nenhuma prática registrada ainda hoje.";
+    totalHoje>0 ? totalHoje+(totalHoje===1?" prática registrada hoje.":" práticas registradas hoje.") : "Nenhuma prática registrada ainda hoje.";
   document.getElementById("badgeFase").textContent="Fase "+dados.fase+" · Forças "+(dados.fase===1?"1 a 5":"6 a 10");
+  renderSemana();
 }
-function toggleAcao(){ const c=ci(); c.acaoFeita=!c.acaoFeita; if(c.acaoFeita) vibrar(18); salvar(); renderHoje(); renderProgresso(); }
+function toggleAcao(){ const c=ci(); c.acaoFeita=!c.acaoFeita; if(c.acaoFeita) vibrar(18); salvar(); renderHoje(); renderProgresso(); checarMeta(); }
 function togglePratica(id){ const c=ci();
   c.praticadas = c.praticadas.includes(id)? c.praticadas.filter(x=>x!==id) : [...c.praticadas,id];
-  vibrar(12); salvar(); renderHoje(); renderProgresso(); }
+  vibrar(12); salvar(); renderHoje(); renderProgresso(); checarMeta(); }
 document.getElementById("nota").addEventListener("blur", e=>{ ci().nota=e.target.value.trim(); salvar(); renderHoje(); renderProgresso(); });
+
+/* ===== Semana atual, anel e resumo ===== */
+function inicioSemana(ref){ const d=new Date(ref); const dia=(d.getDay()+6)%7; d.setDate(d.getDate()-dia); d.setHours(0,0,0,0); return d; }
+function diasNaSemana(inicio){
+  const dias=diasComPratica(); const fim=new Date(inicio); fim.setDate(inicio.getDate()+6); fim.setHours(23,59,59,0);
+  return dias.filter(x=>{ const dt=new Date(x+"T12:00:00"); return dt>=inicio&&dt<=fim; }).length;
+}
+function chaveSemana(){ const i=inicioSemana(new Date()); return i.getFullYear()+"-"+i.getMonth()+"-"+i.getDate(); }
+function renderSemana(){
+  const meta=dados.config.meta||5;
+  const feitos=diasNaSemana(inicioSemana(new Date()));
+  const pct=Math.min(1,feitos/meta);
+  const R=24,C=2*Math.PI*R;
+  document.getElementById("cardSemana").innerHTML =
+    '<svg width="62" height="62" viewBox="0 0 62 62" style="flex:none;transform:rotate(-90deg)">'+
+    '<circle cx="31" cy="31" r="'+R+'" fill="none" stroke="var(--card2)" stroke-width="6"/>'+
+    '<circle cx="31" cy="31" r="'+R+'" fill="none" stroke="'+(pct>=1?"var(--ok)":"var(--rel)")+'" stroke-width="6" stroke-linecap="round" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct))+'" style="transition:stroke-dashoffset .5s cubic-bezier(.2,.7,.3,1)"/></svg>'+
+    '<div><div class="serif" style="font-size:19px">'+feitos+' de '+meta+' dias'+(pct>=1?" ✓":"")+'</div>'+
+    '<div class="hint" style="margin-top:2px">'+(pct>=1?"Meta da semana batida. Constância é a sua marca.":"Meta desta semana. Um check-in por dia conta.")+'</div></div>';
+  const box=document.getElementById("cardResumo");
+  if(new Date().getDay()===1){
+    const iniPrev=inicioSemana(new Date()); iniPrev.setDate(iniPrev.getDate()-7);
+    const fimPrev=new Date(iniPrev); fimPrev.setDate(iniPrev.getDate()+6);
+    const diasPrev=diasComPratica().filter(x=>{ const dt=new Date(x+"T12:00:00"); return dt>=iniPrev&&dt<=fimPrev; });
+    if(diasPrev.length>0){
+      const cont={}; diasPrev.forEach(d=>(dados.checkins[d].praticadas||[]).forEach(id=>cont[id]=(cont[id]||0)+1));
+      const ativas=FORCAS.filter(f=>f.fase===dados.fase);
+      const top=ativas.slice().sort((a,b)=>(cont[b.id]||0)-(cont[a.id]||0))[0];
+      const zero=ativas.filter(f=>!cont[f.id]);
+      box.style.display="block";
+      box.innerHTML='<div class="cardEyebrow">Resumo da semana passada</div>'+
+        '<p class="texto">'+diasPrev.length+' '+(diasPrev.length===1?"dia":"dias")+' com prática. '+
+        (cont[top.id]?('Força mais praticada: <b style="color:'+DOM[top.dom].cor+'">'+top.nome+'</b>. '):'')+
+        (zero.length?('Sem registro: '+zero.map(f=>f.nome).join(", ")+'. Que tal priorizar esta semana?'):'Todas as forças da fase foram praticadas. Excelente.')+'</p>';
+    } else box.style.display="none";
+  } else box.style.display="none";
+}
+function checarMeta(){
+  const meta=dados.config.meta||5;
+  if(diasNaSemana(inicioSemana(new Date()))>=meta && dados.config.celebrou!==chaveSemana()){
+    dados.config.celebrou=chaveSemana(); salvar(); celebrar();
+    toast("Meta semanal batida. Excelente constância!"); vibrar([30,50,30]);
+  }
+}
+function celebrar(){
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const cores=["var(--exec)","var(--estr)","var(--rel)","var(--infl)"];
+  for(let i=0;i<28;i++){
+    const p=document.createElement("div"); p.className="confete";
+    p.style.left=(Math.random()*100)+"vw";
+    p.style.background=cores[i%4];
+    p.style.animationDelay=(Math.random()*0.4)+"s";
+    p.style.animationDuration=(1.2+Math.random()*0.8)+"s";
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),2600);
+  }
+}
+
+/* ===== Classificador local ===== */
+const LEXICO = {
+ prudencia:["risco","riscos","decisao","decidir","avali","cautel","ponder","premissa","cenario","refleti","antecip","mitig"],
+ analitico:["dado","dados","indicador","analis","planilha","padrao","causa","hipotese","metric","investig","numero","dashboard","relatorio"],
+ relacionamento:["convers","1:1","pessoa","colega","mentor","apoi","escut","vinculo","relacao","cafe","confianca","aproxim"],
+ realizacao:["entreg","conclu","finaliz","prioridade","prioridades","tarefa","produtiv","checklist","fechei"],
+ foco:["foco","concentr","distra","bloquei","meta","objetivo","prazo","resumi","direcao","prioriz"],
+ organizacao:["organiz","coorden","aloc","recurso","agenda","plano","cronograma","multitarefa","estrutur","fluxo"],
+ responsabilidade:["compromisso","prometi","confiab","recus","dizer nao","disse nao","sinaliz","atraso","assumi","palavra"],
+ restauracao:["problema","resolv","corrig","travad","consert","crise","pendencia","ajust","bug","destrav"],
+ crenca:["valor","valores","proposito","missao","etica","principio","integridade","coerencia"],
+ excelencia:["melhor","qualidade","otimiz","refin","excelencia","elev","aprimor","potencializ","talento"]
+};
+function normalizar(s){ return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""); }
+function classificar(){
+  const txt=document.getElementById("txtClass").value.trim();
+  const res=document.getElementById("resClass");
+  if(!txt){ res.innerHTML=""; return; }
+  const norm=normalizar(txt);
+  const scores=FORCAS.map(f=>({f,s:LEXICO[f.id].reduce((a,k)=>a+(norm.includes(k)?1:0),0)}))
+    .filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,2);
+  if(!scores.length){
+    res.innerHTML='<p class="texto" style="margin-top:12px">Sem correspondência clara. Escolha manualmente nos chips acima, ou detalhe mais a descrição (verbos e contexto ajudam).</p>';
+    return;
+  }
+  res.innerHTML='<div class="secTitulo" style="margin-top:14px">Sugestão</div>'+scores.map(({f})=>{
+    const D=DOM[f.dom];
+    return '<button class="chip" style="border-color:'+D.cor+';color:'+D.cor+';background:color-mix(in srgb,'+D.cor+' 13%,transparent);margin:4px 6px 4px 0" '+
+      'onclick="registrarClass(\''+f.id+'\')"><b>'+f.rank+'</b>Registrar em '+f.nome+
+      '<span class="domTag" style="color:'+D.cor+';border-color:'+D.cor+';margin-left:4px">'+D.nome+'</span></button>';
+  }).join("");
+}
+function registrarClass(id){
+  const f=FORCAS.find(x=>x.id===id); const c=ci();
+  if(!c.praticadas.includes(id)) c.praticadas.push(id);
+  const txt=document.getElementById("txtClass").value.trim();
+  if(txt) c.nota=(c.nota?c.nota+"\n":"")+"["+f.nome+"] "+txt;
+  document.getElementById("txtClass").value="";
+  document.getElementById("resClass").innerHTML="";
+  vibrar(15); salvar(); renderHoje(); renderProgresso(); checarMeta(); toast("Registrado em "+f.nome+".");
+}
 
 /* ================= RENDER: PLANO ================= */
 function renderPlano(){
@@ -388,10 +675,10 @@ function renderPlano(){
        '<div style="flex:1"><div class="forcaNome" style="font-size:16.5px">'+x.nome+
        '<span class="domTag" style="color:'+D.cor+';border-color:'+D.cor+'">'+D.nome+'</span></div>'+
        '<p class="texto" style="margin-top:4px">'+x.objetivo+'</p></div><span class="seta">›</span></button>'+
-       '<div class="planoCorpo"><div class="secTitulo">Ações de prática</div><ul class="lista">'+
+       '<div class="planoCorpo"><div><div class="secTitulo">Ações de prática</div><ul class="lista">'+
        x.acoes.map(a=>"<li>"+a+"</li>").join("")+'</ul>'+
        '<div class="secTitulo">Ponto cego a gerenciar</div><p class="texto">'+x.pontoCego+'</p>'+
-       '<div class="secTitulo">Indicador de acompanhamento</div><p class="texto">'+x.indicador+'</p></div>';
+       '<div class="secTitulo">Indicador de acompanhamento</div><p class="texto">'+x.indicador+'</p></div></div>';
       card.querySelector(".planoTopo").onclick=()=>card.classList.toggle("aberta");
       pg.appendChild(card);
     });
@@ -415,38 +702,45 @@ function calcStreak(){
   }
   return s;
 }
+function calcMelhorSeq(){
+  const dias=diasComPratica().filter(d=>{ const c=dados.checkins[d]; return (c.praticadas&&c.praticadas.length>0)||c.acaoFeita; });
+  let melhor=0,atual=0,prev=null;
+  dias.forEach(d=>{
+    if(prev){ const dt=new Date(prev+"T12:00:00"); dt.setDate(dt.getDate()+1);
+      const esperado=dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0");
+      atual = (d===esperado)? atual+1 : 1;
+    } else atual=1;
+    if(atual>melhor) melhor=atual; prev=d;
+  });
+  return Math.max(melhor,calcStreak());
+}
 function renderProgresso(){
   const pg=document.getElementById("pg-progresso");
   const dias=diasComPratica(); const streak=calcStreak();
   const totalPraticas=dias.reduce((a,d)=>a+(dados.checkins[d].praticadas?dados.checkins[d].praticadas.length:0)+(dados.checkins[d].acaoFeita?1:0),0);
 
-  /* Heatmap 12 semanas */
   let heat=""; const fim=new Date(); const diaSem=fim.getDay();
   const inicio=new Date(fim); inicio.setDate(fim.getDate()-(11*7+diaSem));
   const cur=new Date(inicio);
   while(cur<=fim){
     const iso=cur.getFullYear()+"-"+String(cur.getMonth()+1).padStart(2,"0")+"-"+String(cur.getDate()).padStart(2,"0");
     const c=dados.checkins[iso]; const n=c?((c.praticadas?c.praticadas.length:0)+(c.acaoFeita?1:0)):0;
-    let cor="var(--card2)";
-    if(n>=4) cor="#43C79A"; else if(n>=2) cor="#2E8A6B"; else if(n>=1) cor="#1E5A47";
-    heat+='<div style="background:'+cor+'" title="'+fmtBR(iso)+": "+n+'"></div>';
+    const cls = n>=4?"n3" : n>=2?"n2" : n>=1?"n1" : "";
+    heat+='<div class="'+cls+'" title="'+fmtBR(iso)+": "+n+'"></div>';
     cur.setDate(cur.getDate()+1);
   }
 
-  /* Barras por força */
   const porForca=FORCAS.map(f=>({f,total:dias.reduce((a,d)=>a+((dados.checkins[d].praticadas||[]).includes(f.id)?1:0),0)}));
   const maxB=Math.max(1,...porForca.map(x=>x.total));
   const barras=porForca.map(({f,total})=>{
     const pct=Math.round(total/maxB*100);
     return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:9px">'+
       '<span style="font-size:12px;color:var(--texto2);width:118px;flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+
-      '<b class="serif" style="color:'+DOM[f.dom].hex+'">'+f.rank+'</b> '+f.nome+'</span>'+
-      '<div style="flex:1;height:12px;background:var(--card2);border-radius:6px;overflow:hidden">'+
-      '<div style="width:'+pct+'%;height:100%;background:'+DOM[f.dom].hex+';border-radius:6px;transition:width .3s"></div></div>'+
+      '<b class="serif" style="color:'+DOM[f.dom].cor+'">'+f.rank+'</b> '+f.nome+'</span>'+
+      '<div class="barraFundo"><div style="width:'+pct+'%;background:'+DOM[f.dom].cor+'"></div></div>'+
       '<span style="font-size:12px;color:var(--mudo);width:22px;text-align:right;font-variant-numeric:tabular-nums">'+total+'</span></div>';
   }).join("");
 
-  /* Consistência 8 semanas (SVG) */
   const sems=[]; const ref=new Date();
   for(let w=7;w>=0;w--){
     const f2=new Date(ref); f2.setDate(ref.getDate()-w*7);
@@ -459,17 +753,16 @@ function renderProgresso(){
   const pts=sems.map((s,i)=>px(i)+","+py(s.v)).join(" ");
   const area="M"+px(0)+","+(H-22)+" L"+sems.map((s,i)=>px(i)+","+py(s.v)).join(" L")+" L"+px(sems.length-1)+","+(H-22)+" Z";
   const linha='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto">'+
-    [0,7].map(v=>'<line x1="'+pad+'" y1="'+py(v)+'" x2="'+(W-pad)+'" y2="'+py(v)+'" stroke="#232938" stroke-dasharray="3 4"/><text x="'+(pad-8)+'" y="'+(py(v)+4)+'" fill="#5A6076" font-size="10" text-anchor="end">'+v+'</text>').join("")+
-    '<path d="'+area+'" fill="rgba(67,199,154,.10)"/>'+
-    '<polyline points="'+pts+'" fill="none" stroke="#43C79A" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>'+
-    sems.map((s,i)=>'<circle cx="'+px(i)+'" cy="'+py(s.v)+'" r="3.4" fill="#43C79A"/><text x="'+px(i)+'" y="'+(H-6)+'" fill="#5A6076" font-size="9.5" text-anchor="middle">'+s.lab+'</text>').join("")+
+    [0,7].map(v=>'<line x1="'+pad+'" y1="'+py(v)+'" x2="'+(W-pad)+'" y2="'+py(v)+'" stroke="var(--linha)" stroke-dasharray="3 4"/><text x="'+(pad-8)+'" y="'+(py(v)+4)+'" fill="var(--mudo2)" font-size="10" text-anchor="end">'+v+'</text>').join("")+
+    '<path d="'+area+'" fill="var(--okSoft)"/>'+
+    '<polyline points="'+pts+'" fill="none" stroke="var(--ok)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>'+
+    sems.map((s,i)=>'<circle cx="'+px(i)+'" cy="'+py(s.v)+'" r="3.4" fill="var(--ok)"/><text x="'+px(i)+'" y="'+(H-6)+'" fill="var(--mudo2)" font-size="9.5" text-anchor="middle">'+s.lab+'</text>').join("")+
     '</svg>';
 
-  /* Histórico */
   const hist=[...dias].reverse().slice(0,14).map(d=>{
     const c=dados.checkins[d];
     const tags=(c.praticadas||[]).map(id=>{ const f=FORCAS.find(x=>x.id===id);
-      return '<span class="histTag" style="color:'+DOM[f.dom].hex+'">'+f.nome+'</span>'; }).join("")+
+      return '<span class="histTag" style="color:'+DOM[f.dom].cor+'">'+f.nome+'</span>'; }).join("")+
       (c.acaoFeita?'<span class="histTag" style="color:var(--texto)">Ação do dia ✓</span>':"");
     return '<div class="histLinha"><div class="histData">'+fmtBR(d)+'</div><div class="histTags">'+tags+'</div>'+
       (c.nota?'<div class="histNota">'+escapar(c.nota)+'</div>':"")+'</div>';
@@ -478,27 +771,39 @@ function renderProgresso(){
   pg.innerHTML =
    '<div class="kpis">'+
    '<div class="kpi"><div class="kpiValor">'+streak+'</div><div class="kpiLabel">'+(streak===1?"dia em sequência":"dias em sequência")+'</div></div>'+
+   '<div class="kpi"><div class="kpiValor">'+calcMelhorSeq()+'</div><div class="kpiLabel">melhor sequência</div></div>'+
    '<div class="kpi"><div class="kpiValor">'+dias.length+'</div><div class="kpiLabel">dias com prática</div></div>'+
-   '<div class="kpi"><div class="kpiValor">'+totalPraticas+'</div><div class="kpiLabel">práticas registradas</div></div>'+
-   '<div class="kpi"><div class="kpiValor">Fase '+dados.fase+'</div><div class="kpiLabel">desde '+fmtBR(dados.inicio)+'</div></div></div>'+
+   '<div class="kpi"><div class="kpiValor">'+totalPraticas+'</div><div class="kpiLabel">práticas registradas</div></div></div>'+
    '<div class="card"><div class="cardEyebrow">Mapa de constância · últimas 12 semanas</div>'+
    '<div style="overflow-x:auto"><div class="heat">'+heat+'</div></div>'+
-   '<div class="heatLeg">Menos <span style="background:var(--card2)"></span><span style="background:#1E5A47"></span><span style="background:#2E8A6B"></span><span style="background:#43C79A"></span> Mais</div></div>'+
+   '<div class="heatLeg">Menos <span style="background:var(--card2)"></span><span style="background:var(--heat1)"></span><span style="background:var(--heat2)"></span><span style="background:var(--heat3)"></span> Mais</div></div>'+
    '<div class="card"><div class="cardEyebrow">Práticas por força · acumulado</div>'+barras+'</div>'+
    '<div class="card"><div class="cardEyebrow">Consistência semanal · dias com prática</div>'+linha+'</div>'+
    '<div class="card"><div class="cardEyebrow">Histórico recente</div>'+hist+'</div>';
 }
-function escapar(s){ const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
 
 /* ================= AJUSTES ================= */
 function renderAjustes(){
+  const segT=document.getElementById("segTema"); segT.innerHTML="";
+  [["sistema","Sistema"],["escuro","Escuro"],["claro","Claro"]].forEach(([v,l])=>{
+    const b=document.createElement("button"); b.className="segBtn"+((dados.config.tema||"sistema")===v?" on":"");
+    b.textContent=l; b.onclick=()=>mudarTema(v); segT.appendChild(b);
+  });
   document.getElementById("segF1").classList.toggle("on",dados.fase===1);
   document.getElementById("segF2").classList.toggle("on",dados.fase===2);
   document.getElementById("swNotif").classList.toggle("on",dados.config.notif);
-  document.getElementById("horaLembrete").value=dados.config.hora||"18:00";
+  document.getElementById("swVibra").classList.toggle("on",dados.config.vibra!==false);
+  document.getElementById("horaManha").value=dados.config.horaManha||"08:30";
+  document.getElementById("horaTarde").value=dados.config.horaTarde||"18:00";
+  const seg=document.getElementById("segMeta"); seg.innerHTML="";
+  [3,4,5,6,7].forEach(n=>{ const b=document.createElement("button");
+    b.className="segBtn"+(dados.config.meta===n?" on":""); b.textContent=n;
+    b.onclick=()=>{ dados.config.meta=n; salvar(); renderAjustes(); renderHoje(); toast("Meta: "+n+" dias por semana."); };
+    seg.appendChild(b); });
 }
 function mudarFase(f){ dados.fase=f; salvar(); renderTudo(); toast("Fase "+f+" ativada."); vibrar(12); }
-function salvarHora(v){ dados.config.hora=v; salvar(); toast("Lembrete definido para "+v+"."); }
+function salvarHora(campo,v){ dados.config[campo]=v; salvar(); toast("Lembrete definido para "+v+"."); }
+function toggleVibra(){ dados.config.vibra=!(dados.config.vibra!==false); salvar(); renderAjustes(); if(dados.config.vibra) vibrar(20); }
 async function toggleNotif(){
   if(!dados.config.notif){
     if(!("Notification" in window)){ toast("Este navegador não suporta notificações."); return; }
@@ -506,7 +811,7 @@ async function toggleNotif(){
     if(perm!=="granted"){ toast("Permissão negada nas configurações do Android."); return; }
     dados.config.notif=true; salvar(); renderAjustes(); toast("Notificações ativadas.");
     registrarSyncPeriodico();
-    notificarSW("Forças em prática","Lembretes ativados. Bom desenvolvimento!");
+    notificarSW("Forças em prática","Lembretes ativados. Bom desenvolvimento!","checkin-diario");
   } else { dados.config.notif=false; salvar(); renderAjustes(); toast("Notificações desativadas."); }
 }
 async function registrarSyncPeriodico(){
@@ -518,24 +823,28 @@ async function registrarSyncPeriodico(){
     }
   }catch(e){}
 }
-function notificarSW(titulo,corpo){
+function notificarSW(titulo,corpo,tag){
   if(navigator.serviceWorker&&navigator.serviceWorker.controller)
-    navigator.serviceWorker.controller.postMessage({type:"notificar",titulo,corpo});
+    navigator.serviceWorker.controller.postMessage({type:"notificar",titulo,corpo,tag});
 }
-/* Lembrete com o app aberto: verifica a cada minuto */
 setInterval(()=>{
   if(!dados.config.notif) return;
   const agora=new Date();
   const hm=String(agora.getHours()).padStart(2,"0")+":"+String(agora.getMinutes()).padStart(2,"0");
   const c=dados.checkins[hoje()];
   const feito=c&&((c.praticadas&&c.praticadas.length>0)||c.acaoFeita);
-  if(hm>=dados.config.hora && !feito && dados.config.ultimoLembrete!==hoje()){
-    dados.config.ultimoLembrete=hoje(); salvar();
-    notificarSW("Forças em prática","Seu check-in de hoje ainda está aberto. Qual força você praticou?");
+  if(hm>=dados.config.horaManha && dados.config.ultimoManha!==hoje()){
+    dados.config.ultimoManha=hoje(); salvar();
+    const {f,a}=acaoDoDia();
+    notificarSW("Ação do dia · "+f.nome, a, "acao-do-dia");
+  }
+  if(hm>=dados.config.horaTarde && !feito && dados.config.ultimoTarde!==hoje()){
+    dados.config.ultimoTarde=hoje(); salvar();
+    notificarSW("Hora do check-in","Registre o que você praticou hoje antes de encerrar o dia.","checkin-diario");
   }
 },60000);
 
-/* Backup */
+/* ===== Backup ===== */
 function exportar(){
   const blob=new Blob([JSON.stringify(dados,null,2)],{type:"application/json"});
   const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
@@ -548,26 +857,30 @@ function importar(input){
   r.onload=()=>{ try{
       const d=JSON.parse(r.result);
       if(!d.checkins||!d.fase) throw 0;
-      dados=d; if(!dados.config) dados.config={hora:"18:00",notif:false,ultimoLembrete:""};
-      salvar(); renderTudo(); toast("Backup restaurado.");
+      dados=d; migrar(dados);
+      salvar(); aplicarTema(); renderTudo(); toast("Backup restaurado.");
     }catch(e){ toast("Arquivo inválido."); } };
   r.readAsText(arq); input.value="";
 }
 function zerar(){
   if(confirm("Apagar todo o histórico deste aparelho? Esta ação não tem volta.")){
-    dados={fase:1,inicio:hoje(),checkins:{},config:{hora:"18:00",notif:false,ultimoLembrete:""}};
-    salvar(); renderTudo(); toast("Dados zerados.");
+    dados={fase:1,inicio:hoje(),checkins:{},config:{}}; migrar(dados);
+    salvar(); aplicarTema(); renderTudo(); toast("Dados zerados.");
   }
 }
 
 /* ================= NAVEGAÇÃO / PWA ================= */
 function irPara(pg){
-  document.querySelectorAll(".pagina").forEach(p=>p.classList.toggle("on",p.id==="pg-"+pg));
+  document.querySelectorAll(".pagina").forEach(p=>p.classList.remove("on"));
   document.querySelectorAll("nav.baixo button").forEach(b=>b.classList.toggle("on",b.dataset.pg===pg));
+  requestAnimationFrame(()=>document.getElementById("pg-"+pg).classList.add("on"));
   window.scrollTo({top:0});
 }
 function renderTudo(){ renderHoje(); renderPlano(); renderProgresso(); renderAjustes(); }
+aplicarTema();
 renderTudo();
+const hashPg=location.hash.replace("#","");
+if(["hoje","plano","progresso","ajustes"].includes(hashPg)) irPara(hashPg);
 
 if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
 
@@ -582,8 +895,6 @@ document.getElementById("btnInstalar").onclick=async()=>{
   promptInstalar=null; document.getElementById("bannerInstalar").classList.remove("on");
 };
 window.addEventListener("appinstalled",()=>{ document.getElementById("bannerInstalar").classList.remove("on"); toast("App instalado."); });
-
-/* Atualiza o dia se o app ficar aberto durante a virada */
 document.addEventListener("visibilitychange",()=>{ if(!document.hidden) renderTudo(); });
 </script>
 </body>

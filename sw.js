@@ -1,6 +1,6 @@
 /* Forças PWA - Service Worker */
 const BADGE = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAABZ0lEQVR4nO3cQW6DMBRAwVD1/lemaxYNhkCfTGfWhhA/kUhfgtcLAAD+3FJfwKzWdV331izLsru/X9dczv8ysvmj6wQ4aHTzR9cLcMDRzR85ToCYADEBYgLEBIgJEBMgJkBMgJgAMQFiAsS+6wu40+jwbGRuf5fH3gFHJpdnp5xXeGSAMxtaRXhcgE82sojwuACzESAmQEyAmAAxAWICxASICRATICZALB9HzzAyvlN6B8wyMr5TFmCmkfGdkgCzjYzv5E84JkBMgJgAMQFiAsQEiAkQEyAmQGx4GnrVyynYGroDrnw5BVu7Aa5+OQVbbwPc8XIKtvwJxwSICRATICZATICYADEBYgLEBIgJEBMgJkBMgJgAMQFiAsQEiAkQEyAmQEyAmAAxAWICxASICRATICZATICYALG3Ac4+crR33CePMs147nfH7d4BRz90dP2ZLzPjuffWD/0EVRc3+7k9tAgA8Jsf30pwrCKBvW4AAAAASUVORK5CYII=";
-const CACHE = "forcas-v3";
+const CACHE = "forcas-v5";
 const PRECACHE = [
   "./",
   "./index.html",
@@ -47,14 +47,22 @@ self.addEventListener("fetch", (e) => {
 /* Lembrete diário via Periodic Background Sync (melhor esforço; depende do Chrome/engajamento) */
 self.addEventListener("periodicsync", (e) => {
   if (e.tag === "lembrete-forcas") {
+    const h = new Date().getHours();
+    const manha = h < 12;
     e.waitUntil(
-      self.registration.showNotification("Forças em prática", {
-        body: "Hora do seu check-in. Qual força você praticou hoje?",
-        icon: "icon-192.png",
-        badge: BADGE,
-        tag: "checkin-diario",
-        data: { url: "./index.html" }
-      })
+      self.registration.showNotification(
+        manha ? "Sua ação do dia está pronta" : "Hora do check-in",
+        {
+          body: manha
+            ? "Abra o app e veja qual força praticar hoje."
+            : "Registre o que você praticou hoje antes de encerrar o dia.",
+          icon: "icon-192.png",
+          badge: BADGE,
+          tag: manha ? "acao-do-dia" : "checkin-diario",
+          actions: [{ action: "abrir", title: "Abrir app" }],
+          data: { url: "./index.html#hoje" }
+        }
+      )
     );
   }
 });
@@ -66,7 +74,8 @@ self.addEventListener("message", (e) => {
       body: e.data.corpo || "Hora do seu check-in.",
       icon: "icon-192.png",
       badge: BADGE,
-      tag: "checkin-diario"
+      tag: e.data.tag || "checkin-diario",
+      actions: [{ action: "abrir", title: "Abrir app" }]
     });
   }
 });
