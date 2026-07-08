@@ -1,5 +1,6 @@
 /* Forças PWA - Service Worker */
-const CACHE = "forcas-v1";
+const BADGE = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAABZ0lEQVR4nO3cQW6DMBRAwVD1/lemaxYNhkCfTGfWhhA/kUhfgtcLAAD+3FJfwKzWdV331izLsru/X9dczv8ysvmj6wQ4aHTzR9cLcMDRzR85ToCYADEBYgLEBIgJEBMgJkBMgJgAMQFiAsS+6wu40+jwbGRuf5fH3gFHJpdnp5xXeGSAMxtaRXhcgE82sojwuACzESAmQEyAmAAxAWICxASICRATICZALB9HzzAyvlN6B8wyMr5TFmCmkfGdkgCzjYzv5E84JkBMgJgAMQFiAsQEiAkQEyAmQGx4GnrVyynYGroDrnw5BVu7Aa5+OQVbbwPc8XIKtvwJxwSICRATICZATICYADEBYgLEBIgJEBMgJkBMgJgAMQFiAsQEiAkQEyAmQEyAmAAxAWICxASICRATICZATICYALG3Ac4+crR33CePMs147nfH7d4BRz90dP2ZLzPjuffWD/0EVRc3+7k9tAgA8Jsf30pwrCKBvW4AAAAASUVORK5CYII=";
+const CACHE = "forcas-v3";
 const PRECACHE = [
   "./",
   "./index.html",
@@ -50,7 +51,7 @@ self.addEventListener("periodicsync", (e) => {
       self.registration.showNotification("Forças em prática", {
         body: "Hora do seu check-in. Qual força você praticou hoje?",
         icon: "icon-192.png",
-        badge: "icon-192.png",
+        badge: BADGE,
         tag: "checkin-diario",
         data: { url: "./index.html" }
       })
@@ -64,7 +65,7 @@ self.addEventListener("message", (e) => {
     self.registration.showNotification(e.data.titulo || "Forças em prática", {
       body: e.data.corpo || "Hora do seu check-in.",
       icon: "icon-192.png",
-      badge: "icon-192.png",
+      badge: BADGE,
       tag: "checkin-diario"
     });
   }
