@@ -241,7 +241,11 @@ nav.baixo svg{width:21px;height:21px}
         <div><div class="ajTitulo">Fim do expediente</div><div class="ajDesc">Aviso do check-in.</div></div>
         <input type="time" id="horaTarde" onchange="salvarHora('horaTarde',this.value)">
       </div>
-      <div class="hint">No smartwatch: ative o espelhamento do Chrome (ou do app Forças) nas notificações do app do relógio. Em segundo plano, o aviso depende da sincronização periódica do Android; com o app aberto, é garantido.</div>
+      <div class="ajLinha">
+        <div><div class="ajTitulo">Testar notificação</div><div class="ajDesc" id="notifStatus"></div></div>
+        <button class="btn btnGhost" style="width:auto;padding:9px 15px" onclick="testarNotif()">Testar</button>
+      </div>
+      <div class="hint">O aviso dispara no horário com o app aberto, ou assim que você abrir o app depois do horário. No smartwatch: ative o espelhamento do Chrome (ou do app Forças) nas notificações do app do relógio.</div>
     </div>
     <div class="card">
       <div class="cardEyebrow">Preferências</div>
@@ -268,7 +272,7 @@ nav.baixo svg{width:21px;height:21px}
     </div>
     <div class="card">
       <div class="cardEyebrow">Sobre</div>
-      <p class="texto">Forças 3.0 · PDI pessoal baseado no relatório CliftonStrengths 34 (Gallup) de Mateus Santos. Fase 1: forças 1 a 5. Fase 2: forças 6 a 10. Seus dados ficam apenas neste aparelho.</p>
+      <p class="texto">Forças 3.1 · PDI pessoal baseado no relatório CliftonStrengths 34 (Gallup) de Mateus Santos. Fase 1: forças 1 a 5. Fase 2: forças 6 a 10. Seus dados ficam apenas neste aparelho.</p>
     </div>
   </section>
 </div>
@@ -792,6 +796,9 @@ function renderAjustes(){
   document.getElementById("segF1").classList.toggle("on",dados.fase===1);
   document.getElementById("segF2").classList.toggle("on",dados.fase===2);
   document.getElementById("swNotif").classList.toggle("on",dados.config.notif);
+  const st=document.getElementById("notifStatus");
+  if(st){ const p=("Notification" in window)?Notification.permission:"sem suporte";
+    st.textContent="Permissão do Android: "+(p==="granted"?"concedida":p==="denied"?"negada (libere nas configurações do sistema)":"ainda não solicitada"); }
   document.getElementById("swVibra").classList.toggle("on",dados.config.vibra!==false);
   document.getElementById("horaManha").value=dados.config.horaManha||"08:30";
   document.getElementById("horaTarde").value=dados.config.horaTarde||"18:00";
@@ -802,6 +809,16 @@ function renderAjustes(){
     seg.appendChild(b); });
 }
 function mudarFase(f){ dados.fase=f; salvar(); renderTudo(); toast("Fase "+f+" ativada."); vibrar(12); }
+async function testarNotif(){
+  if(!("Notification" in window)){ toast("Navegador sem suporte a notificações."); return; }
+  if(Notification.permission!=="granted"){
+    const p=await Notification.requestPermission();
+    if(p!=="granted"){ toast("Bloqueada. Libere em Configurações do Android > Apps > Forças > Notificações."); renderAjustes(); return; }
+  }
+  try{ await mostrarNotif("Teste de notificação","Funcionando. Confira também no seu relógio.","teste");
+    toast("Notificação enviada."); }catch(e){ toast("Falha ao exibir: "+e.message); }
+  renderAjustes();
+}
 function salvarHora(campo,v){ dados.config[campo]=v; salvar(); toast("Lembrete definido para "+v+"."); }
 function toggleVibra(){ dados.config.vibra=!(dados.config.vibra!==false); salvar(); renderAjustes(); if(dados.config.vibra) vibrar(20); }
 async function toggleNotif(){
@@ -811,7 +828,8 @@ async function toggleNotif(){
     if(perm!=="granted"){ toast("Permissão negada nas configurações do Android."); return; }
     dados.config.notif=true; salvar(); renderAjustes(); toast("Notificações ativadas.");
     registrarSyncPeriodico();
-    notificarSW("Forças em prática","Lembretes ativados. Bom desenvolvimento!","checkin-diario");
+    try{ await mostrarNotif("Forças em prática","Lembretes ativados. Bom desenvolvimento!","checkin-diario"); }catch(e){}
+    checarLembretes();
   } else { dados.config.notif=false; salvar(); renderAjustes(); toast("Notificações desativadas."); }
 }
 async function registrarSyncPeriodico(){
@@ -823,26 +841,30 @@ async function registrarSyncPeriodico(){
     }
   }catch(e){}
 }
-function notificarSW(titulo,corpo,tag){
-  if(navigator.serviceWorker&&navigator.serviceWorker.controller)
-    navigator.serviceWorker.controller.postMessage({type:"notificar",titulo,corpo,tag});
+const BADGE = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAABZ0lEQVR4nO3cQW6DMBRAwVD1/lemaxYNhkCfTGfWhhA/kUhfgtcLAAD+3FJfwKzWdV331izLsru/X9dczv8ysvmj6wQ4aHTzR9cLcMDRzR85ToCYADEBYgLEBIgJEBMgJkBMgJgAMQFiAsS+6wu40+jwbGRuf5fH3gFHJpdnp5xXeGSAMxtaRXhcgE82sojwuACzESAmQEyAmAAxAWICxASICRATICZALB9HzzAyvlN6B8wyMr5TFmCmkfGdkgCzjYzv5E84JkBMgJgAMQFiAsQEiAkQEyAmQGx4GnrVyynYGroDrnw5BVu7Aa5+OQVbbwPc8XIKtvwJxwSICRATICZATICYADEBYgLEBIgJEBMgJkBMgJgAMQFiAsQEiAkQEyAmQEyAmAAxAWICxASICRATICZATICYALG3Ac4+crR33CePMs147nfH7d4BRz90dP2ZLzPjuffWD/0EVRc3+7k9tAgA8Jsf30pwrCKBvW4AAAAASUVORK5CYII=";
+async function mostrarNotif(titulo,corpo,tag){
+  if(!("Notification" in window)) throw new Error("sem-suporte");
+  if(Notification.permission!=="granted") throw new Error("sem-permissao");
+  const reg=await navigator.serviceWorker.ready;
+  await reg.showNotification(titulo,{ body:corpo, icon:"icon-192.png", badge:BADGE,
+    tag:tag||"checkin-diario", actions:[{action:"abrir",title:"Abrir app"}], data:{url:"./index.html#hoje"} });
 }
-setInterval(()=>{
-  if(!dados.config.notif) return;
+async function checarLembretes(){
+  if(!dados.config.notif || !("Notification" in window) || Notification.permission!=="granted") return;
   const agora=new Date();
   const hm=String(agora.getHours()).padStart(2,"0")+":"+String(agora.getMinutes()).padStart(2,"0");
   const c=dados.checkins[hoje()];
   const feito=c&&((c.praticadas&&c.praticadas.length>0)||c.acaoFeita);
   if(hm>=dados.config.horaManha && dados.config.ultimoManha!==hoje()){
-    dados.config.ultimoManha=hoje(); salvar();
-    const {f,a}=acaoDoDia();
-    notificarSW("Ação do dia · "+f.nome, a, "acao-do-dia");
+    try{ const {f,a}=acaoDoDia(); await mostrarNotif("Ação do dia · "+f.nome, a, "acao-do-dia");
+      dados.config.ultimoManha=hoje(); salvar(); }catch(e){}
   }
   if(hm>=dados.config.horaTarde && !feito && dados.config.ultimoTarde!==hoje()){
-    dados.config.ultimoTarde=hoje(); salvar();
-    notificarSW("Hora do check-in","Registre o que você praticou hoje antes de encerrar o dia.","checkin-diario");
+    try{ await mostrarNotif("Hora do check-in","Registre o que você praticou hoje antes de encerrar o dia.","checkin-diario");
+      dados.config.ultimoTarde=hoje(); salvar(); }catch(e){}
   }
-},60000);
+}
+setInterval(checarLembretes,30000);
 
 /* ===== Backup ===== */
 function exportar(){
@@ -895,7 +917,8 @@ document.getElementById("btnInstalar").onclick=async()=>{
   promptInstalar=null; document.getElementById("bannerInstalar").classList.remove("on");
 };
 window.addEventListener("appinstalled",()=>{ document.getElementById("bannerInstalar").classList.remove("on"); toast("App instalado."); });
-document.addEventListener("visibilitychange",()=>{ if(!document.hidden) renderTudo(); });
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden){ renderTudo(); checarLembretes(); } });
+checarLembretes();
 </script>
 </body>
 </html>
