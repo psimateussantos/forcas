@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0B0D12" id="metaTema">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Forças</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
@@ -15,80 +14,103 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root, [data-tema="escuro"]{
-  --bg:#0B0D12; --card:#141821; --card2:#1A1F2B; --linha:#232938;
-  --texto:#EDEEF3; --texto2:#C3C7D4; --mudo:#8A90A3; --mudo2:#5A6076;
+  --bg:#0B0D12; --card:#141821; --card2:#1B2030; --linha:#252B3C;
+  --texto:#F0F1F5; --texto2:#C7CBD8; --mudo:#98A0B3; --mudo2:#646B80;
   --exec:#A987E8; --estr:#43C79A; --rel:#5FABF5; --infl:#F09A55;
   --ok:#43C79A; --okSoft:rgba(67,199,154,.10);
   --heat1:#1E5A47; --heat2:#2E8A6B; --heat3:#43C79A;
-  --sombra:0 1px 2px rgba(0,0,0,.4);
+  --sombra:0 1px 2px rgba(0,0,0,.4); --grav:#E86A6A;
 }
 [data-tema="claro"]{
-  --bg:#F3F4F7; --card:#FFFFFF; --card2:#E9EBF1; --linha:#E0E3EA;
-  --texto:#171B26; --texto2:#3E4557; --mudo:#666E82; --mudo2:#9AA1B2;
-  --exec:#8256D9; --estr:#149A72; --rel:#2578D6; --infl:#DE7420;
-  --ok:#149A72; --okSoft:rgba(20,154,114,.10);
-  --heat1:#BFE8D8; --heat2:#66C9A4; --heat3:#149A72;
-  --sombra:0 1px 3px rgba(23,27,38,.08);
+  --bg:#F3F4F7; --card:#FFFFFF; --card2:#E9EBF1; --linha:#DFE2EA;
+  --texto:#14181F; --texto2:#3A4152; --mudo:#5A6274; --mudo2:#98A0B0;
+  --exec:#7A4BD3; --estr:#0E8F68; --rel:#1F6FCB; --infl:#D66A14;
+  --ok:#0E8F68; --okSoft:rgba(14,143,104,.10);
+  --heat1:#BFE8D8; --heat2:#5FC49E; --heat3:#0E8F68;
+  --sombra:0 1px 3px rgba(23,27,38,.08); --grav:#CC4A4A;
 }
 :root{ --raio:14px; --safe-top:env(safe-area-inset-top,0px); --safe-bottom:env(safe-area-inset-bottom,0px); }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--texto);
   font-family:'Inter',system-ui,-apple-system,'Roboto',sans-serif;
-  font-size:15px;line-height:1.55;overscroll-behavior-y:none;
-  transition:background .25s,color .25s}
+  font-size:15.5px;line-height:1.6;overscroll-behavior-y:none;transition:background .25s,color .25s}
 body{padding-top:var(--safe-top)}
 h1,h2,.serif{font-family:'Fraunces',Georgia,serif;font-weight:650;letter-spacing:-0.01em}
-button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;min-height:44px}
 button:focus-visible,textarea:focus-visible,input:focus-visible{outline:2px solid var(--rel);outline-offset:2px}
 textarea,input{font-family:inherit;color:var(--texto)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
-#app{max-width:640px;margin:0 auto;padding:18px 16px calc(88px + var(--safe-bottom))}
-header.topo{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px}
-.eyebrow{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mudo);margin-bottom:4px}
-h1{font-size:30px;margin:0}
-.sub{font-size:12.5px;color:var(--mudo);margin-top:3px}
-.faseBadge{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
-  border:1px solid var(--linha);border-radius:99px;padding:6px 12px;color:var(--texto2);white-space:nowrap;margin-top:6px;background:var(--card)}
+#app{max-width:640px;margin:0 auto;padding:20px 16px calc(92px + var(--safe-bottom))}
+header.topo{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px}
+h1{font-size:27px;margin:0;line-height:1.15}
+.sub{font-size:13px;color:var(--mudo);margin-top:4px;text-transform:capitalize}
+.btnIcone{width:46px;height:46px;border-radius:13px;border:1px solid var(--linha);background:var(--card);
+  display:flex;align-items:center;justify-content:center;color:var(--texto2);flex:none;box-shadow:var(--sombra)}
+.btnIcone svg{width:21px;height:21px}
 
 .card{background:var(--card);border:1px solid var(--linha);border-radius:var(--raio);padding:18px;margin-bottom:14px;
   box-shadow:var(--sombra);transition:background .25s,border-color .25s}
-.cardEyebrow{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mudo);margin-bottom:12px}
+.cardTitulo{font-family:'Fraunces',Georgia,serif;font-size:17.5px;font-weight:650;color:var(--texto);margin:0 0 3px}
+.cardMeta{font-size:12px;color:var(--mudo);margin-bottom:14px}
 .borda-exec{border-left:3px solid var(--exec)} .borda-estr{border-left:3px solid var(--estr)}
 .borda-rel{border-left:3px solid var(--rel)} .borda-infl{border-left:3px solid var(--infl)}
 
-/* Entrada escalonada dos cards */
 .pagina{display:none}.pagina.on{display:block}
 .pagina.on>.card,.pagina.on>.kpis,.pagina.on>.faseHeader,.pagina.on>.planoCard{animation:surge .4s cubic-bezier(.2,.7,.3,1) both}
 .pagina.on>*:nth-child(1){animation-delay:.02s}.pagina.on>*:nth-child(2){animation-delay:.06s}
 .pagina.on>*:nth-child(3){animation-delay:.10s}.pagina.on>*:nth-child(4){animation-delay:.14s}
-.pagina.on>*:nth-child(5){animation-delay:.18s}.pagina.on>*:nth-child(6){animation-delay:.22s}
+.pagina.on>*:nth-child(5){animation-delay:.18s}
 @keyframes surge{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
-.acaoLinha{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
+.acaoLinha{display:flex;gap:14px;align-items:flex-start;margin:4px 0 12px}
 .rank{font-family:'Fraunces',Georgia,serif;font-weight:650;font-size:38px;line-height:1;min-width:30px}
 .forcaNome{font-family:'Fraunces',Georgia,serif;font-size:18px;font-weight:650;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .domTag{font-family:'Inter',sans-serif;font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
   border:1px solid;border-radius:99px;padding:2px 8px}
-.acaoTexto{font-size:15px;line-height:1.55;color:var(--texto2);margin:6px 0 0}
-.btn{border-radius:10px;padding:12px 18px;font-size:14px;font-weight:600;width:100%;transition:filter .15s,transform .1s cubic-bezier(.2,.7,.3,1)}
+.acaoTexto{font-size:15.5px;line-height:1.6;color:var(--texto);margin:6px 0 0;font-weight:500}
+.insight{font-size:13.5px;line-height:1.55;color:var(--mudo);border-top:1px dashed var(--linha);padding-top:11px;margin-top:12px;font-style:italic}
+.btn{border-radius:11px;padding:13px 18px;font-size:14.5px;font-weight:600;width:100%;transition:filter .15s,transform .1s cubic-bezier(.2,.7,.3,1)}
 .btn:active{transform:scale(.97)}
 .btnPrim{background:var(--texto);color:var(--bg)}
 .btnFeito{background:var(--okSoft);color:var(--ok);border:1px solid var(--ok)}
 .btnGhost{background:transparent;border:1px solid var(--linha);color:var(--texto2)}
 .btnPerigo{background:transparent;border:1px solid #B0455A;color:#D06A82}
 .duplo{display:flex;gap:8px}.duplo .btn{flex:1}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
-.chip{border:1px solid var(--linha);border-radius:99px;padding:10px 15px;font-size:13.5px;color:var(--texto2);
-  background:transparent;transition:all .18s;display:flex;align-items:center;gap:7px}
+
+.passo{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--mudo);text-transform:uppercase;margin:16px 0 9px}
+.passo:first-of-type{margin-top:2px}
+.passo b{display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;border-radius:50%;
+  background:var(--card2);color:var(--texto2);font-size:11px;margin-right:7px;font-family:'Inter',sans-serif}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--linha);border-radius:99px;padding:11px 16px;font-size:14px;color:var(--texto2);
+  background:transparent;transition:all .18s;display:flex;align-items:center;gap:7px;min-height:46px}
 .chip:active{transform:scale(.95)}
-.chip b{font-family:'Fraunces',Georgia,serif;font-size:14px}
-textarea{width:100%;background:var(--bg);border:1px solid var(--linha);border-radius:10px;
-  font-size:14px;padding:12px;line-height:1.5;resize:vertical;min-height:74px;transition:background .25s}
-.hint{font-size:12px;color:var(--mudo);margin-top:8px}
+.chip b{font-family:'Fraunces',Georgia,serif;font-size:14.5px}
+.chip .ok{display:none;font-weight:700}
+.chip.on .ok{display:inline}
+textarea{width:100%;background:var(--bg);border:1px solid var(--linha);border-radius:11px;
+  font-size:14.5px;padding:12px;line-height:1.55;resize:vertical;min-height:76px;transition:background .25s}
+input[type=date],input[type=time],input[type=search],input[type=text]{background:var(--bg);border:1px solid var(--linha);
+  border-radius:10px;padding:11px 12px;font-size:14.5px;min-height:44px}
+[data-tema="escuro"] input{color-scheme:dark}
+.hint{font-size:12px;color:var(--mudo);margin-top:8px;line-height:1.5}
+.resumoDia{display:flex;align-items:center;gap:12px}
+.resumoDia .info{flex:1}
+
+.mic{display:flex;align-items:center;gap:10px;margin-top:10px}
+.mic .btnGhost{width:auto;padding:10px 15px;display:flex;align-items:center;gap:7px}
+.mic svg{width:17px;height:17px}
+.gravBox{display:none;align-items:center;gap:10px;margin-top:10px;background:var(--card2);border-radius:11px;padding:10px 14px;flex-wrap:wrap}
+.gravBox.on{display:flex}
+.pontoGrav{width:10px;height:10px;border-radius:50%;background:var(--grav);animation:pulsar 1.1s infinite}
+.pontoGrav.pausado{animation:none;opacity:.4}
+@keyframes pulsar{0%,100%{opacity:1}50%{opacity:.25}}
+.gravTempo{font-variant-numeric:tabular-nums;font-weight:600;font-size:14px;min-width:44px}
+.gravBox button{min-height:38px;padding:7px 13px;border-radius:9px;border:1px solid var(--linha);font-size:13px;color:var(--texto2)}
 
 .faseHeader{display:flex;justify-content:space-between;align-items:baseline;margin:22px 0 10px}
-.faseTitulo{font-family:'Fraunces',Georgia,serif;font-size:17px;font-weight:650}
+.faseTitulo{font-family:'Fraunces',Georgia,serif;font-size:18px;font-weight:650}
 .faseStatus{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
 .planoCard{background:var(--card);border:1px solid var(--linha);border-radius:var(--raio);padding:15px 16px;margin-bottom:10px;box-shadow:var(--sombra)}
 .planoTopo{display:flex;gap:13px;align-items:flex-start;width:100%;text-align:left;padding:0}
@@ -96,18 +118,18 @@ textarea{width:100%;background:var(--bg);border:1px solid var(--linha);border-ra
 .planoCard.aberta .seta{transform:rotate(90deg)}
 .planoCorpo{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s cubic-bezier(.2,.7,.3,1)}
 .planoCorpo>div{overflow:hidden}
-.planoCard.aberta .planoCorpo{grid-template-rows:1fr}
 .planoCard.aberta .planoCorpo>div{margin-top:13px;padding-top:13px;border-top:1px solid var(--linha)}
-.secTitulo{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mudo);margin:12px 0 6px}
+.planoCard.aberta .planoCorpo{grid-template-rows:1fr}
+.secTitulo{font-family:'Fraunces',Georgia,serif;font-size:15px;font-weight:650;color:var(--texto);margin:15px 0 7px}
 .secTitulo:first-child{margin-top:0}
 ul.lista{margin:0;padding-left:18px}
-ul.lista li{font-size:14px;line-height:1.6;color:var(--texto2);margin-bottom:5px}
-p.texto{font-size:14px;line-height:1.6;color:var(--texto2);margin:0}
+ul.lista li{font-size:14.5px;line-height:1.65;color:var(--texto2);margin-bottom:5px}
+p.texto{font-size:14.5px;line-height:1.65;color:var(--texto2);margin:0}
 
 .kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-.kpi{background:var(--card);border:1px solid var(--linha);border-radius:var(--raio);padding:14px 16px;box-shadow:var(--sombra)}
-.kpiValor{font-family:'Fraunces',Georgia,serif;font-size:26px;font-weight:650;line-height:1.1}
-.kpiLabel{font-size:11.5px;color:var(--mudo);margin-top:3px}
+.kpi{background:var(--card);border:1px solid var(--linha);border-radius:var(--raio);padding:15px 16px;box-shadow:var(--sombra)}
+.kpiValor{font-family:'Fraunces',Georgia,serif;font-size:28px;font-weight:650;line-height:1.1}
+.kpiLabel{font-size:12px;color:var(--mudo);margin-top:3px}
 .heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);gap:3px;justify-content:start}
 .heat div{width:13px;height:13px;border-radius:3.5px;background:var(--card2)}
 .heat .n1{background:var(--heat1)}.heat .n2{background:var(--heat2)}.heat .n3{background:var(--heat3)}
@@ -115,86 +137,109 @@ p.texto{font-size:14px;line-height:1.6;color:var(--texto2);margin:0}
 .heatLeg span{width:11px;height:11px;border-radius:3px;display:inline-block}
 .barraFundo{flex:1;height:12px;background:var(--card2);border-radius:6px;overflow:hidden}
 .barraFundo>div{height:100%;border-radius:6px;transition:width .5s cubic-bezier(.2,.7,.3,1)}
-.histLinha{padding:11px 0;border-bottom:1px solid var(--linha)}
+.histLinha{padding:12px 0;border-bottom:1px solid var(--linha)}
 .histLinha:last-child{border-bottom:none}
-.histData{font-size:12px;color:var(--mudo);font-variant-numeric:tabular-nums;margin-bottom:5px}
+.histData{font-size:12.5px;color:var(--mudo);font-variant-numeric:tabular-nums;margin-bottom:6px;font-weight:600}
 .histTags{display:flex;flex-wrap:wrap;gap:6px}
-.histTag{font-size:11.5px;border:1px solid var(--linha);border-radius:99px;padding:2px 9px}
-.histNota{font-size:12.5px;color:var(--texto2);font-style:italic;margin-top:6px;white-space:pre-line}
+.histTag{font-size:12px;border:1px solid var(--linha);border-radius:99px;padding:3px 10px}
+.histNota{font-size:13px;color:var(--texto2);margin-top:7px;white-space:pre-line;line-height:1.55}
+.mesTitulo{font-family:'Fraunces',Georgia,serif;font-size:16.5px;font-weight:650;margin:20px 0 6px;text-transform:capitalize}
 svg text{font-family:'Inter',sans-serif}
 
 .ajLinha{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--linha)}
 .ajLinha:last-child{border-bottom:none}
-.ajTitulo{font-size:14px;font-weight:600}
-.ajDesc{font-size:12px;color:var(--mudo);margin-top:2px;line-height:1.45}
+.ajTitulo{font-size:14.5px;font-weight:600}
+.ajDesc{font-size:12px;color:var(--mudo);margin-top:2px;line-height:1.5}
 .seg{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-.segBtn{border:1px solid var(--linha);border-radius:9px;padding:8px 13px;font-size:12.5px;color:var(--mudo);transition:all .15s}
+.segBtn{border:1px solid var(--linha);border-radius:10px;padding:9px 14px;font-size:13px;color:var(--mudo);transition:all .15s;min-height:42px}
 .segBtn.on{background:var(--texto);color:var(--bg);border-color:var(--texto);font-weight:600}
-input[type=time]{background:var(--bg);border:1px solid var(--linha);border-radius:9px;padding:8px 10px;font-size:14px}
-[data-tema="escuro"] input[type=time]{color-scheme:dark}
-.switch{position:relative;width:46px;height:26px;border-radius:99px;background:var(--card2);border:1px solid var(--linha);transition:background .2s;flex:none}
-.switch::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:var(--mudo);transition:all .2s cubic-bezier(.2,.7,.3,1)}
+.switch{position:relative;width:48px;height:28px;border-radius:99px;background:var(--card2);border:1px solid var(--linha);transition:background .2s;flex:none;min-height:28px}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:var(--mudo);transition:all .2s cubic-bezier(.2,.7,.3,1)}
 .switch.on{background:var(--okSoft);border-color:var(--ok)}
-.switch.on::after{left:22px;background:var(--ok)}
+.switch.on::after{left:23px;background:var(--ok)}
+
+/* Livro */
+.capItem{display:flex;gap:12px;align-items:center;width:100%;text-align:left;padding:13px 4px;border-bottom:1px solid var(--linha)}
+.capItem:last-child{border-bottom:none}
+.capItem .rank{font-size:22px;min-width:26px}
+.capItem .nome{flex:1;font-size:14.5px;font-weight:500;line-height:1.4}
+.capItem .lido{color:var(--ok);font-size:15px}
+#leitor{display:none}
+#leitor.on{display:block}
+#leitorTopo{display:flex;align-items:center;gap:10px;margin-bottom:14px;position:sticky;top:var(--safe-top);background:var(--bg);padding:8px 0;z-index:5}
+#leitorTitulo{flex:1;font-family:'Fraunces',Georgia,serif;font-size:16px;font-weight:650;line-height:1.3}
+#leitorCorpo{font-size:var(--fonteLivro,16.5px);line-height:1.75;color:var(--texto2)}
+#leitorCorpo h1,#leitorCorpo h2,#leitorCorpo h3{font-family:'Fraunces',Georgia,serif;color:var(--texto);line-height:1.3}
+#leitorCorpo p{margin:0 0 1em}
+#leitorCorpo strong,#leitorCorpo b{color:var(--texto)}
 
 nav.baixo{position:fixed;bottom:0;left:0;right:0;background:color-mix(in srgb,var(--bg) 88%,transparent);
   backdrop-filter:blur(14px);border-top:1px solid var(--linha);display:flex;justify-content:space-around;
-  padding:8px 8px calc(8px + var(--safe-bottom));z-index:20;transition:background .25s}
+  padding:7px 4px calc(7px + var(--safe-bottom));z-index:20;transition:background .25s}
 nav.baixo button{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;font-weight:600;
-  letter-spacing:.04em;color:var(--mudo2);padding:6px 16px;border-radius:12px;transition:color .18s,transform .1s}
+  letter-spacing:.03em;color:var(--mudo2);padding:6px 10px;border-radius:12px;transition:color .18s,transform .1s;min-height:52px}
 nav.baixo button:active{transform:scale(.92)}
 nav.baixo button.on{color:var(--texto)}
 nav.baixo svg{width:21px;height:21px}
 
-#toast{position:fixed;left:50%;bottom:calc(96px + var(--safe-bottom));transform:translateX(-50%) translateY(12px);
-  background:var(--card2);border:1px solid var(--linha);border-radius:99px;padding:10px 18px;font-size:13px;
-  color:var(--texto);opacity:0;pointer-events:none;transition:all .25s;z-index:30;white-space:nowrap;box-shadow:var(--sombra)}
+#toast{position:fixed;left:50%;bottom:calc(100px + var(--safe-bottom));transform:translateX(-50%) translateY(12px);
+  background:var(--card2);border:1px solid var(--linha);border-radius:99px;padding:11px 19px;font-size:13px;
+  color:var(--texto);opacity:0;pointer-events:none;transition:all .25s;z-index:40;white-space:nowrap;box-shadow:var(--sombra)}
 #toast.on{opacity:1;transform:translateX(-50%)}
 #bannerInstalar{display:none;align-items:center;gap:12px}
 #bannerInstalar.on{display:flex}
 .confete{position:fixed;top:-14px;width:9px;height:14px;border-radius:2px;z-index:50;pointer-events:none;
   animation:cair 1.5s cubic-bezier(.3,.6,.6,1) forwards}
 @keyframes cair{to{transform:translateY(105vh) rotate(660deg);opacity:.15}}
+
+#printArea{display:none}
+@media print{
+  body>*{display:none!important}
+  #printArea{display:block!important;color:#000;font-family:Georgia,serif}
+  #printArea h1{font-size:22pt}#printArea h2{font-size:14pt;margin-top:16pt}
+  #printArea table{width:100%;border-collapse:collapse;font-size:10pt}
+  #printArea th,#printArea td{border:1px solid #999;padding:5pt;text-align:left}
+}
 </style>
 </head>
 <body>
 <div id="app">
   <header class="topo">
     <div>
-      <div class="eyebrow">PDI · CliftonStrengths 34</div>
-      <h1>Forças</h1>
-      <div class="sub">Mateus Santos · Domínio líder: Execução</div>
+      <h1 id="saudacao">Olá, Mateus</h1>
+      <div class="sub" id="dataHoje"></div>
     </div>
-    <div class="faseBadge" id="badgeFase"></div>
+    <button class="btnIcone" onclick="irPara('ajustes')" aria-label="Ajustes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.2 3h-4l-.4 2.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.7h4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/></svg>
+    </button>
   </header>
 
   <div class="card" id="bannerInstalar">
     <div style="flex:1">
-      <div class="ajTitulo">Instalar na tela inicial</div>
-      <div class="ajDesc">Vira um app de verdade: ícone próprio, tela cheia e funciona offline.</div>
+      <div class="cardTitulo" style="font-size:15.5px">Instalar na tela inicial</div>
+      <div class="ajDesc">Ícone próprio, tela cheia e funcionamento offline.</div>
     </div>
     <button class="btn btnPrim" style="width:auto" id="btnInstalar">Instalar</button>
   </div>
 
   <!-- ===== HOJE ===== -->
   <section class="pagina on" id="pg-hoje">
-    <div class="card" id="cardSemana" style="display:flex;align-items:center;gap:16px;padding:14px 18px"></div>
-    <div class="card" id="cardResumo" style="display:none"></div>
+    <div class="card" id="cardSemana"></div>
+    <div class="card" id="cardResumoSem" style="display:none"></div>
     <div class="card" id="cardAcao"></div>
+    <div class="card" id="cardCheckin"></div>
     <div class="card">
-      <div class="cardEyebrow">Check-in do dia</div>
-      <p class="texto" style="margin-bottom:12px">Quais forças você praticou de forma intencional hoje?</p>
-      <div class="chips" id="chipsForcas"></div>
-      <textarea id="nota" placeholder="Registro do dia: onde a força apareceu, o que funcionou, o que ajustar amanhã..."></textarea>
-      <div class="hint" id="resumoHoje"></div>
-    </div>
-    <div class="card">
-      <div class="cardEyebrow">Onde encaixa?</div>
-      <p class="texto" style="margin-bottom:10px">Fez algo e não sabe em qual força registrar? Descreva que eu sugiro.</p>
-      <textarea id="txtClass" placeholder="Ex.: ajudei um colega a estruturar a triagem de uma vaga travada..." style="min-height:60px"></textarea>
-      <button class="btn btnGhost" style="margin-top:10px" onclick="classificar()">Sugerir força</button>
+      <div class="cardTitulo">Onde encaixa?</div>
+      <div class="cardMeta">Descreva o que você fez e eu sugiro a força correspondente</div>
+      <textarea id="txtClass" placeholder="Ex.: ajudei um colega a estruturar a triagem de uma vaga travada..." style="min-height:62px"></textarea>
+      <div class="mic">
+        <button class="btnGhost btn" style="width:auto" onclick="iniciarVoz('txtClass')" id="micClass">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>Ditar</button>
+        <button class="btn btnGhost" style="flex:1" onclick="classificar()">Sugerir força</button>
+      </div>
+      <div class="gravBox" id="grav-txtClass"></div>
       <div id="resClass"></div>
-      <div class="hint">Método: correspondência local de palavras-chave. Nada sai do seu aparelho.</div>
+      <div class="hint">Sugestão local por palavras-chave, que aprende com suas confirmações. Nada sai do aparelho. O ditado usa o reconhecimento do Chrome e requer internet.</div>
     </div>
   </section>
 
@@ -204,17 +249,48 @@ nav.baixo svg{width:21px;height:21px}
   <!-- ===== PROGRESSO ===== -->
   <section class="pagina" id="pg-progresso"></section>
 
+  <!-- ===== HISTORICO ===== -->
+  <section class="pagina" id="pg-historico">
+    <div class="card">
+      <div class="cardTitulo">Histórico completo</div>
+      <div class="cardMeta" id="histMeta"></div>
+      <input type="search" id="histBusca" placeholder="Buscar nas anotações..." style="width:100%" oninput="renderHistorico()">
+      <div class="chips" id="histFiltros" style="margin-top:12px"></div>
+    </div>
+    <div id="histLista"></div>
+  </section>
+
+  <!-- ===== LIVRO ===== -->
+  <section class="pagina" id="pg-livro">
+    <div id="livroLista"></div>
+    <div id="leitor">
+      <div id="leitorTopo">
+        <button class="btnIcone" onclick="fecharLeitor()" aria-label="Voltar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 19l-7-7 7-7"/></svg></button>
+        <div id="leitorTitulo"></div>
+        <button class="btnIcone" onclick="fonteLivro(-1)" aria-label="Diminuir fonte" style="font-size:14px;font-weight:700">A-</button>
+        <button class="btnIcone" onclick="fonteLivro(1)" aria-label="Aumentar fonte" style="font-size:17px;font-weight:700">A+</button>
+      </div>
+      <div id="leitorCorpo" class="card" style="padding:22px"></div>
+      <div class="duplo" style="margin-top:4px">
+        <button class="btn btnGhost" onclick="navCap(-1)">‹ Anterior</button>
+        <button class="btn btnGhost" id="btnLido" onclick="marcarLido()">Concluir ✓</button>
+        <button class="btn btnGhost" onclick="navCap(1)">Próximo ›</button>
+      </div>
+    </div>
+  </section>
+
   <!-- ===== AJUSTES ===== -->
   <section class="pagina" id="pg-ajustes">
     <div class="card">
-      <div class="cardEyebrow">Aparência</div>
+      <div class="cardTitulo">Aparência</div>
       <div class="ajLinha">
         <div><div class="ajTitulo">Tema</div><div class="ajDesc">Seguir o sistema respeita o modo do Android.</div></div>
         <div class="seg" id="segTema"></div>
       </div>
     </div>
     <div class="card">
-      <div class="cardEyebrow">Plano</div>
+      <div class="cardTitulo">Plano</div>
       <div class="ajLinha">
         <div><div class="ajTitulo">Fase ativa</div><div class="ajDesc">Fase 1: forças 1 a 5 (90 dias). Fase 2: forças 6 a 10.</div></div>
         <div class="seg">
@@ -223,12 +299,12 @@ nav.baixo svg{width:21px;height:21px}
         </div>
       </div>
       <div class="ajLinha">
-        <div><div class="ajTitulo">Meta semanal</div><div class="ajDesc">Dias de prática por semana. Constância vale mais que perfeição.</div></div>
+        <div><div class="ajTitulo">Meta semanal</div><div class="ajDesc">Dias de prática por semana.</div></div>
         <div class="seg" id="segMeta"></div>
       </div>
     </div>
     <div class="card">
-      <div class="cardEyebrow">Lembretes</div>
+      <div class="cardTitulo">Lembretes</div>
       <div class="ajLinha">
         <div><div class="ajTitulo">Notificações</div><div class="ajDesc">Ação do dia pela manhã e check-in à tarde, se ainda estiver aberto.</div></div>
         <button class="switch" id="swNotif" onclick="toggleNotif()" aria-label="Ativar notificações"></button>
@@ -243,36 +319,29 @@ nav.baixo svg{width:21px;height:21px}
       </div>
       <div class="ajLinha">
         <div><div class="ajTitulo">Testar notificação</div><div class="ajDesc" id="notifStatus"></div></div>
-        <button class="btn btnGhost" style="width:auto;padding:9px 15px" onclick="testarNotif()">Testar</button>
+        <button class="btn btnGhost" style="width:auto;padding:10px 15px" onclick="testarNotif()">Testar</button>
       </div>
-      <div class="hint">O aviso dispara no horário com o app aberto, ou assim que você abrir o app depois do horário. No smartwatch: ative o espelhamento do Chrome (ou do app Forças) nas notificações do app do relógio.</div>
+      <div class="hint">O aviso dispara no horário com o app aberto, ou assim que você abrir o app depois do horário. No smartwatch, ative o espelhamento do Chrome nas notificações do app do relógio.</div>
     </div>
     <div class="card">
-      <div class="cardEyebrow">Preferências</div>
+      <div class="cardTitulo">Dados</div>
       <div class="ajLinha">
-        <div><div class="ajTitulo">Vibração</div><div class="ajDesc">Resposta tátil ao registrar práticas.</div></div>
-        <button class="switch" id="swVibra" onclick="toggleVibra()" aria-label="Ativar vibração"></button>
-      </div>
-    </div>
-    <div class="card">
-      <div class="cardEyebrow">Dados</div>
-      <div class="ajLinha">
-        <div><div class="ajTitulo">Exportar backup</div><div class="ajDesc">Baixa um .json com todo o histórico. Faça 1 vez por mês.</div></div>
-        <button class="btn btnGhost" style="width:auto;padding:9px 15px" onclick="exportar()">Exportar</button>
+        <div><div class="ajTitulo">Backup para o OneDrive</div><div class="ajDesc">Abre o compartilhamento do Android com o .json do histórico.</div></div>
+        <button class="btn btnGhost" style="width:auto;padding:10px 15px" onclick="exportar()">Enviar</button>
       </div>
       <div class="ajLinha">
         <div><div class="ajTitulo">Importar backup</div><div class="ajDesc">Restaura um arquivo exportado antes.</div></div>
-        <button class="btn btnGhost" style="width:auto;padding:9px 15px" onclick="document.getElementById('arqImport').click()">Importar</button>
+        <button class="btn btnGhost" style="width:auto;padding:10px 15px" onclick="document.getElementById('arqImport').click()">Importar</button>
         <input type="file" id="arqImport" accept="application/json" style="display:none" onchange="importar(this)">
       </div>
       <div class="ajLinha">
         <div><div class="ajTitulo">Zerar dados</div><div class="ajDesc">Apaga todo o histórico deste aparelho. Sem volta.</div></div>
-        <button class="btn btnPerigo" style="width:auto;padding:9px 15px" onclick="zerar()">Zerar</button>
+        <button class="btn btnPerigo" style="width:auto;padding:10px 15px" onclick="zerar()">Zerar</button>
       </div>
     </div>
     <div class="card">
-      <div class="cardEyebrow">Sobre</div>
-      <p class="texto">Forças 3.1 · PDI pessoal baseado no relatório CliftonStrengths 34 (Gallup) de Mateus Santos. Fase 1: forças 1 a 5. Fase 2: forças 6 a 10. Seus dados ficam apenas neste aparelho.</p>
+      <div class="cardTitulo">Sobre</div>
+      <p class="texto">Forças 4.0 · PDI pessoal baseado no relatório CliftonStrengths 34 (Gallup) de Mateus Santos. Fase 1: forças 1 a 5. Fase 2: forças 6 a 10. Seus dados ficam apenas neste aparelho.</p>
     </div>
   </section>
 </div>
@@ -284,10 +353,13 @@ nav.baixo svg{width:21px;height:21px}
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h14v16H5z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>Plano</button>
   <button data-pg="progresso" onclick="irPara('progresso')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V10M10 19V5M16 19v-7M22 19H2"/></svg>Progresso</button>
-  <button data-pg="ajustes" onclick="irPara('ajustes')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.2 3h-4l-.4 2.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.7h4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/></svg>Ajustes</button>
+  <button data-pg="historico" onclick="irPara('historico')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 8v4l3 2"/><path d="M3.5 12a8.5 8.5 0 1 0 2-5.5L3 9"/><path d="M3 4v5h5"/></svg>Histórico</button>
+  <button data-pg="livro" onclick="irPara('livro')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 1-2-2z"/><path d="M19 17H6a2 2 0 0 0-2 2"/></svg>Livro</button>
 </nav>
 <div id="toast"></div>
+<div id="printArea"></div>
 
 <script>
 "use strict";
@@ -301,6 +373,7 @@ const DOM = {
 const FORCAS = [
  {id:"prudencia",rank:1,nome:"Prudência",dom:"execucao",fase:1,
   objetivo:"Transformar a cautela em vantagem decisória percebida, sem ser lido como lento ou distante.",
+  guia:"A Prudência é um filtro de qualidade para decisões. Quem lidera com este talento enxerga riscos que os outros nem registram e trata cada escolha como coisa séria, porque para ele o mundo é imprevisível e as consequências são reais. Este talento precisa de tempo e espaço para calcular antes de se comprometer, e rende mais quando pode planejar em vez de reagir. Sua contribuição para o grupo é evitar erros caros e frear entusiasmos precipitados, o que faz dele um conselheiro valioso em momentos de decisão. A armadilha: em ambientes que premiam velocidade, o cuidado pode ser lido como resistência ou medo; a resposta não é acelerar, é explicar o processo de avaliação em voz alta.",
   acoes:["Reservar 20 minutos do dia para organizar decisões pendentes, mapeando opções e riscos",
    "Ao apresentar uma recomendação, explicar em uma frase o processo de avaliação por trás dela",
    "Atuar como caixa de ressonância de riscos para um colega ou gestor nesta semana",
@@ -309,6 +382,7 @@ const FORCAS = [
   indicador:"Decisões relevantes documentadas com premissas e riscos (meta: 2 por semana)."},
  {id:"analitico",rank:2,nome:"Analítico",dom:"estrategico",fase:1,
   objetivo:"Converter capacidade analítica em influência: análise que termina em recomendação, não em mais análise.",
+  guia:"O Analítico exige provas. Diante de qualquer afirmação, este talento pergunta: os dados sustentam isso? Ele desmonta situações em causas e fatores, busca padrões e só se convence com lógica, o que o torna um teste de qualidade para as ideias do grupo. Precisa de acesso a dados, tempo de investigação e interlocutores que aceitem ser questionados. Sua contribuição é dar objetividade às decisões e separar o que é fato do que é desejo. A armadilha: o rigor pode soar como ceticismo permanente e desidratar ideias ainda em formação; o antídoto é explicitar que as perguntas são método, não desconfiança, e lembrar que opiniões e emoções também são dados sobre as pessoas.",
   acoes:["Definir antes de analisar o que é dado suficiente para decidir, e parar quando chegar lá",
    "Compartilhar um insight de dados com o time ou gestor nesta semana",
    "Entrar na fase de planejamento de uma iniciativa para avaliar viabilidade cedo",
@@ -317,6 +391,7 @@ const FORCAS = [
   indicador:"Insights compartilhados que geraram decisão ou mudança (meta: 1 por semana)."},
  {id:"relacionamento",rank:3,nome:"Relacionamento",dom:"relacionamento",fase:1,
   objetivo:"Aprofundar vínculos estratégicos de forma deliberada, um a um, dentro e fora do círculo próximo.",
+  guia:"O Relacionamento prefere profundidade a quantidade. Este talento é atraído por pessoas que já conhece e sente prazer genuíno em se aproximar cada vez mais delas, construindo confiança por camadas: revela algo verdadeiro, recebe algo verdadeiro, e o vínculo cresce. Não é avesso a conhecer gente nova, mas amizade para ele significa acesso real à vida um do outro, com o risco calculado que isso implica. Precisa de tempo individual com as pessoas e de ambientes onde relações autênticas sejam possíveis. Sua contribuição é ser o tecido que mantém um time coeso nos momentos difíceis. A armadilha: quem está fora do círculo pode ler seletividade como frieza ou panelinha.",
   acoes:["Fazer uma conversa individual significativa com alguém do time nesta semana",
    "Dedicar tempo de mentoria ou apoio a uma pessoa em desenvolvimento",
    "Conversar com uma pessoa fora do círculo próximo, ampliando a rede com intenção",
@@ -325,6 +400,7 @@ const FORCAS = [
   indicador:"Conversas 1:1 significativas (meta: 2 por semana, 1 fora do círculo por mês)."},
  {id:"realizacao",rank:4,nome:"Realização",dom:"execucao",fase:1,
   objetivo:"Canalizar a energia de entrega para o que mais importa e celebrar conclusões antes de seguir.",
+  guia:"A Realização é um motor que não desliga. Todo dia começa no zero e precisa terminar com algo concreto entregue, ou vem a sensação de dia perdido, e isso vale inclusive para fins de semana e férias. Essa fome de conclusão dá a este talento uma capacidade de trabalho e uma resistência raras, que puxam o ritmo de qualquer grupo. Ele precisa de listas, metas e liberdade para trabalhar no próprio compasso. Sua contribuição é a produtividade constante e a energia que contagia o time. A armadilha dupla: medir os outros pela própria régua, gerando atrito, e aceitar volume demais por não saber recusar; a chama que nunca apaga precisa ser apontada para o que importa, não para o que aparece.",
   acoes:["Definir as 3 prioridades do dia logo pela manhã, antes de abrir e-mails",
    "Ao concluir uma entrega relevante, pausar alguns minutos para registrar e reconhecer o resultado",
    "Antes de aceitar uma nova demanda, verificar agenda e capacidade real",
@@ -333,6 +409,7 @@ const FORCAS = [
   indicador:"Taxa de conclusão das 3 prioridades diárias (meta: 80% dos dias)."},
  {id:"foco",rank:5,nome:"Foco",dom:"execucao",fase:1,
   objetivo:"Proteger tempo de concentração profunda e manter metas escritas com prazo e revisão.",
+  guia:"O Foco funciona por destino: aonde estou indo? Sem essa resposta clara, a vida e o trabalho deste talento viram frustração rápida. Com ela, ele se torna um filtro implacável que avalia cada ação por um único critério, isto me aproxima ou me afasta da meta, e descarta sem dó o que não passa no teste. Precisa de metas escritas, prazos e autonomia para dizer não a desvios. Sua contribuição é manter o grupo no rumo: quando a discussão dispersa, é ele quem traz todos de volta ao ponto. A armadilha: a absorção intensa pode fazê-lo ignorar mudanças de prioridade e parecer indisponível para as pessoas; o talento pede paradas programadas para reavaliar o mapa.",
   acoes:["Bloquear 1 hora de foco total no dia, sem notificações, para o objetivo mais importante",
    "Revisar as metas escritas do trimestre e ajustar prioridades se algo mudou",
    "Em uma reunião, assumir o papel de resumir decisões, responsáveis e prazos",
@@ -341,6 +418,7 @@ const FORCAS = [
   indicador:"Horas de foco protegido cumpridas (meta: 5 por semana)."},
  {id:"organizacao",rank:6,nome:"Organização",dom:"execucao",fase:2,
   objetivo:"Usar a coordenação de pessoas e recursos como diferencial visível em projetos multitarefa.",
+  guia:"A Organização é um maestro de recursos. Diante de um cenário complexo, com muitas variáveis em jogo, este talento sente prazer em arranjar e rearranjar as peças até encontrar a configuração mais produtiva, e nunca considera o arranjo atual definitivo: sempre pode haver um jeito melhor. É flexível por natureza, não por falta de rumo, mas porque busca eficiência. Precisa de situações dinâmicas, com partes móveis de verdade, onde a coordenação seja o desafio. Sua contribuição é fazer projetos multitarefa andarem sem travar. A armadilha: mudanças constantes sem explicação confundem o time, e assumir o controle sem combinar irrita; a regra é comunicar a lógica antes de mover as peças.",
   acoes:["Assumir a orquestração de um projeto com várias partes móveis",
    "Ao reorganizar um plano, explicar ao time o porquê da mudança antes de executá-la",
    "Mapear recursos subutilizados no time e propor uma realocação"],
@@ -348,6 +426,7 @@ const FORCAS = [
   indicador:"Projetos coordenados com plano comunicado e cumprido."},
  {id:"responsabilidade",rank:7,nome:"Responsabilidade",dom:"execucao",fase:2,
   objetivo:"Manter a confiabilidade como marca pessoal sem cair em sobrecarga.",
+  guia:"A Responsabilidade assume compromissos como questão pessoal. Quando este talento diz sim, cria um vínculo emocional com a entrega: falhar não é um contratempo, é uma mancha na própria honra, e por isso ele faz o que for preciso para cumprir. Essa confiabilidade absoluta vira reputação, e reputação vira demanda: as pessoas procuram quem entrega. Precisa de autonomia e de parceiros que levem compromissos tão a sério quanto ele. Sua contribuição é ser a pessoa em quem o time confia de olhos fechados. A armadilha é matemática: a dificuldade de recusar somada à fama de confiável gera sobrecarga; a defesa é abrir mão de algo antes de aceitar o próximo, e entender que um não dito a tempo também é responsabilidade.",
   acoes:["Antes de aceitar algo novo, verificar agenda e, se necessário, abrir mão de um compromisso",
    "Dizer não (ou negociar prazo) para uma demanda que não cabe, de forma transparente",
    "Revisar compromissos assumidos e sinalizar proativamente qualquer risco de atraso"],
@@ -355,6 +434,7 @@ const FORCAS = [
   indicador:"Zero compromissos atrasados sem sinalização prévia."},
  {id:"restauracao",rank:8,nome:"Restauração",dom:"execucao",fase:2,
   objetivo:"Posicionar-se como referência em resolver problemas difíceis que outros evitam.",
+  guia:"A Restauração é energizada pelo que está quebrado. Onde a maioria vê aborrecimento, este talento vê um quebra-cabeça: diagnosticar o que está errado, encontrar a causa e devolver a coisa ao funcionamento é profundamente satisfatório para ele, seja um processo, um projeto ou uma situação entre pessoas. Precisa de problemas reais para resolver; em ambientes onde tudo funciona, murcha. Sua contribuição é ser o bombeiro e o cirurgião do time, aquele que aceita as recuperações que os outros evitam. A armadilha: quem vive diagnosticando falhas pode passar a imagem de que só enxerga o que está errado, inclusive nas pessoas; equilibre apontando também o que funciona, e resista ao impulso de resolver o problema dos outros antes que eles tentem.",
   acoes:["Assumir um problema ou processo travado que ninguém quer pegar",
    "Ao apoiar alguém, dar espaço para a pessoa encontrar a própria solução antes de resolver por ela",
    "Registrar e celebrar um problema resolvido, mesmo os simples de grande impacto"],
@@ -362,6 +442,7 @@ const FORCAS = [
   indicador:"Problemas estruturais resolvidos e documentados por mês."},
  {id:"crenca",rank:9,nome:"Crença",dom:"execucao",fase:2,
   objetivo:"Usar valores como filtro explícito de escolha de projetos e como fonte de estabilidade.",
+  guia:"A Crença opera a partir de valores fixos que não mudam com a maré. Família, ética, responsabilidade com os outros, propósito acima de dinheiro: esses fundamentos dão a este talento uma direção clara em meio às distrações e uma consistência que os outros aprendem a respeitar, porque sabem onde ele está e o que defende. O trabalho precisa ter significado; um bom salário em algo sem propósito o esvazia. Precisa de causas, de coerência entre discurso e prática, e de espaço para a vida pessoal que seus valores priorizam. Sua contribuição é estabilidade e senso de propósito para o grupo. A armadilha: convicção forte pode virar rigidez e julgamento dos valores alheios; firmeza no próprio rumo, curiosidade com o rumo dos outros.",
   acoes:["Escrever ou revisar a missão pessoal e mantê-la visível",
    "Antes de aceitar um projeto, avaliar o alinhamento com seus valores e o impacto pretendido",
    "Proteger um espaço fixo de vida pessoal na agenda desta semana"],
@@ -369,6 +450,7 @@ const FORCAS = [
   indicador:"Projetos avaliados pelo filtro de valores antes do aceite."},
  {id:"excelencia",rank:10,nome:"Excelência",dom:"influencia",fase:2,
   objetivo:"Elevar o padrão do time potencializando forças, com maturidade para aceitar o suficiente quando apropriado.",
+  guia:"A Excelência quer transformar o bom em extraordinário. Este talento não se anima em consertar o que sempre foi fraco; ele se anima em pegar algo que já funciona e lapidar até brilhar, e faz o mesmo com pessoas: enxerga o talento natural de alguém e quer potencializá-lo, em vez de gastar energia remendando deficiências. Precisa trabalhar com e para os melhores, e de liberdade para escolher onde investir. Sua contribuição é elevar o padrão de tudo que toca e ajudar cada pessoa a operar no próprio ponto forte, o que faz dele um multiplicador de desempenho. A armadilha: a busca do ideal pode travar entregas que já estão adequadas e frustrar quem precisa concluir; excelência madura inclui saber quando bom o suficiente é a resposta certa.",
   acoes:["Escolher um talento próprio para maximizar no mês e praticar deliberadamente",
    "Ajudar um colega a reconhecer e usar melhor um ponto forte dele",
    "Identificar uma entrega em que bom o suficiente é a resposta certa, e encerrá-la sem retrabalho"],
@@ -376,10 +458,8 @@ const FORCAS = [
   indicador:"1 talento em desenvolvimento ativo por mês, com prática registrada."}
 ];
 
-/* ===== Repertório de ações do dia (8 por força) ===== */
 const ACOES_DIA = {
- prudencia:[
-  "Antes da primeira decisão do dia, escreva em 3 linhas: opções, risco principal e mitigação",
+ prudencia:["Antes da primeira decisão do dia, escreva em 3 linhas: opções, risco principal e mitigação",
   "Em uma reunião hoje, seja a voz que pergunta: o que pode dar errado neste plano?",
   "Identifique uma decisão que você vem adiando e marque o prazo dela para esta semana",
   "Ao emitir um parecer hoje, inclua explicitamente uma linha de premissas e riscos",
@@ -387,8 +467,7 @@ const ACOES_DIA = {
   "Explique a alguém o porquê de uma cautela sua, transformando prudência em credibilidade",
   "Escolha uma decisão de baixo impacto e tome-a rápido de propósito, calibrando seu tempo de resposta",
   "Registre a lição de um risco que se concretizou no passado e o que fazer diferente agora"],
- analitico:[
-  "Pegue um indicador que você acompanha e investigue a causa por trás do número",
+ analitico:["Pegue um indicador que você acompanha e investigue a causa por trás do número",
   "Transforme uma análise em recomendação de uma frase e envie a quem decide",
   "Questione um dado que todos aceitam como verdade: a fonte sustenta a conclusão?",
   "Defina o critério de dado suficiente antes de abrir a próxima planilha",
@@ -396,8 +475,7 @@ const ACOES_DIA = {
   "Ensine a um colega como você chegou a uma conclusão, mostrando o método",
   "Compare duas abordagens para um problema atual usando prós, contras e dados",
   "Automatize ou simplifique uma análise recorrente que consome seu tempo"],
- relacionamento:[
-  "Chame alguém do time para uma conversa de 15 minutos sem pauta de trabalho",
+ relacionamento:["Chame alguém do time para uma conversa de 15 minutos sem pauta de trabalho",
   "Envie uma mensagem de reconhecimento específico a um colega hoje",
   "Pergunte a alguém próximo como ele está de verdade, e escute sem tentar resolver",
   "Dedique 20 minutos de mentoria a alguém em desenvolvimento",
@@ -405,8 +483,7 @@ const ACOES_DIA = {
   "Converse com alguém fora do seu círculo habitual, com curiosidade genuína",
   "Retome contato com alguém importante com quem você não fala há tempos",
   "Em uma conversa hoje, compartilhe algo pessoal apropriado, aprofundando a confiança"],
- realizacao:[
-  "Escreva as 3 prioridades do dia antes de abrir e-mails e mensagens",
+ realizacao:["Escreva as 3 prioridades do dia antes de abrir e-mails e mensagens",
   "Conclua hoje a tarefa que você vem empurrando há dias",
   "Ao fechar uma entrega, pare 2 minutos e registre o valor que ela gerou",
   "Recuse ou renegocie uma demanda que não cabe na sua capacidade real",
@@ -414,8 +491,7 @@ const ACOES_DIA = {
   "Termine o expediente listando o que foi concluído, não o que faltou",
   "Faça a revisão semanal: entregue versus planejado, e o porquê dos desvios",
   "Elimine da sua lista uma tarefa que não precisa ser feita por ninguém"],
- foco:[
-  "Bloqueie agora 1 hora de foco total na agenda, sem notificações",
+ foco:["Bloqueie agora 1 hora de foco total na agenda, sem notificações",
   "Releia suas metas do trimestre e confirme se esta semana aponta para elas",
   "Em uma reunião hoje, resuma decisões, responsáveis e prazos ao final",
   "Identifique sua maior distração de ontem e neutralize-a hoje",
@@ -423,8 +499,7 @@ const ACOES_DIA = {
   "Antes de começar qualquer tarefa, pergunte: isto é prioridade agora?",
   "Defina uma meta com prazo para algo que está solto e sem dono",
   "Execute a tarefa mais importante do dia na sua primeira hora útil"],
- organizacao:[
-  "Reorganize a agenda da semana em blocos por tipo de trabalho",
+ organizacao:["Reorganize a agenda da semana em blocos por tipo de trabalho",
   "Delegue ou redistribua uma tarefa que outra pessoa faria melhor",
   "Mapeie as partes móveis de um projeto e confirme quem cuida de cada uma",
   "Simplifique um fluxo de trabalho eliminando uma etapa desnecessária",
@@ -432,8 +507,7 @@ const ACOES_DIA = {
   "Monte um modelo reutilizável para uma demanda que sempre se repete",
   "Combine duas reuniões ou tarefas que podem virar uma só",
   "Revise a distribuição de demandas do time e proponha um ajuste"],
- responsabilidade:[
-  "Antes de aceitar algo novo hoje, verifique a agenda e informe o prazo real",
+ responsabilidade:["Antes de aceitar algo novo hoje, verifique a agenda e informe o prazo real",
   "Sinalize proativamente um risco de atraso antes que perguntem",
   "Cumpra hoje uma promessa pequena feita a alguém",
   "Abra mão formalmente de um compromisso que não faz mais sentido",
@@ -441,8 +515,7 @@ const ACOES_DIA = {
   "Revise os compromissos da semana e confirme que todos têm data viável",
   "Assuma publicamente a responsabilidade por um resultado, bom ou ruim",
   "Ajude o time a definir donos claros para tarefas que estão soltas"],
- restauracao:[
-  "Escolha um processo travado e dê o primeiro passo para destravá-lo hoje",
+ restauracao:["Escolha um processo travado e dê o primeiro passo para destravá-lo hoje",
   "Resolva de vez um problema pequeno e recorrente que incomoda todo mundo",
   "Ao apoiar alguém, pergunte o que a pessoa já tentou antes de dar a solução",
   "Liste os 3 problemas mais críticos da sua área e priorize um",
@@ -450,8 +523,7 @@ const ACOES_DIA = {
   "Elogie hoje algo que está funcionando bem, não só o que precisa de conserto",
   "Transforme uma reclamação recente em proposta concreta de melhoria",
   "Revisite um problema tido como sem solução com olhos novos por 15 minutos"],
- crenca:[
-  "Releia sua missão pessoal (ou escreva a primeira versão em 3 linhas)",
+ crenca:["Releia sua missão pessoal (ou escreva a primeira versão em 3 linhas)",
   "Avalie um projeto atual pelo filtro: isto está alinhado aos meus valores?",
   "Tome hoje uma decisão pequena guiada por princípio, não por conveniência",
   "Proteja na agenda um compromisso pessoal inegociável desta semana",
@@ -459,8 +531,7 @@ const ACOES_DIA = {
   "Conecte uma tarefa rotineira ao propósito maior que ela serve",
   "Diga não a algo que conflita com um valor seu, explicando com calma",
   "Escreva por que o seu trabalho importa para além do resultado"],
- excelencia:[
-  "Escolha um talento seu e pratique-o deliberadamente por 30 minutos",
+ excelencia:["Escolha um talento seu e pratique-o deliberadamente por 30 minutos",
   "Aponte a alguém do time uma força que ele tem e talvez não enxergue",
   "Eleve o padrão de uma entrega recorrente com um ajuste de qualidade",
   "Encerre hoje uma entrega em que bom o suficiente é a resposta certa",
@@ -470,10 +541,55 @@ const ACOES_DIA = {
   "Compare uma prática sua com a melhor referência do mercado e anote 1 ajuste"]
 };
 
+const INSIGHTS = {
+ prudencia:["Sua cautela não é medo, é método. Diga em voz alta as etapas do seu raciocínio antes que alguém as interprete errado.",
+  "Você enxerga o risco que ninguém viu. Ofereça esse olhar a alguém que está prestes a decidir rápido demais.",
+  "Nem toda decisão merece o mesmo cuidado. As reversíveis podem ser tomadas em minutos.",
+  "Um elogio seu vale muito, justamente porque você não o distribui à toa. Use esse valor hoje."],
+ analitico:["Dados não convencem sozinhos. Feche a análise com a frase: portanto, recomendo isto.",
+  "Suas perguntas são rigor, não desconfiança. Diga isso a quem apresenta, antes de começar a perguntar.",
+  "Procure o padrão, não o caso isolado. O que os últimos processos têm em comum?",
+  "Opiniões e emoções também são dados sobre as pessoas. Inclua-os no modelo."],
+ relacionamento:["Profundidade é a sua moeda. Uma conversa real vale mais que dez interações protocolares.",
+  "Quem está fora do círculo pode ler distância como frieza. Um gesto pequeno de abertura muda essa leitura.",
+  "Confiança se constrói em dose dupla: revele algo genuíno para receber algo genuíno.",
+  "Seu círculo é pequeno por escolha. Cuide hoje de um vínculo que anda em segundo plano."],
+ realizacao:["Sua energia é um recurso, não uma obrigação. Aponte-a para o que importa, não para o que aparece.",
+  "Escolha agora qual conclusão vai te dar a sensação de dia ganho.",
+  "Comemorar é fechar o ciclo. Registre a entrega antes de abrir a próxima.",
+  "Nem todo mundo corre no seu ritmo. Ajuste a régua para o time sem abaixar a sua."],
+ foco:["Direção vale mais que velocidade. Confirme o destino antes de acelerar.",
+  "Sua concentração é rara. Proteja uma hora dela como protegeria uma reunião com a diretoria.",
+  "Interrupções vão acontecer. Decida de antemão quais merecem quebrar seu foco.",
+  "Metas escritas sobrevivem à correria. Releia as suas antes do almoço."],
+ organizacao:["Reorganizar é seu talento. Comunicar a reorganização é sua responsabilidade.",
+  "Há um recurso ocioso ao seu alcance hoje. Encontre-o e realoque-o.",
+  "Flexibilidade sem explicação parece bagunça. Mostre a lógica da mudança.",
+  "Multitarefa funciona para você. Ainda assim, escolha o que não fazer hoje."],
+ responsabilidade:["Sua palavra é seu patrimônio. Proteja-a dizendo não quando a agenda já está cheia.",
+  "Assumir tudo é o caminho mais rápido para falhar com todos. Escolha os compromissos.",
+  "Sinalizar um atraso antes de perguntarem não é fraqueza, é confiabilidade.",
+  "Antes do sim de hoje, olhe a agenda de amanhã."],
+ restauracao:["Problemas não te assustam, te energizam. Escolha um que valha sua energia.",
+  "Nem tudo que está errado é seu para consertar. Deixe alguém resolver o próprio problema hoje.",
+  "Registre a solução, não só o alívio. O próximo problema igual será resolvido em minutos.",
+  "Elogie algo que funciona. Quem só aponta falhas perde audiência."],
+ crenca:["Valores não são discurso, são filtro. Use-os na próxima escolha do dia.",
+  "Reconecte uma tarefa chata ao motivo maior que ela serve.",
+  "Convicção sem escuta vira teimosia. Ouça um valor diferente do seu com curiosidade.",
+  "Coerência também é viver o que você prega. Proteja um espaço pessoal esta semana."],
+ excelencia:["Bom o suficiente existe. Às vezes, liberar rápido é a excelência do contexto.",
+  "Você enxerga forças que as pessoas não veem em si. Aponte uma hoje.",
+  "Lapide o que já é bom em vez de remendar o que sempre foi fraco.",
+  "Excelência é foco: escolha uma única entrega para elevar o padrão hoje."]
+};
+
 /* ================= ESTADO ================= */
 const CHAVE = "forcas_pdi_v2";
 const hoje = () => { const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); };
 const fmtBR = iso => { const [a,m,d]=iso.split("-"); return d+"/"+m+"/"+a; };
+const MESES=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+const DIAS=["domingo","segunda-feira","terça-feira","quarta-feira","quinta-feira","sexta-feira","sábado"];
 let dados = carregar();
 migrar(dados);
 function carregar(){
@@ -489,18 +605,20 @@ function migrar(d){
   if(c.notif===undefined) c.notif=false;
   if(!c.meta) c.meta=5;
   if(!c.tema) c.tema="sistema";
-  if(c.vibra===undefined) c.vibra=true;
   if(c.ultimoManha===undefined) c.ultimoManha="";
   if(c.ultimoTarde===undefined) c.ultimoTarde="";
   if(c.celebrou===undefined) c.celebrou="";
+  if(!c.fonteLivro) c.fonteLivro=16.5;
+  if(!c.livro) c.livro={cap:0,lidos:[],pos:{}};
+  if(!d.lexicoExtra) d.lexicoExtra={};
 }
 function salvar(){ try{ localStorage.setItem(CHAVE, JSON.stringify(dados)); }catch(e){ toast("Falha ao salvar. Verifique o espaço do navegador."); } }
 function ci(){ if(!dados.checkins[hoje()]) dados.checkins[hoje()]={praticadas:[],acaoFeita:false,nota:"",acaoIdx:0}; return dados.checkins[hoje()]; }
-function vibrar(ms){ if(dados.config.vibra!==false && navigator.vibrate) navigator.vibrate(ms); }
-function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(t._tm); t._tm=setTimeout(()=>t.classList.remove("on"),2200); }
+function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(t._tm); t._tm=setTimeout(()=>t.classList.remove("on"),2400); }
 function escapar(s){ const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
+function normalizar(s){ return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""); }
 
-/* ================= TEMA ================= */
+/* ================= TEMA / CABECALHO ================= */
 function aplicarTema(){
   const pref=dados.config.tema||"sistema";
   const escuro = pref==="escuro" || (pref==="sistema" && window.matchMedia("(prefers-color-scheme: dark)").matches);
@@ -509,8 +627,14 @@ function aplicarTema(){
 }
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ()=>{ if((dados.config.tema||"sistema")==="sistema"){ aplicarTema(); renderTudo(); } });
 function mudarTema(t){ dados.config.tema=t; salvar(); aplicarTema(); renderTudo(); toast(t==="sistema"?"Seguindo o tema do sistema.":"Tema "+t+" ativado."); }
+function renderCabecalho(){
+  const h=new Date().getHours();
+  document.getElementById("saudacao").textContent=(h<12?"Bom dia":h<18?"Boa tarde":"Boa noite")+", Mateus";
+  const d=new Date();
+  document.getElementById("dataHoje").textContent=DIAS[d.getDay()]+", "+d.getDate()+" de "+MESES[d.getMonth()];
+}
 
-/* ================= AÇÃO DO DIA ================= */
+/* ================= ACAO E INSIGHT DO DIA ================= */
 function seed(str){ let h=0; for(let i=0;i<str.length;i++) h=(h*31+str.charCodeAt(i))>>>0; return h; }
 function embaralhar(arr, s){
   const a=arr.slice(); let x=s||1;
@@ -525,45 +649,81 @@ function acaoDoDia(){
   const pool=poolDoDia(); const idx=((ci().acaoIdx||0)%pool.length+pool.length)%pool.length;
   return { ...pool[idx], idx, total:pool.length };
 }
-function trocarAcao(){ const c=ci(); c.acaoIdx=(c.acaoIdx||0)+1; vibrar(8); salvar(); renderHoje(); }
+function trocarAcao(){ const c=ci(); c.acaoIdx=(c.acaoIdx||0)+1; salvar(); renderHoje(); }
+function insightDoDia(forcaId){
+  const lista=INSIGHTS[forcaId]||[];
+  return lista[seed(hoje()+forcaId)%lista.length]||"";
+}
 
-/* ================= RENDER: HOJE ================= */
+/* ================= HOJE ================= */
 function renderHoje(){
+  renderCabecalho();
   const {f,a,idx,total}=acaoDoDia(); const c=ci(); const D=DOM[f.dom];
-  document.getElementById("cardAcao").className="card "+D.cls;
-  document.getElementById("cardAcao").innerHTML =
-    '<div class="cardEyebrow">Ação do dia · '+fmtBR(hoje())+' · opção '+((idx%total)+1)+' de '+total+'</div>'+
+  const ca=document.getElementById("cardAcao");
+  ca.className="card "+D.cls;
+  ca.innerHTML =
+    '<div class="cardTitulo">Ação do dia</div>'+
+    '<div class="cardMeta">Opção '+((idx%total)+1)+' de '+total+' · fase '+dados.fase+'</div>'+
     '<div class="acaoLinha"><span class="rank" style="color:'+D.cor+'">'+f.rank+'</span>'+
     '<div><div class="forcaNome">'+f.nome+'<span class="domTag" style="color:'+D.cor+';border-color:'+D.cor+'">'+D.nome+'</span></div>'+
     '<p class="acaoTexto">'+a+'</p></div></div>'+
-    '<div class="duplo">'+
+    '<div class="insight">'+insightDoDia(f.id)+'</div>'+
+    '<div class="duplo" style="margin-top:14px">'+
     '<button class="btn '+(c.acaoFeita?"btnFeito":"btnPrim")+'" onclick="toggleAcao()">'+(c.acaoFeita?"Concluída ✓":"Marcar como feita")+'</button>'+
     '<button class="btn btnGhost" style="flex:0 0 auto;width:auto" onclick="trocarAcao()">Trocar ↻</button></div>';
-
-  const chips=document.getElementById("chipsForcas"); chips.innerHTML="";
-  FORCAS.filter(x=>x.fase===dados.fase).forEach(x=>{
-    const on=c.praticadas.includes(x.id); const cor=DOM[x.dom].cor;
-    const b=document.createElement("button"); b.className="chip";
-    if(on){ b.style.borderColor=cor; b.style.color=cor; b.style.background="color-mix(in srgb, "+cor+" 13%, transparent)"; }
-    b.innerHTML="<b>"+x.rank+"</b>"+x.nome;
-    b.onclick=()=>{ togglePratica(x.id); };
-    chips.appendChild(b);
-  });
-  const nota=document.getElementById("nota");
-  if(document.activeElement!==nota) nota.value=c.nota||"";
-  const totalHoje=c.praticadas.length+(c.acaoFeita?1:0);
-  document.getElementById("resumoHoje").textContent =
-    totalHoje>0 ? totalHoje+(totalHoje===1?" prática registrada hoje.":" práticas registradas hoje.") : "Nenhuma prática registrada ainda hoje.";
-  document.getElementById("badgeFase").textContent="Fase "+dados.fase+" · Forças "+(dados.fase===1?"1 a 5":"6 a 10");
+  renderCheckin();
   renderSemana();
 }
-function toggleAcao(){ const c=ci(); c.acaoFeita=!c.acaoFeita; if(c.acaoFeita) vibrar(18); salvar(); renderHoje(); renderProgresso(); checarMeta(); }
+function toggleAcao(){ const c=ci(); c.acaoFeita=!c.acaoFeita; salvar(); renderHoje(); renderProgresso(); renderHistorico(); checarMeta(); }
+
+function renderCheckin(){
+  const c=ci(); const box=document.getElementById("cardCheckin");
+  const totalHoje=c.praticadas.length+(c.acaoFeita?1:0);
+  if(c.salvo && !c.editando){
+    const nomes=c.praticadas.map(id=>FORCAS.find(x=>x.id===id).nome).join(", ")||"nenhuma força marcada";
+    box.innerHTML='<div class="resumoDia">'+
+      '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2" style="flex:none"><circle cx="12" cy="12" r="10"/><path d="M8 12.5l2.6 2.6L16 9.5"/></svg>'+
+      '<div class="info"><div class="cardTitulo" style="font-size:16px">Check-in registrado às '+c.salvo+'</div>'+
+      '<div class="ajDesc">'+escapar(nomes)+(c.nota?' · com anotação':'')+'</div></div>'+
+      '<button class="btn btnGhost" style="width:auto;padding:10px 15px" onclick="editarCheckin()">Editar</button></div>';
+    return;
+  }
+  let html='<div class="cardTitulo">Check-in do dia</div>'+
+    '<div class="cardMeta">'+(totalHoje>0?totalHoje+(totalHoje===1?' prática marcada':' práticas marcadas'):'Registre a prática de hoje em 3 passos')+'</div>'+
+    '<div class="passo"><b>1</b>Toque nas forças que praticou hoje</div><div class="chips" id="chipsForcas"></div>'+
+    '<div class="passo"><b>2</b>Anote como foi (opcional)</div>'+
+    '<textarea id="nota" placeholder="Onde a força apareceu, o que funcionou, o que ajustar amanhã...">'+escapar(c.nota||"")+'</textarea>'+
+    '<div class="mic"><button class="btnGhost btn" style="width:auto" onclick="iniciarVoz(\'nota\')" id="micNota">'+
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>Ditar</button></div>'+
+    '<div class="gravBox" id="grav-nota"></div>'+
+    '<div class="passo"><b>3</b>Confirme o registro</div>'+
+    '<button class="btn btnPrim" onclick="salvarCheckin()">Salvar check-in</button>';
+  box.innerHTML=html;
+  const chips=document.getElementById("chipsForcas");
+  FORCAS.filter(x=>x.fase===dados.fase).forEach(x=>{
+    const on=c.praticadas.includes(x.id); const cor=DOM[x.dom].cor;
+    const b=document.createElement("button"); b.className="chip"+(on?" on":"");
+    if(on){ b.style.borderColor=cor; b.style.color=cor; b.style.background="color-mix(in srgb, "+cor+" 13%, transparent)"; }
+    b.innerHTML='<b>'+x.rank+'</b>'+x.nome+'<span class="ok">✓</span>';
+    b.onclick=()=>togglePratica(x.id);
+    chips.appendChild(b);
+  });
+}
 function togglePratica(id){ const c=ci();
   c.praticadas = c.praticadas.includes(id)? c.praticadas.filter(x=>x!==id) : [...c.praticadas,id];
-  vibrar(12); salvar(); renderHoje(); renderProgresso(); checarMeta(); }
-document.getElementById("nota").addEventListener("blur", e=>{ ci().nota=e.target.value.trim(); salvar(); renderHoje(); renderProgresso(); });
+  const n=document.getElementById("nota"); if(n) c.nota=n.value.trim();
+  salvar(); renderCheckin(); renderSemana(); renderProgresso(); renderHistorico(); }
+function salvarCheckin(){
+  const c=ci(); const n=document.getElementById("nota"); if(n) c.nota=n.value.trim();
+  const ag=new Date();
+  c.salvo=String(ag.getHours()).padStart(2,"0")+":"+String(ag.getMinutes()).padStart(2,"0");
+  c.editando=false;
+  salvar(); renderHoje(); renderProgresso(); renderHistorico(); checarMeta();
+  toast("Check-in salvo às "+c.salvo+".");
+}
+function editarCheckin(){ ci().editando=true; salvar(); renderCheckin(); }
 
-/* ===== Semana atual, anel e resumo ===== */
+/* ===== Semana ===== */
 function inicioSemana(ref){ const d=new Date(ref); const dia=(d.getDay()+6)%7; d.setDate(d.getDate()-dia); d.setHours(0,0,0,0); return d; }
 function diasNaSemana(inicio){
   const dias=diasComPratica(); const fim=new Date(inicio); fim.setDate(inicio.getDate()+6); fim.setHours(23,59,59,0);
@@ -576,12 +736,14 @@ function renderSemana(){
   const pct=Math.min(1,feitos/meta);
   const R=24,C=2*Math.PI*R;
   document.getElementById("cardSemana").innerHTML =
+    '<div style="display:flex;align-items:center;gap:16px">'+
     '<svg width="62" height="62" viewBox="0 0 62 62" style="flex:none;transform:rotate(-90deg)">'+
     '<circle cx="31" cy="31" r="'+R+'" fill="none" stroke="var(--card2)" stroke-width="6"/>'+
     '<circle cx="31" cy="31" r="'+R+'" fill="none" stroke="'+(pct>=1?"var(--ok)":"var(--rel)")+'" stroke-width="6" stroke-linecap="round" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-pct))+'" style="transition:stroke-dashoffset .5s cubic-bezier(.2,.7,.3,1)"/></svg>'+
-    '<div><div class="serif" style="font-size:19px">'+feitos+' de '+meta+' dias'+(pct>=1?" ✓":"")+'</div>'+
-    '<div class="hint" style="margin-top:2px">'+(pct>=1?"Meta da semana batida. Constância é a sua marca.":"Meta desta semana. Um check-in por dia conta.")+'</div></div>';
-  const box=document.getElementById("cardResumo");
+    '<div style="flex:1"><div class="serif" style="font-size:20px">'+feitos+' de '+meta+' dias'+(pct>=1?" ✓":"")+'</div>'+
+    '<div class="hint" style="margin-top:2px">'+(pct>=1?"Meta da semana batida. Constância é a sua marca.":"Meta desta semana. Um check-in por dia conta.")+'</div>'+
+    '<div class="hint" style="margin-top:5px;color:var(--texto2);font-weight:600">Fase '+dados.fase+' · Forças '+(dados.fase===1?"1 a 5":"6 a 10")+'</div></div></div>';
+  const box=document.getElementById("cardResumoSem");
   if(new Date().getDay()===1){
     const iniPrev=inicioSemana(new Date()); iniPrev.setDate(iniPrev.getDate()-7);
     const fimPrev=new Date(iniPrev); fimPrev.setDate(iniPrev.getDate()+6);
@@ -592,7 +754,7 @@ function renderSemana(){
       const top=ativas.slice().sort((a,b)=>(cont[b.id]||0)-(cont[a.id]||0))[0];
       const zero=ativas.filter(f=>!cont[f.id]);
       box.style.display="block";
-      box.innerHTML='<div class="cardEyebrow">Resumo da semana passada</div>'+
+      box.innerHTML='<div class="cardTitulo">Resumo da semana passada</div><div class="cardMeta">Gerado toda segunda-feira</div>'+
         '<p class="texto">'+diasPrev.length+' '+(diasPrev.length===1?"dia":"dias")+' com prática. '+
         (cont[top.id]?('Força mais praticada: <b style="color:'+DOM[top.dom].cor+'">'+top.nome+'</b>. '):'')+
         (zero.length?('Sem registro: '+zero.map(f=>f.nome).join(", ")+'. Que tal priorizar esta semana?'):'Todas as forças da fase foram praticadas. Excelente.')+'</p>';
@@ -603,7 +765,7 @@ function checarMeta(){
   const meta=dados.config.meta||5;
   if(diasNaSemana(inicioSemana(new Date()))>=meta && dados.config.celebrou!==chaveSemana()){
     dados.config.celebrou=chaveSemana(); salvar(); celebrar();
-    toast("Meta semanal batida. Excelente constância!"); vibrar([30,50,30]);
+    toast("Meta semanal batida. Excelente constância!");
   }
 }
 function celebrar(){
@@ -611,16 +773,13 @@ function celebrar(){
   const cores=["var(--exec)","var(--estr)","var(--rel)","var(--infl)"];
   for(let i=0;i<28;i++){
     const p=document.createElement("div"); p.className="confete";
-    p.style.left=(Math.random()*100)+"vw";
-    p.style.background=cores[i%4];
-    p.style.animationDelay=(Math.random()*0.4)+"s";
-    p.style.animationDuration=(1.2+Math.random()*0.8)+"s";
-    document.body.appendChild(p);
-    setTimeout(()=>p.remove(),2600);
+    p.style.left=(Math.random()*100)+"vw"; p.style.background=cores[i%4];
+    p.style.animationDelay=(Math.random()*0.4)+"s"; p.style.animationDuration=(1.2+Math.random()*0.8)+"s";
+    document.body.appendChild(p); setTimeout(()=>p.remove(),2600);
   }
 }
 
-/* ===== Classificador local ===== */
+/* ===== Classificador que aprende ===== */
 const LEXICO = {
  prudencia:["risco","riscos","decisao","decidir","avali","cautel","ponder","premissa","cenario","refleti","antecip","mitig"],
  analitico:["dado","dados","indicador","analis","planilha","padrao","causa","hipotese","metric","investig","numero","dashboard","relatorio"],
@@ -633,36 +792,108 @@ const LEXICO = {
  crenca:["valor","valores","proposito","missao","etica","principio","integridade","coerencia"],
  excelencia:["melhor","qualidade","otimiz","refin","excelencia","elev","aprimor","potencializ","talento"]
 };
-function normalizar(s){ return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""); }
+const STOP=new Set(["sobre","muito","tambem","ainda","hoje","ontem","amanha","fazer","fazendo","porque","quando","estava","estou","tinha","foram","sendo","depois","antes","tempo","pessoa","pessoas","coisa","coisas","semana","trabalho","piracanjuba"]);
+function lexico(id){ return (LEXICO[id]||[]).concat(dados.lexicoExtra[id]||[]); }
 function classificar(){
   const txt=document.getElementById("txtClass").value.trim();
   const res=document.getElementById("resClass");
   if(!txt){ res.innerHTML=""; return; }
   const norm=normalizar(txt);
-  const scores=FORCAS.map(f=>({f,s:LEXICO[f.id].reduce((a,k)=>a+(norm.includes(k)?1:0),0)}))
+  const scores=FORCAS.map(f=>({f,s:lexico(f.id).reduce((a,k)=>a+(norm.includes(k)?1:0),0)}))
     .filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,2);
   if(!scores.length){
-    res.innerHTML='<p class="texto" style="margin-top:12px">Sem correspondência clara. Escolha manualmente nos chips acima, ou detalhe mais a descrição (verbos e contexto ajudam).</p>';
+    res.innerHTML='<p class="texto" style="margin-top:12px">Sem correspondência clara. Marque manualmente no check-in, ou detalhe mais a descrição (verbos e contexto ajudam).</p>';
     return;
   }
-  res.innerHTML='<div class="secTitulo" style="margin-top:14px">Sugestão</div>'+scores.map(({f})=>{
+  res.innerHTML='<div class="passo" style="margin-top:14px">Sugestão</div><div class="chips">'+scores.map(({f})=>{
     const D=DOM[f.dom];
-    return '<button class="chip" style="border-color:'+D.cor+';color:'+D.cor+';background:color-mix(in srgb,'+D.cor+' 13%,transparent);margin:4px 6px 4px 0" '+
-      'onclick="registrarClass(\''+f.id+'\')"><b>'+f.rank+'</b>Registrar em '+f.nome+
-      '<span class="domTag" style="color:'+D.cor+';border-color:'+D.cor+';margin-left:4px">'+D.nome+'</span></button>';
-  }).join("");
+    return '<button class="chip" style="border-color:'+D.cor+';color:'+D.cor+';background:color-mix(in srgb,'+D.cor+' 13%,transparent)" '+
+      'onclick="registrarClass(\''+f.id+'\')"><b>'+f.rank+'</b>Registrar em '+f.nome+'</button>';
+  }).join("")+'</div>';
 }
 function registrarClass(id){
   const f=FORCAS.find(x=>x.id===id); const c=ci();
   if(!c.praticadas.includes(id)) c.praticadas.push(id);
   const txt=document.getElementById("txtClass").value.trim();
-  if(txt) c.nota=(c.nota?c.nota+"\n":"")+"["+f.nome+"] "+txt;
+  if(txt){
+    c.nota=(c.nota?c.nota+"\n":"")+"["+f.nome+"] "+txt;
+    /* aprendizado: incorpora palavras novas ao vocabulário desta força */
+    if(!dados.lexicoExtra[id]) dados.lexicoExtra[id]=[];
+    const jaTem=new Set(lexico(id));
+    const novas=normalizar(txt).replace(/[^a-z0-9\s]/g," ").split(/\s+/)
+      .filter(p=>p.length>=5 && !STOP.has(p) && !jaTem.has(p)).slice(0,3);
+    novas.forEach(p=>{ if(dados.lexicoExtra[id].length<40) dados.lexicoExtra[id].push(p); });
+  }
   document.getElementById("txtClass").value="";
   document.getElementById("resClass").innerHTML="";
-  vibrar(15); salvar(); renderHoje(); renderProgresso(); checarMeta(); toast("Registrado em "+f.nome+".");
+  salvar(); renderHoje(); renderProgresso(); renderHistorico(); checarMeta();
+  toast("Registrado em "+f.nome+". Vocabulário atualizado.");
 }
 
-/* ================= RENDER: PLANO ================= */
+/* ===== Ditado por voz (estilo WhatsApp: gravar, pausar, retomar, concluir) ===== */
+let voz={rec:null,alvo:null,buffer:"",pausado:false,ativo:false,t0:0,timer:null,acum:0};
+function vozSuportada(){ return "webkitSpeechRecognition" in window || "SpeechRecognition" in window; }
+function iniciarVoz(alvoId){
+  if(!vozSuportada()){ toast("Ditado indisponível neste navegador."); return; }
+  if(voz.ativo){ toast("Já existe um ditado em andamento."); return; }
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  voz.rec=new SR(); voz.rec.lang="pt-BR"; voz.rec.continuous=true; voz.rec.interimResults=true;
+  voz.alvo=alvoId; voz.buffer=""; voz.pausado=false; voz.ativo=true; voz.acum=0; voz.t0=Date.now();
+  voz.rec.onresult=(e)=>{
+    let parcial="";
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal) voz.buffer+=e.results[i][0].transcript+" ";
+      else parcial+=e.results[i][0].transcript;
+    }
+    const st=document.getElementById("gravParcial-"+voz.alvo);
+    if(st) st.textContent=(voz.buffer+parcial).trim().slice(-60)||"Ouvindo...";
+  };
+  voz.rec.onerror=(e)=>{ if(e.error==="not-allowed"){ toast("Permita o microfone nas configurações."); encerrarVoz(false); } };
+  voz.rec.onend=()=>{ if(voz.ativo&&!voz.pausado){ try{voz.rec.start();}catch(e){} } };
+  try{ voz.rec.start(); }catch(e){ toast("Falha ao iniciar o microfone."); voz.ativo=false; return; }
+  voz.timer=setInterval(atualizarTempoVoz,500);
+  renderGravador();
+}
+function atualizarTempoVoz(){
+  const el=document.getElementById("gravTempo-"+voz.alvo); if(!el) return;
+  const s=Math.floor((voz.acum+(voz.pausado?0:Date.now()-voz.t0))/1000);
+  el.textContent=String(Math.floor(s/60)).padStart(1,"0")+":"+String(s%60).padStart(2,"0");
+}
+function pausarVoz(){
+  if(!voz.ativo) return;
+  if(!voz.pausado){ voz.pausado=true; voz.acum+=Date.now()-voz.t0; try{voz.rec.stop();}catch(e){} }
+  else { voz.pausado=false; voz.t0=Date.now(); try{voz.rec.start();}catch(e){} }
+  renderGravador();
+}
+function concluirVoz(){
+  const txt=voz.buffer.trim();
+  const alvo=document.getElementById(voz.alvo);
+  if(alvo&&txt){ alvo.value=(alvo.value?alvo.value.trimEnd()+"\n":"")+txt;
+    if(voz.alvo==="nota"){ ci().nota=alvo.value.trim(); salvar(); } }
+  encerrarVoz(true);
+  if(txt) toast("Transcrição adicionada."); else toast("Nada foi captado.");
+}
+function encerrarVoz(ok){
+  voz.ativo=false; voz.pausado=false;
+  try{ voz.rec&&voz.rec.stop(); }catch(e){}
+  clearInterval(voz.timer);
+  const box=document.getElementById("grav-"+voz.alvo);
+  if(box){ box.classList.remove("on"); box.innerHTML=""; }
+  voz.alvo=null; voz.buffer="";
+}
+function renderGravador(){
+  const box=document.getElementById("grav-"+voz.alvo); if(!box) return;
+  box.classList.add("on");
+  box.innerHTML='<span class="pontoGrav'+(voz.pausado?" pausado":"")+'"></span>'+
+    '<span class="gravTempo" id="gravTempo-'+voz.alvo+'">0:00</span>'+
+    '<span style="flex:1;font-size:12.5px;color:var(--mudo);overflow:hidden;white-space:nowrap;text-overflow:ellipsis" id="gravParcial-'+voz.alvo+'">'+(voz.pausado?"Pausado":"Ouvindo...")+'</span>'+
+    '<button onclick="pausarVoz()">'+(voz.pausado?"Retomar":"Pausar")+'</button>'+
+    '<button onclick="concluirVoz()" style="color:var(--ok);border-color:var(--ok)">Concluir ✓</button>'+
+    '<button onclick="encerrarVoz(false)" style="color:#D06A82">✕</button>';
+  atualizarTempoVoz();
+}
+
+/* ================= PLANO ================= */
 function renderPlano(){
   const pg=document.getElementById("pg-plano"); pg.innerHTML="";
   [1,2].forEach(f=>{
@@ -679,7 +910,9 @@ function renderPlano(){
        '<div style="flex:1"><div class="forcaNome" style="font-size:16.5px">'+x.nome+
        '<span class="domTag" style="color:'+D.cor+';border-color:'+D.cor+'">'+D.nome+'</span></div>'+
        '<p class="texto" style="margin-top:4px">'+x.objetivo+'</p></div><span class="seta">›</span></button>'+
-       '<div class="planoCorpo"><div><div class="secTitulo">Ações de prática</div><ul class="lista">'+
+       '<div class="planoCorpo"><div>'+
+       '<div class="secTitulo">Entenda esta força</div><p class="texto">'+x.guia+'</p>'+
+       '<div class="secTitulo">Ações de prática</div><ul class="lista">'+
        x.acoes.map(a=>"<li>"+a+"</li>").join("")+'</ul>'+
        '<div class="secTitulo">Ponto cego a gerenciar</div><p class="texto">'+x.pontoCego+'</p>'+
        '<div class="secTitulo">Indicador de acompanhamento</div><p class="texto">'+x.indicador+'</p></div></div>';
@@ -689,7 +922,7 @@ function renderPlano(){
   });
 }
 
-/* ================= RENDER: PROGRESSO ================= */
+/* ================= METRICAS ================= */
 function diasComPratica(){
   return Object.keys(dados.checkins).filter(d=>{
     const c=dados.checkins[d]; return (c.praticadas&&c.praticadas.length>0)||c.acaoFeita||(c.nota&&c.nota.length>0);
@@ -718,6 +951,45 @@ function calcMelhorSeq(){
   });
   return Math.max(melhor,calcStreak());
 }
+
+/* ===== Motor de insights locais ===== */
+function insightsLocais(){
+  const out=[]; const dias=diasComPratica(); if(!dias.length) return out;
+  const streak=calcStreak(), melhor=calcMelhorSeq();
+  const c=dados.checkins[hoje()];
+  const feitoHoje=c&&((c.praticadas&&c.praticadas.length>0)||c.acaoFeita);
+  if(streak>0 && streak<melhor && melhor-streak<=3)
+    out.push("Faltam "+(melhor-streak+1)+" dias para bater sua melhor sequência ("+melhor+" dias).");
+  if(!feitoHoje && streak>=3)
+    out.push("Sua sequência de "+streak+" dias termina hoje sem o check-in.");
+  /* força negligenciada */
+  const ativas=FORCAS.filter(f=>f.fase===dados.fase);
+  let pior=null,piorDias=-1;
+  ativas.forEach(f=>{
+    let ultimo=null;
+    for(let i=dias.length-1;i>=0;i--){ if((dados.checkins[dias[i]].praticadas||[]).includes(f.id)){ ultimo=dias[i]; break; } }
+    const n = ultimo? Math.floor((new Date(hoje()+"T12:00:00")-new Date(ultimo+"T12:00:00"))/86400000) : 9999;
+    if(n>piorDias){ piorDias=n; pior=f; }
+  });
+  if(pior && piorDias>=10 && piorDias<9999)
+    out.push(pior.nome+" está há "+piorDias+" dias sem registro. É a candidata natural da semana.");
+  if(pior && piorDias===9999 && dias.length>=7)
+    out.push(pior.nome+" ainda não tem nenhum registro. Comece por uma ação pequena.");
+  /* padrão de dia da semana */
+  if(dias.length>=15){
+    const cont=[0,0,0,0,0,0,0];
+    dias.forEach(d=>cont[new Date(d+"T12:00:00").getDay()]++);
+    const uteis=[1,2,3,4,5].map(i=>({i,n:cont[i]})).sort((a,b)=>a.n-b.n);
+    if(uteis[0].n < uteis[4].n/2)
+      out.push("Seu dia mais fraco é "+DIAS[uteis[0].i]+". Um lembrete extra nesse dia pode fechar a lacuna.");
+  }
+  const totalP=dias.reduce((a,d)=>a+(dados.checkins[d].praticadas?dados.checkins[d].praticadas.length:0)+(dados.checkins[d].acaoFeita?1:0),0);
+  if(totalP>0 && totalP%50<3 && totalP>=50)
+    out.push("Você passou de "+Math.floor(totalP/50)*50+" práticas registradas. Marco de constância.");
+  return out.slice(0,3);
+}
+
+/* ================= PROGRESSO ================= */
 function renderProgresso(){
   const pg=document.getElementById("pg-progresso");
   const dias=diasComPratica(); const streak=calcStreak();
@@ -730,7 +1002,7 @@ function renderProgresso(){
     const iso=cur.getFullYear()+"-"+String(cur.getMonth()+1).padStart(2,"0")+"-"+String(cur.getDate()).padStart(2,"0");
     const c=dados.checkins[iso]; const n=c?((c.praticadas?c.praticadas.length:0)+(c.acaoFeita?1:0)):0;
     const cls = n>=4?"n3" : n>=2?"n2" : n>=1?"n1" : "";
-    heat+='<div class="'+cls+'" title="'+fmtBR(iso)+": "+n+'"></div>';
+    heat+='<div class="'+cls+'"></div>';
     cur.setDate(cur.getDate()+1);
   }
 
@@ -739,7 +1011,7 @@ function renderProgresso(){
   const barras=porForca.map(({f,total})=>{
     const pct=Math.round(total/maxB*100);
     return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:9px">'+
-      '<span style="font-size:12px;color:var(--texto2);width:118px;flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+
+      '<span style="font-size:12.5px;color:var(--texto2);width:120px;flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+
       '<b class="serif" style="color:'+DOM[f.dom].cor+'">'+f.rank+'</b> '+f.nome+'</span>'+
       '<div class="barraFundo"><div style="width:'+pct+'%;background:'+DOM[f.dom].cor+'"></div></div>'+
       '<span style="font-size:12px;color:var(--mudo);width:22px;text-align:right;font-variant-numeric:tabular-nums">'+total+'</span></div>';
@@ -763,14 +1035,10 @@ function renderProgresso(){
     sems.map((s,i)=>'<circle cx="'+px(i)+'" cy="'+py(s.v)+'" r="3.4" fill="var(--ok)"/><text x="'+px(i)+'" y="'+(H-6)+'" fill="var(--mudo2)" font-size="9.5" text-anchor="middle">'+s.lab+'</text>').join("")+
     '</svg>';
 
-  const hist=[...dias].reverse().slice(0,14).map(d=>{
-    const c=dados.checkins[d];
-    const tags=(c.praticadas||[]).map(id=>{ const f=FORCAS.find(x=>x.id===id);
-      return '<span class="histTag" style="color:'+DOM[f.dom].cor+'">'+f.nome+'</span>'; }).join("")+
-      (c.acaoFeita?'<span class="histTag" style="color:var(--texto)">Ação do dia ✓</span>':"");
-    return '<div class="histLinha"><div class="histData">'+fmtBR(d)+'</div><div class="histTags">'+tags+'</div>'+
-      (c.nota?'<div class="histNota">'+escapar(c.nota)+'</div>':"")+'</div>';
-  }).join("") || '<p class="texto">Nenhum registro ainda. Comece pelo check-in de hoje.</p>';
+  const ins=insightsLocais();
+  const insHtml = ins.length?
+    '<div class="card"><div class="cardTitulo">Leitura dos seus dados</div><div class="cardMeta">Gerado no aparelho, a partir do seu histórico</div>'+
+    ins.map(t=>'<p class="texto" style="margin-bottom:8px">· '+t+'</p>').join("")+'</div>' : '';
 
   pg.innerHTML =
    '<div class="kpis">'+
@@ -778,13 +1046,212 @@ function renderProgresso(){
    '<div class="kpi"><div class="kpiValor">'+calcMelhorSeq()+'</div><div class="kpiLabel">melhor sequência</div></div>'+
    '<div class="kpi"><div class="kpiValor">'+dias.length+'</div><div class="kpiLabel">dias com prática</div></div>'+
    '<div class="kpi"><div class="kpiValor">'+totalPraticas+'</div><div class="kpiLabel">práticas registradas</div></div></div>'+
-   '<div class="card"><div class="cardEyebrow">Mapa de constância · últimas 12 semanas</div>'+
+   insHtml+
+   '<div class="card"><div class="cardTitulo">Mapa de constância</div><div class="cardMeta">Últimas 12 semanas</div>'+
    '<div style="overflow-x:auto"><div class="heat">'+heat+'</div></div>'+
    '<div class="heatLeg">Menos <span style="background:var(--card2)"></span><span style="background:var(--heat1)"></span><span style="background:var(--heat2)"></span><span style="background:var(--heat3)"></span> Mais</div></div>'+
-   '<div class="card"><div class="cardEyebrow">Práticas por força · acumulado</div>'+barras+'</div>'+
-   '<div class="card"><div class="cardEyebrow">Consistência semanal · dias com prática</div>'+linha+'</div>'+
-   '<div class="card"><div class="cardEyebrow">Histórico recente</div>'+hist+'</div>';
+   '<div class="card"><div class="cardTitulo">Práticas por força</div><div class="cardMeta">Acumulado desde o início</div>'+barras+'</div>'+
+   '<div class="card"><div class="cardTitulo">Consistência semanal</div><div class="cardMeta">Dias com prática por semana</div>'+linha+'</div>'+
+   '<div class="card"><div class="cardTitulo">Relatório do período</div><div class="cardMeta">Gere um PDF ou um resumo para revisão com Claude</div>'+
+   '<div class="seg" style="justify-content:flex-start;margin-bottom:12px" id="segPeriodo"></div>'+
+   '<div id="periodoCustom" style="display:none;gap:8px;margin-bottom:12px"><input type="date" id="perIni" style="flex:1"><input type="date" id="perFim" style="flex:1"></div>'+
+   '<div class="duplo"><button class="btn btnGhost" onclick="gerarRelatorio(\'pdf\')">Gerar PDF</button>'+
+   '<button class="btn btnGhost" onclick="gerarRelatorio(\'claude\')">Resumo p/ Claude</button></div></div>';
+
+  const seg=document.getElementById("segPeriodo");
+  [["mes","Este mês"],["mesPassado","Mês passado"],["30","30 dias"],["90","90 dias"],["fase","Fase atual"],["custom","Escolher"]].forEach(([v,l])=>{
+    const b=document.createElement("button"); b.className="segBtn"+((dados.config.periodo||"30")===v?" on":"");
+    b.textContent=l; b.onclick=()=>{ dados.config.periodo=v; salvar();
+      document.getElementById("periodoCustom").style.display=v==="custom"?"flex":"none";
+      seg.querySelectorAll(".segBtn").forEach(x=>x.classList.toggle("on",x===b)); };
+    seg.appendChild(b);
+  });
+  if((dados.config.periodo||"30")==="custom") document.getElementById("periodoCustom").style.display="flex";
 }
+
+/* ===== Relatorio por periodo ===== */
+function periodoAtual(){
+  const p=dados.config.periodo||"30"; const fim=new Date(); let ini=new Date();
+  if(p==="mes"){ ini=new Date(fim.getFullYear(),fim.getMonth(),1); }
+  else if(p==="mesPassado"){ ini=new Date(fim.getFullYear(),fim.getMonth()-1,1); return [ini,new Date(fim.getFullYear(),fim.getMonth(),0)]; }
+  else if(p==="30"){ ini.setDate(fim.getDate()-29); }
+  else if(p==="90"){ ini.setDate(fim.getDate()-89); }
+  else if(p==="fase"){ ini=new Date((dados.inicio||hoje())+"T00:00:00"); }
+  else if(p==="custom"){
+    const a=document.getElementById("perIni").value, b=document.getElementById("perFim").value;
+    if(!a||!b){ toast("Escolha as duas datas."); return null; }
+    return [new Date(a+"T00:00:00"), new Date(b+"T23:59:59")];
+  }
+  return [ini,fim];
+}
+function dadosPeriodo(ini,fim){
+  const dias=diasComPratica().filter(d=>{ const dt=new Date(d+"T12:00:00"); return dt>=ini&&dt<=fim; });
+  const cont={}; let acoes=0;
+  dias.forEach(d=>{ const c=dados.checkins[d];
+    (c.praticadas||[]).forEach(id=>cont[id]=(cont[id]||0)+1);
+    if(c.acaoFeita) acoes++; });
+  return {dias,cont,acoes};
+}
+function gerarRelatorio(tipo){
+  const per=periodoAtual(); if(!per) return;
+  const [ini,fim]=per; const {dias,cont,acoes}=dadosPeriodo(ini,fim);
+  const iniS=fmtBR(ini.toISOString().slice(0,10)), fimS=fmtBR(fim.toISOString().slice(0,10));
+  if(tipo==="claude"){
+    let t="RELATORIO FORCAS (PDI CliftonStrengths) · Mateus Santos\nPeriodo: "+iniS+" a "+fimS+"\nFase ativa: "+dados.fase+"\n\n";
+    t+="Dias com pratica: "+dias.length+"\nAcoes do dia concluidas: "+acoes+"\n\nPraticas por forca:\n";
+    FORCAS.forEach(f=>{ t+="- "+f.rank+". "+f.nome+": "+(cont[f.id]||0)+"\n"; });
+    t+="\nRegistros:\n";
+    dias.forEach(d=>{ const c=dados.checkins[d];
+      t+=fmtBR(d)+" | "+((c.praticadas||[]).map(id=>FORCAS.find(x=>x.id===id).nome).join(", ")||"sem forcas")+(c.acaoFeita?" | acao do dia OK":"")+"\n";
+      if(c.nota) t+="  Nota: "+c.nota.replace(/\n/g," / ")+"\n"; });
+    t+="\nPedido: analise este periodo, aponte padroes, riscos e recalibre as acoes do PDI.";
+    navigator.clipboard.writeText(t).then(()=>toast("Resumo copiado. Cole na conversa com Claude."))
+      .catch(()=>toast("Falha ao copiar."));
+    return;
+  }
+  const pa=document.getElementById("printArea");
+  pa.innerHTML='<h1>Forças · Relatório do período</h1>'+
+    '<p>Mateus Santos · '+iniS+' a '+fimS+' · Fase '+dados.fase+'</p>'+
+    '<h2>Indicadores</h2><table><tr><th>Dias com prática</th><th>Ações do dia concluídas</th><th>Sequência atual</th><th>Melhor sequência</th></tr>'+
+    '<tr><td>'+dias.length+'</td><td>'+acoes+'</td><td>'+calcStreak()+'</td><td>'+calcMelhorSeq()+'</td></tr></table>'+
+    '<h2>Práticas por força</h2><table><tr><th>Força</th><th>Registros</th></tr>'+
+    FORCAS.map(f=>'<tr><td>'+f.rank+'. '+f.nome+'</td><td>'+(cont[f.id]||0)+'</td></tr>').join("")+'</table>'+
+    '<h2>Registros do período</h2><table><tr><th>Data</th><th>Forças</th><th>Anotação</th></tr>'+
+    dias.map(d=>{ const c=dados.checkins[d];
+      return '<tr><td>'+fmtBR(d)+'</td><td>'+((c.praticadas||[]).map(id=>FORCAS.find(x=>x.id===id).nome).join(", ")||"")+(c.acaoFeita?" · Ação ✓":"")+'</td><td>'+escapar(c.nota||"")+'</td></tr>'; }).join("")+'</table>'+
+    '<p style="margin-top:14pt;font-size:9pt">Gerado pelo app Forças · Base: CliftonStrengths 34 (Gallup)</p>';
+  window.print();
+}
+
+/* ================= HISTORICO ================= */
+let histForca="";
+function renderHistorico(){
+  const pg=document.getElementById("pg-historico"); if(!pg) return;
+  const filtros=document.getElementById("histFiltros");
+  if(!filtros.dataset.pronto){
+    filtros.dataset.pronto="1";
+    FORCAS.forEach(f=>{
+      const b=document.createElement("button"); b.className="chip"; b.style.minHeight="40px"; b.style.padding="8px 13px";
+      b.innerHTML='<b>'+f.rank+'</b>'+f.nome;
+      b.onclick=()=>{ histForca = histForca===f.id? "" : f.id; renderHistorico(); };
+      b.dataset.id=f.id; filtros.appendChild(b);
+    });
+  }
+  filtros.querySelectorAll(".chip").forEach(b=>{
+    const f=FORCAS.find(x=>x.id===b.dataset.id); const on=histForca===f.id; const cor=DOM[f.dom].cor;
+    b.classList.toggle("on",on);
+    b.style.borderColor=on?cor:""; b.style.color=on?cor:"";
+    b.style.background=on?("color-mix(in srgb, "+cor+" 13%, transparent)"):"";
+  });
+  const q=normalizar((document.getElementById("histBusca").value||"").trim());
+  const todos=diasComPratica().slice().reverse().filter(d=>{
+    const c=dados.checkins[d];
+    if(histForca && !(c.praticadas||[]).includes(histForca)) return false;
+    if(q && !normalizar(c.nota||"").includes(q)) return false;
+    return true;
+  });
+  document.getElementById("histMeta").textContent=todos.length+" "+(todos.length===1?"registro":"registros")+(q||histForca?" (filtrado)":" desde "+fmtBR(dados.inicio));
+  let html=""; let mesAtual="";
+  todos.forEach(d=>{
+    const dt=new Date(d+"T12:00:00");
+    const chave=MESES[dt.getMonth()]+" de "+dt.getFullYear();
+    if(chave!==mesAtual){ if(mesAtual) html+='</div>';
+      html+='<div class="mesTitulo">'+chave+'</div><div class="card">'; mesAtual=chave; }
+    const c=dados.checkins[d];
+    const tags=(c.praticadas||[]).map(id=>{ const f=FORCAS.find(x=>x.id===id);
+      return '<span class="histTag" style="color:'+DOM[f.dom].cor+'">'+f.nome+'</span>'; }).join("")+
+      (c.acaoFeita?'<span class="histTag" style="color:var(--texto)">Ação do dia ✓</span>':"");
+    html+='<div class="histLinha"><div class="histData">'+DIAS[dt.getDay()]+', '+fmtBR(d)+'</div>'+
+      '<div class="histTags">'+tags+'</div>'+(c.nota?'<div class="histNota">'+escapar(c.nota)+'</div>':"")+'</div>';
+  });
+  if(mesAtual) html+='</div>';
+  document.getElementById("histLista").innerHTML = html || '<div class="card"><p class="texto">Nenhum registro '+(q||histForca?"para este filtro.":"ainda. O histórico nasce com o primeiro check-in.")+'</p></div>';
+}
+
+/* ================= LIVRO ================= */
+let LIVRO=null;
+function dbLivro(){ return new Promise((res,rej)=>{ const r=indexedDB.open("forcas_livro",1);
+  r.onupgradeneeded=()=>r.result.createObjectStore("kv");
+  r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); }
+async function livroGuardar(v){ const db=await dbLivro(); return new Promise((res,rej)=>{ const t=db.transaction("kv","readwrite"); t.objectStore("kv").put(v,"livro"); t.oncomplete=res; t.onerror=()=>rej(t.error); }); }
+async function livroLer(){ const db=await dbLivro(); return new Promise((res)=>{ const q=db.transaction("kv").objectStore("kv").get("livro"); q.onsuccess=()=>res(q.result||null); q.onerror=()=>res(null); }); }
+async function importarLivro(input){
+  const arq=input.files[0]; if(!arq) return;
+  try{
+    const txt=await arq.text(); const l=JSON.parse(txt);
+    if(!l.capitulos||!l.capitulos.length) throw 0;
+    await livroGuardar(l); LIVRO=l; renderLivro(); toast("Livro importado: "+l.capitulos.length+" capítulos.");
+  }catch(e){ toast("Arquivo de livro inválido."); }
+  input.value="";
+}
+function renderLivro(){
+  const box=document.getElementById("livroLista");
+  document.getElementById("leitor").classList.remove("on");
+  box.style.display="block";
+  if(!LIVRO){
+    box.innerHTML='<div class="card"><div class="cardTitulo">Sua biblioteca</div>'+
+      '<div class="cardMeta">Importe o arquivo livro.json guardado no seu OneDrive</div>'+
+      '<p class="texto" style="margin-bottom:14px">O livro é carregado direto no aparelho e fica disponível offline. Ele não vai para a internet nem entra no backup, por ser sua cópia licenciada de uso pessoal.</p>'+
+      '<button class="btn btnPrim" onclick="document.getElementById(\'arqLivro\').click()">Importar livro</button>'+
+      '<input type="file" id="arqLivro" accept="application/json" style="display:none" onchange="importarLivro(this)"></div>';
+    return;
+  }
+  const lidos=new Set(dados.config.livro.lidos||[]);
+  const minhas=LIVRO.capitulos.filter(c=>c.forca).sort((a,b)=>a.rank-b.rank);
+  const item=(c)=>{
+    const i=LIVRO.capitulos.indexOf(c);
+    return '<button class="capItem" onclick="abrirCap('+i+')">'+
+      (c.rank?'<span class="rank serif" style="color:'+DOM[FORCAS.find(f=>f.id===c.forca).dom].cor+'">'+c.rank+'</span>':'<span class="rank serif" style="color:var(--mudo2);font-size:15px">·</span>')+
+      '<span class="nome">'+escapar(c.titulo)+'</span>'+
+      (lidos.has(c.id)?'<span class="lido">✓</span>':'')+'</button>';
+  };
+  box.innerHTML='<div class="card"><div class="cardTitulo">'+escapar(LIVRO.titulo)+'</div>'+
+    '<div class="cardMeta">'+escapar(LIVRO.autor||"")+' · '+lidos.size+' de '+LIVRO.capitulos.length+' capítulos lidos</div>'+
+    '<div class="secTitulo" style="margin-top:4px">Suas 10 forças</div>'+minhas.map(item).join("")+
+    '<div class="secTitulo">Todos os capítulos</div>'+LIVRO.capitulos.map(item).join("")+'</div>'+
+    '<p class="hint" style="text-align:center">Cópia licenciada para uso pessoal. Conteúdo armazenado apenas neste aparelho.</p>';
+}
+function abrirCap(i){
+  if(!LIVRO) return;
+  dados.config.livro.cap=i; salvar();
+  const c=LIVRO.capitulos[i];
+  document.getElementById("livroLista").style.display="none";
+  const le=document.getElementById("leitor"); le.classList.add("on");
+  document.getElementById("leitorTitulo").textContent=c.titulo;
+  const corpo=document.getElementById("leitorCorpo");
+  corpo.innerHTML=c.html;
+  corpo.style.setProperty("--fonteLivro",(dados.config.fonteLivro||16.5)+"px");
+  document.documentElement.style.setProperty("--fonteLivro",(dados.config.fonteLivro||16.5)+"px");
+  document.getElementById("btnLido").textContent=(dados.config.livro.lidos||[]).includes(c.id)?"Lido ✓":"Concluir ✓";
+  const pos=(dados.config.livro.pos||{})[c.id]||0;
+  requestAnimationFrame(()=>window.scrollTo(0,pos));
+}
+function fecharLeitor(){ salvarPosLivro(); renderLivro(); window.scrollTo(0,0); }
+function navCap(dir){
+  salvarPosLivro();
+  const n=dados.config.livro.cap+dir;
+  if(n<0||n>=LIVRO.capitulos.length){ toast(dir<0?"Primeiro capítulo.":"Último capítulo."); return; }
+  abrirCap(n); window.scrollTo(0,0);
+}
+function marcarLido(){
+  const c=LIVRO.capitulos[dados.config.livro.cap];
+  const l=dados.config.livro.lidos||[];
+  if(l.includes(c.id)) dados.config.livro.lidos=l.filter(x=>x!==c.id);
+  else l.push(c.id);
+  salvar();
+  document.getElementById("btnLido").textContent=(dados.config.livro.lidos||[]).includes(c.id)?"Lido ✓":"Concluir ✓";
+}
+function fonteLivro(dir){
+  dados.config.fonteLivro=Math.min(22,Math.max(13,(dados.config.fonteLivro||16.5)+dir*1.5));
+  salvar(); document.documentElement.style.setProperty("--fonteLivro",dados.config.fonteLivro+"px");
+}
+function salvarPosLivro(){
+  if(!LIVRO||!document.getElementById("leitor").classList.contains("on")) return;
+  const c=LIVRO.capitulos[dados.config.livro.cap];
+  if(!dados.config.livro.pos) dados.config.livro.pos={};
+  dados.config.livro.pos[c.id]=window.scrollY; salvar();
+}
+setInterval(()=>{ if(document.getElementById("leitor").classList.contains("on")) salvarPosLivro(); },5000);
 
 /* ================= AJUSTES ================= */
 function renderAjustes(){
@@ -799,16 +1266,16 @@ function renderAjustes(){
   const st=document.getElementById("notifStatus");
   if(st){ const p=("Notification" in window)?Notification.permission:"sem suporte";
     st.textContent="Permissão do Android: "+(p==="granted"?"concedida":p==="denied"?"negada (libere nas configurações do sistema)":"ainda não solicitada"); }
-  document.getElementById("swVibra").classList.toggle("on",dados.config.vibra!==false);
   document.getElementById("horaManha").value=dados.config.horaManha||"08:30";
   document.getElementById("horaTarde").value=dados.config.horaTarde||"18:00";
   const seg=document.getElementById("segMeta"); seg.innerHTML="";
   [3,4,5,6,7].forEach(n=>{ const b=document.createElement("button");
     b.className="segBtn"+(dados.config.meta===n?" on":""); b.textContent=n;
-    b.onclick=()=>{ dados.config.meta=n; salvar(); renderAjustes(); renderHoje(); toast("Meta: "+n+" dias por semana."); };
+    b.onclick=()=>{ dados.config.meta=n; salvar(); renderAjustes(); renderSemana(); toast("Meta: "+n+" dias por semana."); };
     seg.appendChild(b); });
 }
-function mudarFase(f){ dados.fase=f; salvar(); renderTudo(); toast("Fase "+f+" ativada."); vibrar(12); }
+function mudarFase(f){ dados.fase=f; salvar(); renderTudo(); toast("Fase "+f+" ativada."); }
+function salvarHora(campo,v){ dados.config[campo]=v; salvar(); toast("Lembrete definido para "+v+"."); }
 async function testarNotif(){
   if(!("Notification" in window)){ toast("Navegador sem suporte a notificações."); return; }
   if(Notification.permission!=="granted"){
@@ -819,8 +1286,6 @@ async function testarNotif(){
     toast("Notificação enviada."); }catch(e){ toast("Falha ao exibir: "+e.message); }
   renderAjustes();
 }
-function salvarHora(campo,v){ dados.config[campo]=v; salvar(); toast("Lembrete definido para "+v+"."); }
-function toggleVibra(){ dados.config.vibra=!(dados.config.vibra!==false); salvar(); renderAjustes(); if(dados.config.vibra) vibrar(20); }
 async function toggleNotif(){
   if(!dados.config.notif){
     if(!("Notification" in window)){ toast("Este navegador não suporta notificações."); return; }
@@ -841,12 +1306,12 @@ async function registrarSyncPeriodico(){
     }
   }catch(e){}
 }
-const BADGE = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAABZ0lEQVR4nO3cQW6DMBRAwVD1/lemaxYNhkCfTGfWhhA/kUhfgtcLAAD+3FJfwKzWdV331izLsru/X9dczv8ysvmj6wQ4aHTzR9cLcMDRzR85ToCYADEBYgLEBIgJEBMgJkBMgJgAMQFiAsS+6wu40+jwbGRuf5fH3gFHJpdnp5xXeGSAMxtaRXhcgE82sojwuACzESAmQEyAmAAxAWICxASICRATICZALB9HzzAyvlN6B8wyMr5TFmCmkfGdkgCzjYzv5E84JkBMgJgAMQFiAsQEiAkQEyAmQGx4GnrVyynYGroDrnw5BVu7Aa5+OQVbbwPc8XIKtvwJxwSICRATICZATICYADEBYgLEBIgJEBMgJkBMgJgAMQFiAsQEiAkQEyAmQEyAmAAxAWICxASICRATICZATICYALG3Ac4+crR33CePMs147nfH7d4BRz90dP2ZLzPjuffWD/0EVRc3+7k9tAgA8Jsf30pwrCKBvW4AAAAASUVORK5CYII=";
+const BADGE_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAABZ0lEQVR4nO3cQW6DMBRAwVD1/lemaxYNhkCfTGfWhhA/kUhfgtcLAAD+3FJfwKzWdV331izLsru/X9dczv8ysvmj6wQ4aHTzR9cLcMDRzR85ToCYADEBYgLEBIgJEBMgJkBMgJgAMQFiAsS+6wu40+jwbGRuf5fH3gFHJpdnp5xXeGSAMxtaRXhcgE82sojwuACzESAmQEyAmAAxAWICxASICRATICZALB9HzzAyvlN6B8wyMr5TFmCmkfGdkgCzjYzv5E84JkBMgJgAMQFiAsQEiAkQEyAmQGx4GnrVyynYGroDrnw5BVu7Aa5+OQVbbwPc8XIKtvwJxwSICRATICZATICYADEBYgLEBIgJEBMgJkBMgJgAMQFiAsQEiAkQEyAmQEyAmAAxAWICxASICRATICZATICYALG3Ac4+crR33CePMs147nfH7d4BRz90dP2ZLzPjuffWD/0EVRc3+7k9tAgA8Jsf30pwrCKBvW4AAAAASUVORK5CYII=";
 async function mostrarNotif(titulo,corpo,tag){
   if(!("Notification" in window)) throw new Error("sem-suporte");
   if(Notification.permission!=="granted") throw new Error("sem-permissao");
   const reg=await navigator.serviceWorker.ready;
-  await reg.showNotification(titulo,{ body:corpo, icon:"icon-192.png", badge:BADGE,
+  await reg.showNotification(titulo,{ body:corpo, icon:"icon-192.png", badge:BADGE_B64,
     tag:tag||"checkin-diario", actions:[{action:"abrir",title:"Abrir app"}], data:{url:"./index.html#hoje"} });
 }
 async function checarLembretes(){
@@ -860,18 +1325,27 @@ async function checarLembretes(){
       dados.config.ultimoManha=hoje(); salvar(); }catch(e){}
   }
   if(hm>=dados.config.horaTarde && !feito && dados.config.ultimoTarde!==hoje()){
-    try{ await mostrarNotif("Hora do check-in","Registre o que você praticou hoje antes de encerrar o dia.","checkin-diario");
+    const streak=calcStreak();
+    const corpo = streak>=3 ? "Sua sequência de "+streak+" dias termina hoje sem o check-in."
+      : "Registre o que você praticou hoje antes de encerrar o dia.";
+    try{ await mostrarNotif("Hora do check-in",corpo,"checkin-diario");
       dados.config.ultimoTarde=hoje(); salvar(); }catch(e){}
   }
 }
 setInterval(checarLembretes,30000);
 
 /* ===== Backup ===== */
-function exportar(){
+async function exportar(){
   const blob=new Blob([JSON.stringify(dados,null,2)],{type:"application/json"});
+  const nome="forcas_backup_"+hoje()+".json";
+  const arq=new File([blob],nome,{type:"application/json"});
+  if(navigator.canShare && navigator.canShare({files:[arq]})){
+    try{ await navigator.share({files:[arq],title:"Backup Forças"}); toast("Compartilhado."); return; }
+    catch(e){ if(e.name==="AbortError") return; }
+  }
   const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
-  a.download="forcas_backup_"+hoje()+".json"; a.click(); URL.revokeObjectURL(a.href);
-  toast("Backup exportado.");
+  a.download=nome; a.click(); URL.revokeObjectURL(a.href);
+  toast("Backup baixado (compartilhamento indisponível).");
 }
 function importar(input){
   const arq=input.files[0]; if(!arq) return;
@@ -891,21 +1365,23 @@ function zerar(){
   }
 }
 
-/* ================= NAVEGAÇÃO / PWA ================= */
+/* ================= NAVEGACAO / PWA ================= */
 function irPara(pg){
+  if(voz.ativo) concluirVoz();
+  salvarPosLivro();
   document.querySelectorAll(".pagina").forEach(p=>p.classList.remove("on"));
   document.querySelectorAll("nav.baixo button").forEach(b=>b.classList.toggle("on",b.dataset.pg===pg));
   requestAnimationFrame(()=>document.getElementById("pg-"+pg).classList.add("on"));
   window.scrollTo({top:0});
 }
-function renderTudo(){ renderHoje(); renderPlano(); renderProgresso(); renderAjustes(); }
+function renderTudo(){ renderHoje(); renderPlano(); renderProgresso(); renderHistorico(); renderAjustes(); renderLivro(); }
 aplicarTema();
-renderTudo();
-const hashPg=location.hash.replace("#","");
-if(["hoje","plano","progresso","ajustes"].includes(hashPg)) irPara(hashPg);
+livroLer().then(l=>{ LIVRO=l; renderTudo();
+  const hashPg=location.hash.replace("#","");
+  if(["hoje","plano","progresso","historico","livro","ajustes"].includes(hashPg)) irPara(hashPg);
+});
 
 if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
-
 let promptInstalar=null;
 window.addEventListener("beforeinstallprompt",e=>{
   e.preventDefault(); promptInstalar=e;
@@ -917,8 +1393,8 @@ document.getElementById("btnInstalar").onclick=async()=>{
   promptInstalar=null; document.getElementById("bannerInstalar").classList.remove("on");
 };
 window.addEventListener("appinstalled",()=>{ document.getElementById("bannerInstalar").classList.remove("on"); toast("App instalado."); });
-document.addEventListener("visibilitychange",()=>{ if(!document.hidden){ renderTudo(); checarLembretes(); } });
-checarLembretes();
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden){ renderCabecalho(); checarLembretes(); } });
+window.addEventListener("beforeunload",()=>salvarPosLivro());
 </script>
 </body>
 </html>
