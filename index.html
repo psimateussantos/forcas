@@ -11,7 +11,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Inter:wght@400;500;600;700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&display=swap" rel="stylesheet">
 <style>
 :root, [data-tema="escuro"]{
   --bg:#0B0D12; --card:#141821; --card2:#1B2030; --linha:#252B3C;
@@ -101,13 +101,18 @@ input[type=date],input[type=time],input[type=search],input[type=text]{background
 .mic{display:flex;align-items:center;gap:10px;margin-top:10px}
 .mic .btnGhost{width:auto;padding:10px 15px;display:flex;align-items:center;gap:7px}
 .mic svg{width:17px;height:17px}
-.gravBox{display:none;align-items:center;gap:10px;margin-top:10px;background:var(--card2);border-radius:11px;padding:10px 14px;flex-wrap:wrap}
+.gravBox{display:none;flex-direction:column;gap:11px;margin-top:10px;background:var(--card2);border-radius:12px;padding:13px 14px}
 .gravBox.on{display:flex}
+.gravLinha{display:flex;align-items:center;gap:10px}
+.gravStatus{font-size:13px;color:var(--mudo);flex:1}
+.gravBtns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.gravBtns button{min-height:44px;border-radius:10px;border:1px solid var(--linha);font-size:13px;font-weight:600;color:var(--texto2);background:var(--card);padding:0 6px}
+.gravBtns .gravOk{color:var(--ok);border-color:var(--ok)}
+.gravBtns .gravX{color:#D06A82;border-color:#B0455A}
 .pontoGrav{width:10px;height:10px;border-radius:50%;background:var(--grav);animation:pulsar 1.1s infinite}
 .pontoGrav.pausado{animation:none;opacity:.4}
 @keyframes pulsar{0%,100%{opacity:1}50%{opacity:.25}}
-.gravTempo{font-variant-numeric:tabular-nums;font-weight:600;font-size:14px;min-width:44px}
-.gravBox button{min-height:38px;padding:7px 13px;border-radius:9px;border:1px solid var(--linha);font-size:13px;color:var(--texto2)}
+.gravTempo{font-variant-numeric:tabular-nums;font-weight:600;font-size:14px;min-width:40px}
 
 .faseHeader{display:flex;justify-content:space-between;align-items:baseline;margin:22px 0 10px}
 .faseTitulo{font-family:'Fraunces',Georgia,serif;font-size:18px;font-weight:650}
@@ -166,12 +171,24 @@ svg text{font-family:'Inter',sans-serif}
 .capItem .lido{color:var(--ok);font-size:15px}
 #leitor{display:none}
 #leitor.on{display:block}
-#leitorTopo{display:flex;align-items:center;gap:10px;margin-bottom:14px;position:sticky;top:var(--safe-top);background:var(--bg);padding:8px 0;z-index:5}
+#leitorTopo{display:flex;align-items:center;gap:10px;margin-bottom:14px;position:sticky;top:var(--safe-top);background:var(--bg);padding:8px 0 12px;z-index:5}
 #leitorTitulo{flex:1;font-family:'Fraunces',Georgia,serif;font-size:16px;font-weight:650;line-height:1.3}
-#leitorCorpo{font-size:var(--fonteLivro,16.5px);line-height:1.75;color:var(--texto2)}
-#leitorCorpo h1,#leitorCorpo h2,#leitorCorpo h3{font-family:'Fraunces',Georgia,serif;color:var(--texto);line-height:1.3}
-#leitorCorpo p{margin:0 0 1em}
+#leitorCorpo{font-family:'Literata',Georgia,serif;font-size:17px;line-height:1.85;color:var(--texto2);
+  text-align:justify;hyphens:auto;-webkit-hyphens:auto;overflow-wrap:break-word}
+[data-tema="claro"] #leitorCorpo{background:#FCF8EF;border-color:#EAE1CE}
+#leitorCorpo h1,#leitorCorpo h2,#leitorCorpo h3{font-family:'Fraunces',Georgia,serif;color:var(--texto);line-height:1.35;
+  text-align:center;text-indent:0;margin:1.5em 0 1.1em;font-weight:650}
+#leitorCorpo>*:first-child{margin-top:0}
+#leitorCorpo p{margin:0;text-indent:1.5em}
+#leitorCorpo p:first-of-type,#leitorCorpo h1+p,#leitorCorpo h2+p,#leitorCorpo h3+p,#leitorCorpo blockquote p{text-indent:0}
+#leitorCorpo p:first-of-type::first-letter{font-family:'Fraunces',Georgia,serif;font-size:3em;float:left;line-height:.88;padding:3px 8px 0 0;color:var(--texto)}
+#leitorCorpo p+p{margin-top:.3em}
+#leitorCorpo blockquote{margin:1em 0;padding-left:14px;border-left:2px solid var(--linha);font-style:italic}
 #leitorCorpo strong,#leitorCorpo b{color:var(--texto)}
+#leitorFim{text-align:center;color:var(--mudo2);font-size:15px;letter-spacing:.5em;margin-top:28px;text-indent:.5em!important}
+.capMeta{font-size:10.5px;color:var(--mudo);font-family:'Inter',sans-serif;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
+#leitorProg{position:absolute;left:0;right:0;bottom:0;height:3px;background:transparent}
+#leitorProg>div{height:100%;width:0;background:var(--infl);border-radius:2px}
 
 nav.baixo{position:fixed;bottom:0;left:0;right:0;background:color-mix(in srgb,var(--bg) 88%,transparent);
   backdrop-filter:blur(14px);border-top:1px solid var(--linha);display:flex;justify-content:space-around;
@@ -270,6 +287,7 @@ nav.baixo svg{width:21px;height:21px}
         <div id="leitorTitulo"></div>
         <button class="btnIcone" onclick="fonteLivro(-1)" aria-label="Diminuir fonte" style="font-size:14px;font-weight:700">A-</button>
         <button class="btnIcone" onclick="fonteLivro(1)" aria-label="Aumentar fonte" style="font-size:17px;font-weight:700">A+</button>
+        <div id="leitorProg"><div id="leitorProgFill"></div></div>
       </div>
       <div id="leitorCorpo" class="card" style="padding:22px"></div>
       <div class="duplo" style="margin-top:4px">
@@ -341,7 +359,7 @@ nav.baixo svg{width:21px;height:21px}
     </div>
     <div class="card">
       <div class="cardTitulo">Sobre</div>
-      <p class="texto">Forças 4.0 · PDI pessoal baseado no relatório CliftonStrengths 34 (Gallup) de Mateus Santos. Fase 1: forças 1 a 5. Fase 2: forças 6 a 10. Seus dados ficam apenas neste aparelho.</p>
+      <p class="texto">Forças 4.1 · PDI pessoal baseado no relatório CliftonStrengths 34 (Gallup) de Mateus Santos. Fase 1: forças 1 a 5. Fase 2: forças 6 a 10. Seus dados ficam apenas neste aparelho.</p>
     </div>
   </section>
 </div>
@@ -608,7 +626,7 @@ function migrar(d){
   if(c.ultimoManha===undefined) c.ultimoManha="";
   if(c.ultimoTarde===undefined) c.ultimoTarde="";
   if(c.celebrou===undefined) c.celebrou="";
-  if(!c.fonteLivro) c.fonteLivro=16.5;
+  if(!c.fonteLivro||c.fonteLivro===16.5) c.fonteLivro=17;
   if(!c.livro) c.livro={cap:0,lidos:[],pos:{}};
   if(!d.lexicoExtra) d.lexicoExtra={};
 }
@@ -831,33 +849,38 @@ function registrarClass(id){
 }
 
 /* ===== Ditado por voz (estilo WhatsApp: gravar, pausar, retomar, concluir) ===== */
-let voz={rec:null,alvo:null,buffer:"",pausado:false,ativo:false,t0:0,timer:null,acum:0};
+let voz={rec:null,alvo:null,previo:"",sessao:"",pausado:false,ativo:false,t0:0,timer:null,acum:0};
 function vozSuportada(){ return "webkitSpeechRecognition" in window || "SpeechRecognition" in window; }
+function limparRepeticoes(t){
+  t=t.replace(/\s+/g," ").trim();
+  t=t.replace(/\b(\p{L}+)(?:\s+\1\b)+/giu,"$1");
+  return t;
+}
 function iniciarVoz(alvoId){
   if(!vozSuportada()){ toast("Ditado indisponível neste navegador."); return; }
   if(voz.ativo){ toast("Já existe um ditado em andamento."); return; }
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  voz.rec=new SR(); voz.rec.lang="pt-BR"; voz.rec.continuous=true; voz.rec.interimResults=true;
-  voz.alvo=alvoId; voz.buffer=""; voz.pausado=false; voz.ativo=true; voz.acum=0; voz.t0=Date.now();
+  voz.rec=new SR(); voz.rec.lang="pt-BR"; voz.rec.continuous=true; voz.rec.interimResults=false;
+  voz.alvo=alvoId; voz.previo=""; voz.sessao=""; voz.pausado=false; voz.ativo=true; voz.acum=0; voz.t0=Date.now();
   voz.rec.onresult=(e)=>{
-    let parcial="";
-    for(let i=e.resultIndex;i<e.results.length;i++){
-      if(e.results[i].isFinal) voz.buffer+=e.results[i][0].transcript+" ";
-      else parcial+=e.results[i][0].transcript;
-    }
-    const st=document.getElementById("gravParcial-"+voz.alvo);
-    if(st) st.textContent=(voz.buffer+parcial).trim().slice(-60)||"Ouvindo...";
+    /* reconstrói a transcrição da sessão inteira a cada evento, eliminando somas duplicadas */
+    let fin="";
+    for(let i=0;i<e.results.length;i++) if(e.results[i].isFinal) fin+=e.results[i][0].transcript+" ";
+    voz.sessao=fin;
   };
   voz.rec.onerror=(e)=>{ if(e.error==="not-allowed"){ toast("Permita o microfone nas configurações."); encerrarVoz(false); } };
-  voz.rec.onend=()=>{ if(voz.ativo&&!voz.pausado){ try{voz.rec.start();}catch(e){} } };
+  voz.rec.onend=()=>{
+    voz.previo=limparRepeticoes(voz.previo+" "+voz.sessao); voz.sessao="";
+    if(voz.ativo&&!voz.pausado){ try{voz.rec.start();}catch(e){} }
+  };
   try{ voz.rec.start(); }catch(e){ toast("Falha ao iniciar o microfone."); voz.ativo=false; return; }
   voz.timer=setInterval(atualizarTempoVoz,500);
   renderGravador();
 }
 function atualizarTempoVoz(){
-  const el=document.getElementById("gravTempo-"+voz.alvo); if(!el) return;
+  const el=document.getElementById("gravTempo"); if(!el) return;
   const s=Math.floor((voz.acum+(voz.pausado?0:Date.now()-voz.t0))/1000);
-  el.textContent=String(Math.floor(s/60)).padStart(1,"0")+":"+String(s%60).padStart(2,"0");
+  el.textContent=Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
 }
 function pausarVoz(){
   if(!voz.ativo) return;
@@ -866,12 +889,12 @@ function pausarVoz(){
   renderGravador();
 }
 function concluirVoz(){
-  const txt=voz.buffer.trim();
+  const txt=limparRepeticoes(voz.previo+" "+voz.sessao);
   const alvo=document.getElementById(voz.alvo);
   if(alvo&&txt){ alvo.value=(alvo.value?alvo.value.trimEnd()+"\n":"")+txt;
     if(voz.alvo==="nota"){ ci().nota=alvo.value.trim(); salvar(); } }
   encerrarVoz(true);
-  if(txt) toast("Transcrição adicionada."); else toast("Nada foi captado.");
+  toast(txt?"Transcrição adicionada.":"Nada foi captado.");
 }
 function encerrarVoz(ok){
   voz.ativo=false; voz.pausado=false;
@@ -879,17 +902,18 @@ function encerrarVoz(ok){
   clearInterval(voz.timer);
   const box=document.getElementById("grav-"+voz.alvo);
   if(box){ box.classList.remove("on"); box.innerHTML=""; }
-  voz.alvo=null; voz.buffer="";
+  voz.alvo=null; voz.previo=""; voz.sessao="";
 }
 function renderGravador(){
   const box=document.getElementById("grav-"+voz.alvo); if(!box) return;
   box.classList.add("on");
-  box.innerHTML='<span class="pontoGrav'+(voz.pausado?" pausado":"")+'"></span>'+
-    '<span class="gravTempo" id="gravTempo-'+voz.alvo+'">0:00</span>'+
-    '<span style="flex:1;font-size:12.5px;color:var(--mudo);overflow:hidden;white-space:nowrap;text-overflow:ellipsis" id="gravParcial-'+voz.alvo+'">'+(voz.pausado?"Pausado":"Ouvindo...")+'</span>'+
+  box.innerHTML='<div class="gravLinha"><span class="pontoGrav'+(voz.pausado?" pausado":"")+'"></span>'+
+    '<span class="gravTempo" id="gravTempo">0:00</span>'+
+    '<span class="gravStatus">'+(voz.pausado?"Pausado":"Gravando")+'</span></div>'+
+    '<div class="gravBtns">'+
     '<button onclick="pausarVoz()">'+(voz.pausado?"Retomar":"Pausar")+'</button>'+
-    '<button onclick="concluirVoz()" style="color:var(--ok);border-color:var(--ok)">Concluir ✓</button>'+
-    '<button onclick="encerrarVoz(false)" style="color:#D06A82">✕</button>';
+    '<button class="gravOk" onclick="concluirVoz()">Concluir ✓</button>'+
+    '<button class="gravX" onclick="encerrarVoz(false)">Descartar</button></div>';
   atualizarTempoVoz();
 }
 
@@ -1193,7 +1217,7 @@ function renderLivro(){
       '<div class="cardMeta">Importe o arquivo livro.json guardado no seu OneDrive</div>'+
       '<p class="texto" style="margin-bottom:14px">O livro é carregado direto no aparelho e fica disponível offline. Ele não vai para a internet nem entra no backup, por ser sua cópia licenciada de uso pessoal.</p>'+
       '<button class="btn btnPrim" onclick="document.getElementById(\'arqLivro\').click()">Importar livro</button>'+
-      '<input type="file" id="arqLivro" accept="application/json" style="display:none" onchange="importarLivro(this)"></div>';
+      '<input type="file" id="arqLivro" accept="application/json,.json" style="display:none" onchange="importarLivro(this)"></div>';
     return;
   }
   const lidos=new Set(dados.config.livro.lidos||[]);
@@ -1209,6 +1233,10 @@ function renderLivro(){
     '<div class="cardMeta">'+escapar(LIVRO.autor||"")+' · '+lidos.size+' de '+LIVRO.capitulos.length+' capítulos lidos</div>'+
     '<div class="secTitulo" style="margin-top:4px">Suas 10 forças</div>'+minhas.map(item).join("")+
     '<div class="secTitulo">Todos os capítulos</div>'+LIVRO.capitulos.map(item).join("")+'</div>'+
+    '<div class="card" style="padding:12px 18px"><div class="ajLinha" style="border:none;padding:4px 0">'+
+    '<div><div class="ajTitulo">Arquivo do livro</div><div class="ajDesc">Substitui a versão carregada por um livro.json novo.</div></div>'+
+    '<button class="btn btnGhost" style="width:auto;padding:10px 15px" onclick="document.getElementById(\'arqLivro2\').click()">Atualizar</button>'+
+    '<input type="file" id="arqLivro2" accept="application/json,.json" style="display:none" onchange="importarLivro(this)"></div></div>'+
     '<p class="hint" style="text-align:center">Cópia licenciada para uso pessoal. Conteúdo armazenado apenas neste aparelho.</p>';
 }
 function abrirCap(i){
@@ -1217,11 +1245,12 @@ function abrirCap(i){
   const c=LIVRO.capitulos[i];
   document.getElementById("livroLista").style.display="none";
   const le=document.getElementById("leitor"); le.classList.add("on");
-  document.getElementById("leitorTitulo").textContent=c.titulo;
+  document.getElementById("leitorTitulo").innerHTML=escapar(c.titulo)+'<div class="capMeta">Capítulo '+(i+1)+' de '+LIVRO.capitulos.length+'</div>';
   const corpo=document.getElementById("leitorCorpo");
-  corpo.innerHTML=c.html;
-  corpo.style.setProperty("--fonteLivro",(dados.config.fonteLivro||16.5)+"px");
-  document.documentElement.style.setProperty("--fonteLivro",(dados.config.fonteLivro||16.5)+"px");
+  corpo.innerHTML=c.html+'<div id="leitorFim">···</div>';
+  corpo.lang="en";
+  corpo.style.fontSize=(dados.config.fonteLivro||17)+"px";
+  const fill=document.getElementById("leitorProgFill"); if(fill) fill.style.width="0%";
   document.getElementById("btnLido").textContent=(dados.config.livro.lidos||[]).includes(c.id)?"Lido ✓":"Concluir ✓";
   const pos=(dados.config.livro.pos||{})[c.id]||0;
   requestAnimationFrame(()=>window.scrollTo(0,pos));
@@ -1242,8 +1271,9 @@ function marcarLido(){
   document.getElementById("btnLido").textContent=(dados.config.livro.lidos||[]).includes(c.id)?"Lido ✓":"Concluir ✓";
 }
 function fonteLivro(dir){
-  dados.config.fonteLivro=Math.min(22,Math.max(13,(dados.config.fonteLivro||16.5)+dir*1.5));
-  salvar(); document.documentElement.style.setProperty("--fonteLivro",dados.config.fonteLivro+"px");
+  dados.config.fonteLivro=Math.min(22,Math.max(14,(dados.config.fonteLivro||17)+dir));
+  salvar();
+  const c=document.getElementById("leitorCorpo"); if(c) c.style.fontSize=dados.config.fonteLivro+"px";
 }
 function salvarPosLivro(){
   if(!LIVRO||!document.getElementById("leitor").classList.contains("on")) return;
@@ -1252,6 +1282,12 @@ function salvarPosLivro(){
   dados.config.livro.pos[c.id]=window.scrollY; salvar();
 }
 setInterval(()=>{ if(document.getElementById("leitor").classList.contains("on")) salvarPosLivro(); },5000);
+window.addEventListener("scroll",()=>{
+  if(!document.getElementById("leitor").classList.contains("on")) return;
+  const d=document.documentElement; const max=d.scrollHeight-d.clientHeight;
+  const f=document.getElementById("leitorProgFill");
+  if(f) f.style.width=(max>0? Math.min(100,d.scrollTop/max*100):0)+"%";
+},{passive:true});
 
 /* ================= AJUSTES ================= */
 function renderAjustes(){
