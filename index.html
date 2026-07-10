@@ -44,7 +44,7 @@ textarea,input{font-family:inherit;color:var(--texto)}
 #app{max-width:640px;margin:0 auto;padding:20px 16px calc(92px + var(--safe-bottom))}
 header.topo{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px}
 h1{font-size:27px;margin:0;line-height:1.15}
-.sub{font-size:13px;color:var(--mudo);margin-top:4px;text-transform:capitalize}
+.sub{font-size:13px;color:var(--mudo);margin-top:4px}
 .btnIcone{width:46px;height:46px;border-radius:13px;border:1px solid var(--linha);background:var(--card);
   display:flex;align-items:center;justify-content:center;color:var(--texto2);flex:none;box-shadow:var(--sombra)}
 .btnIcone svg{width:21px;height:21px}
@@ -148,7 +148,7 @@ p.texto{font-size:14.5px;line-height:1.65;color:var(--texto2);margin:0}
 .histTags{display:flex;flex-wrap:wrap;gap:6px}
 .histTag{font-size:12px;border:1px solid var(--linha);border-radius:99px;padding:3px 10px}
 .histNota{font-size:13px;color:var(--texto2);margin-top:7px;white-space:pre-line;line-height:1.55}
-.mesTitulo{font-family:'Fraunces',Georgia,serif;font-size:16.5px;font-weight:650;margin:20px 0 6px;text-transform:capitalize}
+.mesTitulo{font-family:'Fraunces',Georgia,serif;font-size:16.5px;font-weight:650;margin:20px 0 6px}
 svg text{font-family:'Inter',sans-serif}
 
 .ajLinha{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--linha)}
@@ -339,7 +339,32 @@ nav.baixo svg{width:21px;height:21px}
         <div><div class="ajTitulo">Testar notificação</div><div class="ajDesc" id="notifStatus"></div></div>
         <button class="btn btnGhost" style="width:auto;padding:10px 15px" onclick="testarNotif()">Testar</button>
       </div>
-      <div class="hint">O aviso dispara no horário com o app aberto, ou assim que você abrir o app depois do horário. No smartwatch, ative o espelhamento do Chrome nas notificações do app do relógio.</div>
+      <div class="hint">Com o app aberto (ou ao abrir depois do horário), estes avisos disparam sozinhos. Para avisos com o app fechado, configure o card abaixo.</div>
+    </div>
+    <div class="card">
+      <div class="cardTitulo">Avisos com o app fechado</div>
+      <div class="cardMeta">Push enviado pelo robô do GitHub nos seus horários. Configuração única.</div>
+      <div class="ajLinha">
+        <div><div class="ajTitulo">1. Assinatura deste aparelho</div><div class="ajDesc" id="pushStatus">Gere e cole no secret PUSH_SUBSCRIPTION do repositório.</div></div>
+        <button class="btn btnGhost" style="width:auto;padding:10px 15px" onclick="ativarPush()">Gerar</button>
+      </div>
+      <div id="pushBox" style="display:none;padding:10px 0;border-bottom:1px solid var(--linha)">
+        <textarea id="pushJson" readonly style="min-height:88px;font-size:11px"></textarea>
+        <button class="btn btnGhost" style="margin-top:8px" onclick="copiarPush()">Copiar assinatura</button>
+      </div>
+      <div class="ajLinha">
+        <div style="flex:1"><div class="ajTitulo">2. Token do GitHub</div><div class="ajDesc">Permite ao app gravar seus horários no repositório. Fica só neste aparelho.</div>
+        <input type="password" id="ghToken" placeholder="github_pat_..." style="width:100%;margin-top:8px" onchange="salvarToken(this.value)"></div>
+      </div>
+      <div class="ajLinha">
+        <div><div class="ajTitulo">Somente dias úteis</div><div class="ajDesc">Sem push aos sábados e domingos.</div></div>
+        <button class="switch" id="swDiasUteis" onclick="toggleDiasUteis()" aria-label="Somente dias úteis"></button>
+      </div>
+      <div class="ajLinha">
+        <div><div class="ajTitulo">Sincronizar horários</div><div class="ajDesc" id="syncStatus">Os horários definidos acima valem também para o push.</div></div>
+        <button class="btn btnGhost" style="width:auto;padding:10px 15px" onclick="sincronizarHorarios(true)">Enviar</button>
+      </div>
+      <div class="hint">Roteiro completo no INSTRUCOES do pacote. O robô confere a cada 15 minutos; o aviso chega em poucos minutos do horário, com estado antiduplicação.</div>
     </div>
     <div class="card">
       <div class="cardTitulo">Dados</div>
@@ -359,7 +384,7 @@ nav.baixo svg{width:21px;height:21px}
     </div>
     <div class="card">
       <div class="cardTitulo">Sobre</div>
-      <p class="texto">Forças 4.1 · PDI pessoal baseado no relatório CliftonStrengths 34 (Gallup) de Mateus Santos. Fase 1: forças 1 a 5. Fase 2: forças 6 a 10. Seus dados ficam apenas neste aparelho.</p>
+      <p class="texto">Forças 4.2 · PDI pessoal baseado no relatório CliftonStrengths 34 (Gallup) de Mateus Santos. Fase 1: forças 1 a 5. Fase 2: forças 6 a 10. Seus dados ficam apenas neste aparelho.</p>
     </div>
   </section>
 </div>
@@ -629,6 +654,7 @@ function migrar(d){
   if(!c.fonteLivro||c.fonteLivro===16.5) c.fonteLivro=17;
   if(!c.livro) c.livro={cap:0,lidos:[],pos:{}};
   if(!d.lexicoExtra) d.lexicoExtra={};
+  if(c.diasUteis===undefined) c.diasUteis=true;
 }
 function salvar(){ try{ localStorage.setItem(CHAVE, JSON.stringify(dados)); }catch(e){ toast("Falha ao salvar. Verifique o espaço do navegador."); } }
 function ci(){ if(!dados.checkins[hoje()]) dados.checkins[hoje()]={praticadas:[],acaoFeita:false,nota:"",acaoIdx:0}; return dados.checkins[hoje()]; }
@@ -648,8 +674,8 @@ function mudarTema(t){ dados.config.tema=t; salvar(); aplicarTema(); renderTudo(
 function renderCabecalho(){
   const h=new Date().getHours();
   document.getElementById("saudacao").textContent=(h<12?"Bom dia":h<18?"Boa tarde":"Boa noite")+", Mateus";
-  const d=new Date();
-  document.getElementById("dataHoje").textContent=DIAS[d.getDay()]+", "+d.getDate()+" de "+MESES[d.getMonth()];
+  const d=new Date(); const nd=DIAS[d.getDay()];
+  document.getElementById("dataHoje").textContent=nd.charAt(0).toUpperCase()+nd.slice(1)+", "+d.getDate()+" de "+MESES[d.getMonth()];
 }
 
 /* ================= ACAO E INSIGHT DO DIA ================= */
@@ -721,6 +747,7 @@ function renderCheckin(){
   FORCAS.filter(x=>x.fase===dados.fase).forEach(x=>{
     const on=c.praticadas.includes(x.id); const cor=DOM[x.dom].cor;
     const b=document.createElement("button"); b.className="chip"+(on?" on":"");
+    b.setAttribute("aria-pressed",on);
     if(on){ b.style.borderColor=cor; b.style.color=cor; b.style.background="color-mix(in srgb, "+cor+" 13%, transparent)"; }
     b.innerHTML='<b>'+x.rank+'</b>'+x.nome+'<span class="ok">✓</span>';
     b.onclick=()=>togglePratica(x.id);
@@ -860,13 +887,20 @@ function iniciarVoz(alvoId){
   if(!vozSuportada()){ toast("Ditado indisponível neste navegador."); return; }
   if(voz.ativo){ toast("Já existe um ditado em andamento."); return; }
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  voz.rec=new SR(); voz.rec.lang="pt-BR"; voz.rec.continuous=true; voz.rec.interimResults=false;
+  voz.rec=new SR(); voz.rec.lang="pt-BR"; voz.rec.continuous=true; voz.rec.interimResults=true;
   voz.alvo=alvoId; voz.previo=""; voz.sessao=""; voz.pausado=false; voz.ativo=true; voz.acum=0; voz.t0=Date.now();
   voz.rec.onresult=(e)=>{
-    /* reconstrói a transcrição da sessão inteira a cada evento, eliminando somas duplicadas */
-    let fin="";
-    for(let i=0;i<e.results.length;i++) if(e.results[i].isFinal) fin+=e.results[i][0].transcript+" ";
-    voz.sessao=fin;
+    /* reconstrói a sessão inteira a cada evento (sem somas duplicadas);
+       no Android o Chrome pode nunca marcar isFinal, então o parcial também compõe a sessão */
+    let fin="", parc="";
+    for(let i=0;i<e.results.length;i++){
+      const t=e.results[i][0].transcript;
+      if(e.results[i].isFinal) fin+=t+" "; else parc+=t+" ";
+    }
+    voz.sessao=(fin+" "+parc).trim();
+    const st=document.getElementById("gravStatus");
+    if(st){ const tudo=limparRepeticoes(voz.previo+" "+voz.sessao);
+      st.textContent=tudo? "..."+tudo.slice(-44) : "Gravando"; }
   };
   voz.rec.onerror=(e)=>{ if(e.error==="not-allowed"){ toast("Permita o microfone nas configurações."); encerrarVoz(false); } };
   voz.rec.onend=()=>{
@@ -1178,7 +1212,7 @@ function renderHistorico(){
   let html=""; let mesAtual="";
   todos.forEach(d=>{
     const dt=new Date(d+"T12:00:00");
-    const chave=MESES[dt.getMonth()]+" de "+dt.getFullYear();
+    const chave=MESES[dt.getMonth()].charAt(0).toUpperCase()+MESES[dt.getMonth()].slice(1)+" de "+dt.getFullYear();
     if(chave!==mesAtual){ if(mesAtual) html+='</div>';
       html+='<div class="mesTitulo">'+chave+'</div><div class="card">'; mesAtual=chave; }
     const c=dados.checkins[d];
@@ -1299,10 +1333,16 @@ function renderAjustes(){
   document.getElementById("segF1").classList.toggle("on",dados.fase===1);
   document.getElementById("segF2").classList.toggle("on",dados.fase===2);
   document.getElementById("swNotif").classList.toggle("on",dados.config.notif);
+  document.getElementById("swNotif").setAttribute("aria-checked",!!dados.config.notif);
   const st=document.getElementById("notifStatus");
   if(st){ const p=("Notification" in window)?Notification.permission:"sem suporte";
     st.textContent="Permissão do Android: "+(p==="granted"?"concedida":p==="denied"?"negada (libere nas configurações do sistema)":"ainda não solicitada"); }
   document.getElementById("horaManha").value=dados.config.horaManha||"08:30";
+  document.getElementById("swDiasUteis").classList.toggle("on",dados.config.diasUteis!==false);
+  document.getElementById("swDiasUteis").setAttribute("aria-checked",dados.config.diasUteis!==false);
+  const tk=document.getElementById("ghToken"); if(tk&&document.activeElement!==tk) tk.value=dados.config.ghToken||"";
+  const ss=document.getElementById("syncStatus");
+  if(ss&&dados.config.ultimoSync) ss.textContent="Sincronizado em "+dados.config.ultimoSync+" ✓";
   document.getElementById("horaTarde").value=dados.config.horaTarde||"18:00";
   const seg=document.getElementById("segMeta"); seg.innerHTML="";
   [3,4,5,6,7].forEach(n=>{ const b=document.createElement("button");
@@ -1311,7 +1351,76 @@ function renderAjustes(){
     seg.appendChild(b); });
 }
 function mudarFase(f){ dados.fase=f; salvar(); renderTudo(); toast("Fase "+f+" ativada."); }
-function salvarHora(campo,v){ dados.config[campo]=v; salvar(); toast("Lembrete definido para "+v+"."); }
+function salvarHora(campo,v){ dados.config[campo]=v; salvar(); toast("Lembrete definido para "+v+"."); sincronizarHorarios(false); }
+const VAPID_PUBLIC = "BC0XdiNwIkNVKglZ2yeMmQf9fO4qfC69ra0D-ZUsZWxJfcXgwLgrMT9niSIv6QyzI9uWxGq4ew-AajxBbp7kJeM";
+function b64ParaUint8(b64){
+  const pad="=".repeat((4-b64.length%4)%4);
+  const base=(b64+pad).replace(/-/g,"+").replace(/_/g,"/");
+  const raw=atob(base); const arr=new Uint8Array(raw.length);
+  for(let i=0;i<raw.length;i++) arr[i]=raw.charCodeAt(i);
+  return arr;
+}
+async function ativarPush(){
+  try{
+    if(!("PushManager" in window)){ toast("Este navegador não suporta push."); return; }
+    if(Notification.permission!=="granted"){
+      const p=await Notification.requestPermission();
+      if(p!=="granted"){ toast("Permissão de notificação é necessária."); return; }
+    }
+    const reg=await navigator.serviceWorker.ready;
+    let sub=await reg.pushManager.getSubscription();
+    if(!sub) sub=await reg.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey:b64ParaUint8(VAPID_PUBLIC) });
+    document.getElementById("pushJson").value=JSON.stringify(sub);
+    document.getElementById("pushBox").style.display="block";
+    document.getElementById("pushStatus").textContent="Assinatura gerada. Copie e cole no secret PUSH_SUBSCRIPTION.";
+    dados.config.notif=true; salvar(); renderAjustes();
+  }catch(e){ toast("Falha ao assinar push: "+e.message); }
+}
+function copiarPush(){
+  const t=document.getElementById("pushJson"); t.select(); t.setSelectionRange(0,999999);
+  navigator.clipboard.writeText(t.value).then(()=>toast("Copiado. Cole no secret PUSH_SUBSCRIPTION."))
+    .catch(()=>{ document.execCommand("copy"); toast("Copiado."); });
+}
+function salvarToken(v){ dados.config.ghToken=v.trim(); salvar(); if(v.trim()) sincronizarHorarios(false); }
+function toggleDiasUteis(){ dados.config.diasUteis=!(dados.config.diasUteis!==false); salvar(); renderAjustes(); sincronizarHorarios(false); }
+function repoInfo(){
+  const host=location.hostname, seg=location.pathname.split("/").filter(Boolean);
+  if(!host.endsWith(".github.io")) return null;
+  const owner=host.split(".")[0];
+  return { owner, repo: seg.length? seg[0] : host };
+}
+let syncTm=null;
+async function sincronizarHorarios(manual){
+  const token=dados.config.ghToken;
+  const st=document.getElementById("syncStatus");
+  if(!token){ if(manual) toast("Informe o token do GitHub acima."); return; }
+  const info=repoInfo();
+  if(!info){ if(manual) toast("Sincronização disponível apenas no app publicado no GitHub Pages."); return; }
+  clearTimeout(syncTm);
+  syncTm=setTimeout(async ()=>{
+    try{
+      const url="https://api.github.com/repos/"+info.owner+"/"+info.repo+"/contents/horarios.json";
+      const cab={ "Authorization":"Bearer "+token, "Accept":"application/vnd.github+json" };
+      let sha=null;
+      const r1=await fetch(url,{headers:cab});
+      if(r1.ok) sha=(await r1.json()).sha;
+      const corpo={ message:"Atualiza horários dos lembretes (via app)",
+        content: btoa(JSON.stringify({ manha:dados.config.horaManha, tarde:dados.config.horaTarde,
+          diasUteis:dados.config.diasUteis!==false }, null, 2)) };
+      if(sha) corpo.sha=sha;
+      const r2=await fetch(url,{method:"PUT",headers:cab,body:JSON.stringify(corpo)});
+      if(!r2.ok) throw new Error("HTTP "+r2.status);
+      const ag=new Date();
+      dados.config.ultimoSync=fmtBR(hoje())+" "+String(ag.getHours()).padStart(2,"0")+":"+String(ag.getMinutes()).padStart(2,"0");
+      salvar();
+      if(st) st.textContent="Sincronizado em "+dados.config.ultimoSync+" ✓";
+      toast("Horários sincronizados com o robô.");
+    }catch(e){
+      if(st) st.textContent="Falha na sincronização ("+e.message+"). Confira o token.";
+      if(manual) toast("Falha ao sincronizar. Token válido e com acesso ao repositório?");
+    }
+  }, manual?0:900);
+}
 async function testarNotif(){
   if(!("Notification" in window)){ toast("Navegador sem suporte a notificações."); return; }
   if(Notification.permission!=="granted"){

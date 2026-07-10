@@ -1,6 +1,6 @@
 /* Forças PWA - Service Worker */
 const BADGE = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAABZ0lEQVR4nO3cQW6DMBRAwVD1/lemaxYNhkCfTGfWhhA/kUhfgtcLAAD+3FJfwKzWdV331izLsru/X9dczv8ysvmj6wQ4aHTzR9cLcMDRzR85ToCYADEBYgLEBIgJEBMgJkBMgJgAMQFiAsS+6wu40+jwbGRuf5fH3gFHJpdnp5xXeGSAMxtaRXhcgE82sojwuACzESAmQEyAmAAxAWICxASICRATICZALB9HzzAyvlN6B8wyMr5TFmCmkfGdkgCzjYzv5E84JkBMgJgAMQFiAsQEiAkQEyAmQGx4GnrVyynYGroDrnw5BVu7Aa5+OQVbbwPc8XIKtvwJxwSICRATICZATICYADEBYgLEBIgJEBMgJkBMgJgAMQFiAsQEiAkQEyAmQEyAmAAxAWICxASICRATICZATICYALG3Ac4+crR33CePMs147nfH7d4BRz90dP2ZLzPjuffWD/0EVRc3+7k9tAgA8Jsf30pwrCKBvW4AAAAASUVORK5CYII=";
-const CACHE = "forcas-v10";
+const CACHE = "forcas-v11";
 const PRECACHE = [
   "./",
   "./index.html",
@@ -39,7 +39,7 @@ self.addEventListener("fetch", (e) => {
         const clone = res.clone();
         caches.open(CACHE).then((c) => c.put(e.request, clone));
         return res;
-      }).catch(() => hit))
+      }))
     );
   }
 });
@@ -65,6 +65,22 @@ self.addEventListener("periodicsync", (e) => {
       )
     );
   }
+});
+
+/* Web Push: recebido mesmo com o app fechado (enviado pelo robô do GitHub) */
+self.addEventListener("push", (e) => {
+  let d = {};
+  try { d = e.data ? e.data.json() : {}; } catch (err) {}
+  e.waitUntil(
+    self.registration.showNotification(d.titulo || "Forças em prática", {
+      body: d.corpo || "Hora de praticar suas forças.",
+      icon: "icon-192.png",
+      badge: BADGE,
+      tag: d.tag || "push-forcas",
+      actions: [{ action: "abrir", title: "Abrir app" }],
+      data: { url: "./index.html#hoje" }
+    })
+  );
 });
 
 /* Notificação disparada pelo app em primeiro plano */
