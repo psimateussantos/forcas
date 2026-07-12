@@ -179,6 +179,8 @@ svg text{font-family:'Inter',sans-serif}
 #leitorCorpo h1,#leitorCorpo h2,#leitorCorpo h3{font-family:'Fraunces',Georgia,serif;color:var(--texto);line-height:1.35;
   text-align:center;text-indent:0;margin:1.5em 0 1.1em;font-weight:650}
 #leitorCorpo>*:first-child{margin-top:0}
+#leitorCorpo.capAnim{animation:capFade .4s cubic-bezier(.2,.7,.3,1)}
+@keyframes capFade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 #leitorCorpo p{margin:0;text-indent:1.5em}
 #leitorCorpo p:first-of-type,#leitorCorpo h1+p,#leitorCorpo h2+p,#leitorCorpo h3+p,#leitorCorpo blockquote p{text-indent:0}
 #leitorCorpo p:first-of-type::first-letter{font-family:'Fraunces',Georgia,serif;font-size:3em;float:left;line-height:.88;padding:3px 8px 0 0;color:var(--texto)}
@@ -212,10 +214,22 @@ nav.baixo svg{width:21px;height:21px}
 #printArea{display:none}
 @media print{
   body>*{display:none!important}
-  #printArea{display:block!important;color:#000;font-family:Georgia,serif}
-  #printArea h1{font-size:22pt}#printArea h2{font-size:14pt;margin-top:16pt}
-  #printArea table{width:100%;border-collapse:collapse;font-size:10pt}
-  #printArea th,#printArea td{border:1px solid #999;padding:5pt;text-align:left}
+  #printArea{display:block!important;color:#14181F;font-family:'Inter',Helvetica,sans-serif;font-size:10.5pt}
+  #printArea .cabecalho{border-bottom:2.5pt solid #14181F;padding-bottom:10pt;margin-bottom:14pt}
+  #printArea h1{font-family:'Fraunces',Georgia,serif;font-size:23pt;margin:0}
+  #printArea .meta{color:#555;font-size:9.5pt;margin-top:4pt}
+  #printArea h2{font-family:'Fraunces',Georgia,serif;font-size:13pt;margin:16pt 0 6pt}
+  #printArea .kgrid{display:flex;gap:8pt}
+  #printArea .kbox{flex:1;border:1pt solid #ccc;border-radius:6pt;padding:8pt 9pt}
+  #printArea .kv{font-family:'Fraunces',Georgia,serif;font-size:18pt}
+  #printArea .kl{font-size:8pt;color:#555;margin-top:2pt}
+  #printArea table{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:3pt}
+  #printArea th{text-align:left;border-bottom:1.5pt solid #14181F;padding:5pt 6pt;font-size:8pt;text-transform:uppercase;letter-spacing:.5pt}
+  #printArea td{border-bottom:.75pt solid #ddd;padding:5pt 6pt;vertical-align:top}
+  #printArea tr:nth-child(even) td{background:#F5F5F8}
+  #printArea .barra{height:6pt;border-radius:3pt;background:#E8E8EE;position:relative;min-width:60pt}
+  #printArea .barra>span{position:absolute;left:0;top:0;bottom:0;border-radius:3pt}
+  #printArea .rodape{margin-top:16pt;font-size:8pt;color:#777}
 }
 </style>
 </head>
@@ -242,6 +256,7 @@ nav.baixo svg{width:21px;height:21px}
   <!-- ===== HOJE ===== -->
   <section class="pagina on" id="pg-hoje">
     <div class="card" id="cardSemana"></div>
+    <div class="card" id="cardAlerta" style="display:none;border-left:3px solid var(--infl)"></div>
     <div class="card" id="cardResumoSem" style="display:none"></div>
     <div class="card" id="cardAcao"></div>
     <div class="card" id="cardCheckin"></div>
@@ -271,7 +286,7 @@ nav.baixo svg{width:21px;height:21px}
     <div class="card">
       <div class="cardTitulo">Histórico completo</div>
       <div class="cardMeta" id="histMeta"></div>
-      <input type="search" id="histBusca" placeholder="Buscar nas anotações..." style="width:100%" oninput="renderHistorico()">
+      <input type="search" id="histBusca" placeholder="Buscar nas anotações..." style="width:100%" oninput="histLimite=60;renderHistorico()">
       <div class="chips" id="histFiltros" style="margin-top:12px"></div>
     </div>
     <div id="histLista"></div>
@@ -354,7 +369,7 @@ nav.baixo svg{width:21px;height:21px}
       </div>
       <div class="ajLinha">
         <div style="flex:1"><div class="ajTitulo">2. Token do GitHub</div><div class="ajDesc">Permite ao app gravar seus horários no repositório. Fica só neste aparelho.</div>
-        <input type="password" id="ghToken" placeholder="github_pat_..." style="width:100%;margin-top:8px" onchange="salvarToken(this.value)"></div>
+        <div id="tokenArea" style="margin-top:8px"></div></div>
       </div>
       <div class="ajLinha">
         <div><div class="ajTitulo">Somente dias úteis</div><div class="ajDesc">Sem push aos sábados e domingos.</div></div>
@@ -378,13 +393,13 @@ nav.baixo svg{width:21px;height:21px}
         <input type="file" id="arqImport" accept="application/json" style="display:none" onchange="importar(this)">
       </div>
       <div class="ajLinha">
-        <div><div class="ajTitulo">Zerar dados</div><div class="ajDesc">Apaga todo o histórico deste aparelho. Sem volta.</div></div>
+        <div><div class="ajTitulo">Zerar histórico</div><div class="ajDesc">Apaga check-ins e aprendizado do classificador. Ajustes, token e livro são preservados.</div></div>
         <button class="btn btnPerigo" style="width:auto;padding:10px 15px" onclick="zerar()">Zerar</button>
       </div>
     </div>
     <div class="card">
       <div class="cardTitulo">Sobre</div>
-      <p class="texto">Forças 4.2 · PDI pessoal baseado no relatório CliftonStrengths 34 (Gallup) de Mateus Santos. Fase 1: forças 1 a 5. Fase 2: forças 6 a 10. Seus dados ficam apenas neste aparelho.</p>
+      <p class="texto">Forças 4.4 · PDI pessoal baseado no relatório CliftonStrengths 34 (Gallup) de Mateus Santos. Fase 1: forças 1 a 5. Fase 2: forças 6 a 10. Seus dados ficam apenas neste aparelho.</p>
     </div>
   </section>
 </div>
@@ -633,10 +648,12 @@ const hoje = () => { const d=new Date(); return d.getFullYear()+"-"+String(d.get
 const fmtBR = iso => { const [a,m,d]=iso.split("-"); return d+"/"+m+"/"+a; };
 const MESES=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
 const DIAS=["domingo","segunda-feira","terça-feira","quarta-feira","quinta-feira","sexta-feira","sábado"];
+let dadosEramPadrao=false;
 let dados = carregar();
 migrar(dados);
 function carregar(){
   try{ const r = localStorage.getItem(CHAVE); if(r) return JSON.parse(r); }catch(e){}
+  dadosEramPadrao=true;
   return { fase:1, inicio:hoje(), checkins:{}, config:{} };
 }
 function migrar(d){
@@ -656,7 +673,12 @@ function migrar(d){
   if(!d.lexicoExtra) d.lexicoExtra={};
   if(c.diasUteis===undefined) c.diasUteis=true;
 }
-function salvar(){ try{ localStorage.setItem(CHAVE, JSON.stringify(dados)); }catch(e){ toast("Falha ao salvar. Verifique o espaço do navegador."); } }
+let espTm=null;
+function salvar(){
+  try{ localStorage.setItem(CHAVE, JSON.stringify(dados)); }catch(e){ toast("Falha ao salvar. Verifique o espaço do navegador."); }
+  clearTimeout(espTm);
+  espTm=setTimeout(()=>{ try{ idbSet("dados", JSON.parse(JSON.stringify(dados))); }catch(e){} },1200);
+}
 function ci(){ if(!dados.checkins[hoje()]) dados.checkins[hoje()]={praticadas:[],acaoFeita:false,nota:"",acaoIdx:0}; return dados.checkins[hoje()]; }
 function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(t._tm); t._tm=setTimeout(()=>t.classList.remove("on"),2400); }
 function escapar(s){ const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
@@ -700,8 +722,30 @@ function insightDoDia(forcaId){
 }
 
 /* ================= HOJE ================= */
+function diasDesde(iso){ if(!iso) return 9999; return Math.floor((new Date(hoje()+"T12:00:00")-new Date(iso+"T12:00:00"))/86400000); }
+function backupPendente(){
+  const base=dados.config.ultimoBackup||dados.inicio;
+  if(diasDesde(base)<=30) return false;
+  if(dados.config.backupAdiado && diasDesde(dados.config.backupAdiado)<7) return false;
+  return true;
+}
+function adiarBackup(){ dados.config.backupAdiado=hoje(); salvar(); renderHoje(); toast("Lembro você em uma semana."); }
+function renderAlertas(){
+  const al=document.getElementById("cardAlerta"); if(!al) return;
+  const avisos=[];
+  if(pushDivergente) avisos.push('<div class="ajTitulo">Avisos com o app fechado inativos</div>'+
+    '<div class="ajDesc">A assinatura push deste aparelho mudou (reinstalação ou limpeza do Chrome). Gere uma nova em Ajustes e atualize o secret PUSH_SUBSCRIPTION.</div>'+
+    '<button class="btn btnGhost" style="margin-top:10px" onclick="irPara(\'ajustes\')">Abrir Ajustes</button>');
+  if(backupPendente()) avisos.push('<div class="ajTitulo">Backup mensal pendente</div>'+
+    '<div class="ajDesc">Mais de 30 dias desde o último backup. Dois toques até o OneDrive.</div>'+
+    '<div class="duplo" style="margin-top:10px"><button class="btn btnPrim" onclick="exportar()">Exportar agora</button>'+
+    '<button class="btn btnGhost" onclick="adiarBackup()">Depois</button></div>');
+  if(avisos.length){ al.style.display="block"; al.innerHTML=avisos.join('<div style="border-top:1px solid var(--linha);margin:14px 0"></div>'); }
+  else al.style.display="none";
+}
 function renderHoje(){
   renderCabecalho();
+  renderAlertas();
   const {f,a,idx,total}=acaoDoDia(); const c=ci(); const D=DOM[f.dom];
   const ca=document.getElementById("cardAcao");
   ca.className="card "+D.cls;
@@ -718,7 +762,7 @@ function renderHoje(){
   renderCheckin();
   renderSemana();
 }
-function toggleAcao(){ const c=ci(); c.acaoFeita=!c.acaoFeita; salvar(); renderHoje(); renderProgresso(); renderHistorico(); checarMeta(); }
+function toggleAcao(){ const c=ci(); c.acaoFeita=!c.acaoFeita; salvar(); renderHoje(); pedirRender("progresso","historico"); checarMeta(); }
 
 function renderCheckin(){
   const c=ci(); const box=document.getElementById("cardCheckin");
@@ -757,13 +801,13 @@ function renderCheckin(){
 function togglePratica(id){ const c=ci();
   c.praticadas = c.praticadas.includes(id)? c.praticadas.filter(x=>x!==id) : [...c.praticadas,id];
   const n=document.getElementById("nota"); if(n) c.nota=n.value.trim();
-  salvar(); renderCheckin(); renderSemana(); renderProgresso(); renderHistorico(); }
+  salvar(); renderCheckin(); renderSemana(); pedirRender("progresso","historico"); }
 function salvarCheckin(){
   const c=ci(); const n=document.getElementById("nota"); if(n) c.nota=n.value.trim();
   const ag=new Date();
   c.salvo=String(ag.getHours()).padStart(2,"0")+":"+String(ag.getMinutes()).padStart(2,"0");
   c.editando=false;
-  salvar(); renderHoje(); renderProgresso(); renderHistorico(); checarMeta();
+  salvar(); renderHoje(); pedirRender("progresso","historico"); checarMeta();
   toast("Check-in salvo às "+c.salvo+".");
 }
 function editarCheckin(){ ci().editando=true; salvar(); renderCheckin(); }
@@ -871,7 +915,7 @@ function registrarClass(id){
   }
   document.getElementById("txtClass").value="";
   document.getElementById("resClass").innerHTML="";
-  salvar(); renderHoje(); renderProgresso(); renderHistorico(); checarMeta();
+  salvar(); renderHoje(); pedirRender("progresso","historico"); checarMeta();
   toast("Registrado em "+f.nome+". Vocabulário atualizado.");
 }
 
@@ -1168,21 +1212,24 @@ function gerarRelatorio(tipo){
     return;
   }
   const pa=document.getElementById("printArea");
-  pa.innerHTML='<h1>Forças · Relatório do período</h1>'+
-    '<p>Mateus Santos · '+iniS+' a '+fimS+' · Fase '+dados.fase+'</p>'+
-    '<h2>Indicadores</h2><table><tr><th>Dias com prática</th><th>Ações do dia concluídas</th><th>Sequência atual</th><th>Melhor sequência</th></tr>'+
-    '<tr><td>'+dias.length+'</td><td>'+acoes+'</td><td>'+calcStreak()+'</td><td>'+calcMelhorSeq()+'</td></tr></table>'+
-    '<h2>Práticas por força</h2><table><tr><th>Força</th><th>Registros</th></tr>'+
-    FORCAS.map(f=>'<tr><td>'+f.rank+'. '+f.nome+'</td><td>'+(cont[f.id]||0)+'</td></tr>').join("")+'</table>'+
-    '<h2>Registros do período</h2><table><tr><th>Data</th><th>Forças</th><th>Anotação</th></tr>'+
+  const CORP={execucao:"#7A4BD3",estrategico:"#0E8F68",relacionamento:"#1F6FCB",influencia:"#D66A14"};
+  const maxF=Math.max(1,...FORCAS.map(f=>cont[f.id]||0));
+  pa.innerHTML='<div class="cabecalho"><h1>Forças · Relatório do período</h1>'+
+    '<div class="meta">Mateus Santos · '+iniS+' a '+fimS+' · Fase '+dados.fase+' · Gerado em '+fmtBR(hoje())+'</div></div>'+
+    '<div class="kgrid">'+[[dias.length,"dias com prática"],[acoes,"ações do dia concluídas"],[calcStreak(),"sequência atual"],[calcMelhorSeq(),"melhor sequência"]]
+      .map(k=>'<div class="kbox"><div class="kv">'+k[0]+'</div><div class="kl">'+k[1]+'</div></div>').join("")+'</div>'+
+    '<h2>Práticas por força</h2><table><tr><th style="width:32%">Força</th><th style="width:12%">Registros</th><th>Distribuição</th></tr>'+
+    FORCAS.map(f=>{ const n=cont[f.id]||0; const pct=Math.round(n/maxF*100);
+      return '<tr><td>'+f.rank+'. '+f.nome+'</td><td>'+n+'</td><td><div class="barra"><span style="width:'+pct+'%;background:'+CORP[f.dom]+'"></span></div></td></tr>'; }).join("")+'</table>'+
+    '<h2>Registros do período</h2><table><tr><th style="width:15%">Data</th><th style="width:30%">Forças</th><th>Anotação</th></tr>'+
     dias.map(d=>{ const c=dados.checkins[d];
       return '<tr><td>'+fmtBR(d)+'</td><td>'+((c.praticadas||[]).map(id=>FORCAS.find(x=>x.id===id).nome).join(", ")||"")+(c.acaoFeita?" · Ação ✓":"")+'</td><td>'+escapar(c.nota||"")+'</td></tr>'; }).join("")+'</table>'+
-    '<p style="margin-top:14pt;font-size:9pt">Gerado pelo app Forças · Base: CliftonStrengths 34 (Gallup)</p>';
+    '<div class="rodape">Gerado pelo app Forças · Base: relatório CliftonStrengths 34 (Gallup) · Uso pessoal</div>';
   window.print();
 }
 
 /* ================= HISTORICO ================= */
-let histForca="";
+let histForca=""; let histLimite=60;
 function renderHistorico(){
   const pg=document.getElementById("pg-historico"); if(!pg) return;
   const filtros=document.getElementById("histFiltros");
@@ -1191,7 +1238,7 @@ function renderHistorico(){
     FORCAS.forEach(f=>{
       const b=document.createElement("button"); b.className="chip"; b.style.minHeight="40px"; b.style.padding="8px 13px";
       b.innerHTML='<b>'+f.rank+'</b>'+f.nome;
-      b.onclick=()=>{ histForca = histForca===f.id? "" : f.id; renderHistorico(); };
+      b.onclick=()=>{ histForca = histForca===f.id? "" : f.id; histLimite=60; renderHistorico(); };
       b.dataset.id=f.id; filtros.appendChild(b);
     });
   }
@@ -1209,8 +1256,9 @@ function renderHistorico(){
     return true;
   });
   document.getElementById("histMeta").textContent=todos.length+" "+(todos.length===1?"registro":"registros")+(q||histForca?" (filtrado)":" desde "+fmtBR(dados.inicio));
+  const visiveis=todos.slice(0,histLimite);
   let html=""; let mesAtual="";
-  todos.forEach(d=>{
+  visiveis.forEach(d=>{
     const dt=new Date(d+"T12:00:00");
     const chave=MESES[dt.getMonth()].charAt(0).toUpperCase()+MESES[dt.getMonth()].slice(1)+" de "+dt.getFullYear();
     if(chave!==mesAtual){ if(mesAtual) html+='</div>';
@@ -1223,6 +1271,8 @@ function renderHistorico(){
       '<div class="histTags">'+tags+'</div>'+(c.nota?'<div class="histNota">'+escapar(c.nota)+'</div>':"")+'</div>';
   });
   if(mesAtual) html+='</div>';
+  if(todos.length>histLimite)
+    html+='<button class="btn btnGhost" style="margin-bottom:14px" onclick="histLimite+=60;renderHistorico()">Carregar mais ('+(todos.length-histLimite)+' registros restantes)</button>';
   document.getElementById("histLista").innerHTML = html || '<div class="card"><p class="texto">Nenhum registro '+(q||histForca?"para este filtro.":"ainda. O histórico nasce com o primeiro check-in.")+'</p></div>';
 }
 
@@ -1231,8 +1281,10 @@ let LIVRO=null;
 function dbLivro(){ return new Promise((res,rej)=>{ const r=indexedDB.open("forcas_livro",1);
   r.onupgradeneeded=()=>r.result.createObjectStore("kv");
   r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); }
-async function livroGuardar(v){ const db=await dbLivro(); return new Promise((res,rej)=>{ const t=db.transaction("kv","readwrite"); t.objectStore("kv").put(v,"livro"); t.oncomplete=res; t.onerror=()=>rej(t.error); }); }
-async function livroLer(){ const db=await dbLivro(); return new Promise((res)=>{ const q=db.transaction("kv").objectStore("kv").get("livro"); q.onsuccess=()=>res(q.result||null); q.onerror=()=>res(null); }); }
+async function idbSet(k,v){ const db=await dbLivro(); return new Promise((res,rej)=>{ const t=db.transaction("kv","readwrite"); t.objectStore("kv").put(v,k); t.oncomplete=res; t.onerror=()=>rej(t.error); }); }
+async function idbGet(k){ const db=await dbLivro(); return new Promise((res)=>{ const q=db.transaction("kv").objectStore("kv").get(k); q.onsuccess=()=>res(q.result||null); q.onerror=()=>res(null); }); }
+function livroGuardar(v){ return idbSet("livro",v); }
+function livroLer(){ return idbGet("livro"); }
 async function importarLivro(input){
   const arq=input.files[0]; if(!arq) return;
   try{
@@ -1283,6 +1335,7 @@ function abrirCap(i){
   const corpo=document.getElementById("leitorCorpo");
   corpo.innerHTML=c.html+'<div id="leitorFim">···</div>';
   corpo.lang="en";
+  corpo.classList.remove("capAnim"); void corpo.offsetWidth; corpo.classList.add("capAnim");
   corpo.style.fontSize=(dados.config.fonteLivro||17)+"px";
   const fill=document.getElementById("leitorProgFill"); if(fill) fill.style.width="0%";
   document.getElementById("btnLido").textContent=(dados.config.livro.lidos||[]).includes(c.id)?"Lido ✓":"Concluir ✓";
@@ -1340,7 +1393,9 @@ function renderAjustes(){
   document.getElementById("horaManha").value=dados.config.horaManha||"08:30";
   document.getElementById("swDiasUteis").classList.toggle("on",dados.config.diasUteis!==false);
   document.getElementById("swDiasUteis").setAttribute("aria-checked",dados.config.diasUteis!==false);
-  const tk=document.getElementById("ghToken"); if(tk&&document.activeElement!==tk) tk.value=dados.config.ghToken||"";
+  renderTokenArea();
+  const ps=document.getElementById("pushStatus");
+  if(ps&&pushDivergente){ ps.textContent="A assinatura deste aparelho mudou. Gere de novo e atualize o secret PUSH_SUBSCRIPTION."; ps.style.color="#D06A82"; }
   const ss=document.getElementById("syncStatus");
   if(ss&&dados.config.ultimoSync) ss.textContent="Sincronizado em "+dados.config.ultimoSync+" ✓";
   document.getElementById("horaTarde").value=dados.config.horaTarde||"18:00";
@@ -1373,6 +1428,7 @@ async function ativarPush(){
     document.getElementById("pushJson").value=JSON.stringify(sub);
     document.getElementById("pushBox").style.display="block";
     document.getElementById("pushStatus").textContent="Assinatura gerada. Copie e cole no secret PUSH_SUBSCRIPTION.";
+    dados.config.pushEndpoint=sub.endpoint; pushDivergente=false;
     dados.config.notif=true; salvar(); renderAjustes();
   }catch(e){ toast("Falha ao assinar push: "+e.message); }
 }
@@ -1381,7 +1437,29 @@ function copiarPush(){
   navigator.clipboard.writeText(t.value).then(()=>toast("Copiado. Cole no secret PUSH_SUBSCRIPTION."))
     .catch(()=>{ document.execCommand("copy"); toast("Copiado."); });
 }
-function salvarToken(v){ dados.config.ghToken=v.trim(); salvar(); if(v.trim()) sincronizarHorarios(false); }
+let tokenEditando=false;
+function salvarToken(v){
+  v=(v||"").trim(); if(!v){ toast("Token vazio. Nada foi salvo."); return; }
+  dados.config.ghToken=v; tokenEditando=false; salvar(); renderTokenArea();
+  toast("Token salvo e travado."); sincronizarHorarios(false);
+}
+function renderTokenArea(){
+  const area=document.getElementById("tokenArea"); if(!area) return;
+  const t=dados.config.ghToken||"";
+  if(t && !tokenEditando){
+    area.innerHTML='<div style="display:flex;gap:8px;align-items:center">'+
+      '<input type="password" value="••••••••••••••••••••" disabled style="flex:1;opacity:.65">'+
+      '<button class="btn btnGhost" style="width:auto;padding:10px 15px" onclick="destravarToken()">Alterar</button></div>'+
+      '<div class="hint">Token salvo e travado contra edição acidental.</div>';
+  } else {
+    area.innerHTML='<div style="display:flex;gap:8px;align-items:center">'+
+      '<input type="password" id="ghToken" placeholder="github_pat_..." style="flex:1" onchange="salvarToken(this.value)">'+
+      (t?'<button class="btn btnGhost" style="width:auto;padding:10px 15px" onclick="cancelarEdToken()">Cancelar</button>':'')+
+      '</div>';
+  }
+}
+function destravarToken(){ if(confirm("Destravar o campo para editar o token?")){ tokenEditando=true; renderTokenArea(); } }
+function cancelarEdToken(){ tokenEditando=false; renderTokenArea(); }
 function toggleDiasUteis(){ dados.config.diasUteis=!(dados.config.diasUteis!==false); salvar(); renderAjustes(); sincronizarHorarios(false); }
 function repoInfo(){
   const host=location.hostname, seg=location.pathname.split("/").filter(Boolean);
@@ -1389,7 +1467,16 @@ function repoInfo(){
   const owner=host.split(".")[0];
   return { owner, repo: seg.length? seg[0] : host };
 }
-let syncTm=null;
+let syncTm=null, pushDivergente=false;
+async function verificarPush(){
+  try{
+    if(!dados.config.pushEndpoint) return;
+    const reg=await navigator.serviceWorker.ready;
+    const s=await reg.pushManager.getSubscription();
+    pushDivergente = !s || s.endpoint!==dados.config.pushEndpoint;
+    if(pushDivergente){ renderHoje(); renderAjustes(); }
+  }catch(e){}
+}
 async function sincronizarHorarios(manual){
   const token=dados.config.ghToken;
   const st=document.getElementById("syncStatus");
@@ -1437,19 +1524,9 @@ async function toggleNotif(){
     const perm=await Notification.requestPermission();
     if(perm!=="granted"){ toast("Permissão negada nas configurações do Android."); return; }
     dados.config.notif=true; salvar(); renderAjustes(); toast("Notificações ativadas.");
-    registrarSyncPeriodico();
     try{ await mostrarNotif("Forças em prática","Lembretes ativados. Bom desenvolvimento!","checkin-diario"); }catch(e){}
     checarLembretes();
   } else { dados.config.notif=false; salvar(); renderAjustes(); toast("Notificações desativadas."); }
-}
-async function registrarSyncPeriodico(){
-  try{
-    const reg=await navigator.serviceWorker.ready;
-    if("periodicSync" in reg){
-      const status=await navigator.permissions.query({name:"periodic-background-sync"});
-      if(status.state==="granted") await reg.periodicSync.register("lembrete-forcas",{minInterval:12*60*60*1000});
-    }
-  }catch(e){}
 }
 const BADGE_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAABZ0lEQVR4nO3cQW6DMBRAwVD1/lemaxYNhkCfTGfWhhA/kUhfgtcLAAD+3FJfwKzWdV331izLsru/X9dczv8ysvmj6wQ4aHTzR9cLcMDRzR85ToCYADEBYgLEBIgJEBMgJkBMgJgAMQFiAsS+6wu40+jwbGRuf5fH3gFHJpdnp5xXeGSAMxtaRXhcgE82sojwuACzESAmQEyAmAAxAWICxASICRATICZALB9HzzAyvlN6B8wyMr5TFmCmkfGdkgCzjYzv5E84JkBMgJgAMQFiAsQEiAkQEyAmQGx4GnrVyynYGroDrnw5BVu7Aa5+OQVbbwPc8XIKtvwJxwSICRATICZATICYADEBYgLEBIgJEBMgJkBMgJgAMQFiAsQEiAkQEyAmQEyAmAAxAWICxASICRATICZATICYALG3Ac4+crR33CePMs147nfH7d4BRz90dP2ZLzPjuffWD/0EVRc3+7k9tAgA8Jsf30pwrCKBvW4AAAAASUVORK5CYII=";
 async function mostrarNotif(titulo,corpo,tag){
@@ -1461,6 +1538,7 @@ async function mostrarNotif(titulo,corpo,tag){
 }
 async function checarLembretes(){
   if(!dados.config.notif || !("Notification" in window) || Notification.permission!=="granted") return;
+  if(dados.config.diasUteis!==false){ const ds=new Date().getDay(); if(ds===0||ds===6) return; }
   const agora=new Date();
   const hm=String(agora.getHours()).padStart(2,"0")+":"+String(agora.getMinutes()).padStart(2,"0");
   const c=dados.checkins[hoje()];
@@ -1480,17 +1558,18 @@ async function checarLembretes(){
 setInterval(checarLembretes,30000);
 
 /* ===== Backup ===== */
+function registrarBackup(){ dados.config.ultimoBackup=hoje(); dados.config.backupAdiado=""; salvar(); renderHoje(); }
 async function exportar(){
   const blob=new Blob([JSON.stringify(dados,null,2)],{type:"application/json"});
   const nome="forcas_backup_"+hoje()+".json";
   const arq=new File([blob],nome,{type:"application/json"});
   if(navigator.canShare && navigator.canShare({files:[arq]})){
-    try{ await navigator.share({files:[arq],title:"Backup Forças"}); toast("Compartilhado."); return; }
+    try{ await navigator.share({files:[arq],title:"Backup Forças"}); registrarBackup(); toast("Compartilhado."); return; }
     catch(e){ if(e.name==="AbortError") return; }
   }
   const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
   a.download=nome; a.click(); URL.revokeObjectURL(a.href);
-  toast("Backup baixado (compartilhamento indisponível).");
+  registrarBackup(); toast("Backup baixado (compartilhamento indisponível).");
 }
 function importar(input){
   const arq=input.files[0]; if(!arq) return;
@@ -1504,27 +1583,41 @@ function importar(input){
   r.readAsText(arq); input.value="";
 }
 function zerar(){
-  if(confirm("Apagar todo o histórico deste aparelho? Esta ação não tem volta.")){
-    dados={fase:1,inicio:hoje(),checkins:{},config:{}}; migrar(dados);
-    salvar(); aplicarTema(); renderTudo(); toast("Dados zerados.");
+  if(confirm("Apagar check-ins e histórico deste aparelho? Ajustes, token e livro serão mantidos. Esta ação não tem volta.")){
+    dados.checkins={}; dados.lexicoExtra={}; dados.inicio=hoje(); dados.fase=dados.fase||1;
+    dados.config.celebrou=""; dados.config.ultimoManha=""; dados.config.ultimoTarde="";
+    dados.config.ultimoBackup=""; dados.config.backupAdiado="";
+    salvar(); renderTudo(); toast("Histórico zerado. Ajustes preservados.");
   }
 }
 
 /* ================= NAVEGACAO / PWA ================= */
+let paginaAtiva="hoje"; const sujas=new Set();
+const RENDER={hoje:()=>renderHoje(),plano:()=>renderPlano(),progresso:()=>renderProgresso(),historico:()=>renderHistorico(),livro:()=>renderLivro(),ajustes:()=>renderAjustes()};
+function pedirRender(...pgs){ pgs.forEach(p=>{ if(p===paginaAtiva) RENDER[p](); else sujas.add(p); }); }
 function irPara(pg){
   if(voz.ativo) concluirVoz();
   salvarPosLivro();
+  paginaAtiva=pg;
+  if(sujas.has(pg)){ RENDER[pg](); sujas.delete(pg); }
   document.querySelectorAll(".pagina").forEach(p=>p.classList.remove("on"));
   document.querySelectorAll("nav.baixo button").forEach(b=>b.classList.toggle("on",b.dataset.pg===pg));
   requestAnimationFrame(()=>document.getElementById("pg-"+pg).classList.add("on"));
   window.scrollTo({top:0});
 }
-function renderTudo(){ renderHoje(); renderPlano(); renderProgresso(); renderHistorico(); renderAjustes(); renderLivro(); }
+function renderTudo(){ sujas.clear(); renderHoje(); renderPlano(); renderProgresso(); renderHistorico(); renderAjustes(); renderLivro(); }
 aplicarTema();
 livroLer().then(l=>{ LIVRO=l; renderTudo();
   const hashPg=location.hash.replace("#","");
   if(["hoje","plano","progresso","historico","livro","ajustes"].includes(hashPg)) irPara(hashPg);
 });
+if(dadosEramPadrao) idbGet("dados").then(d=>{
+  if(d&&d.checkins&&Object.keys(d.checkins).length){
+    dados=d; migrar(dados); salvar(); aplicarTema(); renderTudo();
+    toast("Histórico restaurado da reserva interna.");
+  }
+});
+verificarPush();
 
 if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
 let promptInstalar=null;
