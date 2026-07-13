@@ -408,7 +408,7 @@ nav.baixo svg{width:21px;height:21px}
     </div>
     <div class="card">
       <div class="cardTitulo">Sobre</div>
-      <p class="texto">Forças 4.6 · PDI pessoal baseado no relatório CliftonStrengths 34 (Gallup) de Mateus Santos. Fase 1: forças 1 a 5. Fase 2: forças 6 a 10. Seus dados ficam apenas neste aparelho.</p>
+      <p class="texto">Forças 4.6.1 · PDI pessoal baseado no relatório CliftonStrengths 34 (Gallup) de Mateus Santos. Fase 1: forças 1 a 5. Fase 2: forças 6 a 10. Seus dados ficam apenas neste aparelho.</p>
     </div>
   </section>
 </div>
@@ -1688,7 +1688,7 @@ function importar(input){
 function zerar(){
   if(confirm("Apagar check-ins e histórico deste aparelho? Ajustes, token e livro serão mantidos. Esta ação não tem volta.")){
     dados.checkins={}; dados.lexicoExtra={}; dados.inicio=hoje(); dados.fase=dados.fase||1;
-    dados.config.celebrou=""; dados.config.ultimoManha=""; dados.config.ultimoTarde="";
+    dados.config.celebrou=""; dados.config.ultimoManha=hoje(); dados.config.ultimoTarde=hoje();
     dados.config.ultimoBackup=""; dados.config.backupAdiado="";
     salvar(); renderTudo(); toast("Histórico zerado. Ajustes preservados.");
   }
