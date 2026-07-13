@@ -399,7 +399,7 @@ nav.baixo svg{width:21px;height:21px}
     </div>
     <div class="card">
       <div class="cardTitulo">Sobre</div>
-      <p class="texto">Forças 4.4 · PDI pessoal baseado no relatório CliftonStrengths 34 (Gallup) de Mateus Santos. Fase 1: forças 1 a 5. Fase 2: forças 6 a 10. Seus dados ficam apenas neste aparelho.</p>
+      <p class="texto">Forças 4.5 · PDI pessoal baseado no relatório CliftonStrengths 34 (Gallup) de Mateus Santos. Fase 1: forças 1 a 5. Fase 2: forças 6 a 10. Seus dados ficam apenas neste aparelho.</p>
     </div>
   </section>
 </div>
@@ -920,36 +920,53 @@ function registrarClass(id){
 }
 
 /* ===== Ditado por voz (estilo WhatsApp: gravar, pausar, retomar, concluir) ===== */
-let voz={rec:null,alvo:null,previo:"",sessao:"",pausado:false,ativo:false,t0:0,timer:null,acum:0};
+let voz={rec:null,alvo:null,texto:"",utter:"",pausado:false,ativo:false,t0:0,timer:null,acum:0,reinicio:null};
 function vozSuportada(){ return "webkitSpeechRecognition" in window || "SpeechRecognition" in window; }
+function normVoz(s){ return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^\p{L}\p{N}\s]/gu," ").replace(/\s+/g," ").trim(); }
 function limparRepeticoes(t){
-  t=t.replace(/\s+/g," ").trim();
-  t=t.replace(/\b(\p{L}+)(?:\s+\1\b)+/giu,"$1");
+  t=(t||"").replace(/\s+/g," ").trim();
+  let ant;
+  do{ ant=t; t=t.replace(/\b(\p{L}[\p{L}\p{N}]*(?:\s+\p{L}[\p{L}\p{N}]*){0,5})\s+\1\b/giu,"$1"); }while(t!==ant);
   return t;
+}
+function juntarSemEco(base,novo){
+  /* emenda trechos removendo sobreposicao (o Android repete frases entre sessoes) */
+  base=(base||"").trim(); novo=(novo||"").trim();
+  if(!base) return novo; if(!novo) return base;
+  const A=normVoz(base).split(" "), B=normVoz(novo).split(" ");
+  const wordsNovo=novo.split(/\s+/);
+  if(B.length<=A.length && A.slice(A.length-B.length).join(" ")===B.join(" ")) return base;
+  let corte=0; const max=Math.min(A.length,B.length);
+  for(let k=max;k>0;k--){ if(A.slice(A.length-k).join(" ")===B.slice(0,k).join(" ")){ corte=k; break; } }
+  const resto=wordsNovo.slice(corte).join(" ");
+  return resto? (base+" "+resto).trim() : base;
 }
 function iniciarVoz(alvoId){
   if(!vozSuportada()){ toast("Ditado indisponível neste navegador."); return; }
   if(voz.ativo){ toast("Já existe um ditado em andamento."); return; }
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  voz.rec=new SR(); voz.rec.lang="pt-BR"; voz.rec.continuous=true; voz.rec.interimResults=true;
-  voz.alvo=alvoId; voz.previo=""; voz.sessao=""; voz.pausado=false; voz.ativo=true; voz.acum=0; voz.t0=Date.now();
+  voz.rec=new SR(); voz.rec.lang="pt-BR";
+  voz.rec.continuous=false; /* frase a frase: modo estável no Android */
+  voz.rec.interimResults=true;
+  voz.rec.maxAlternatives=1;
+  voz.alvo=alvoId; voz.texto=""; voz.utter=""; voz.pausado=false; voz.ativo=true; voz.acum=0; voz.t0=Date.now();
   voz.rec.onresult=(e)=>{
-    /* reconstrói a sessão inteira a cada evento (sem somas duplicadas);
-       no Android o Chrome pode nunca marcar isFinal, então o parcial também compõe a sessão */
     let fin="", parc="";
     for(let i=0;i<e.results.length;i++){
-      const t=e.results[i][0].transcript;
-      if(e.results[i].isFinal) fin+=t+" "; else parc+=t+" ";
+      const r=e.results[i], t=(r[0].transcript||"").trim(); if(!t) continue;
+      if(r.isFinal){
+        const c=r[0].confidence;
+        if(!(typeof c==="number" && c>0 && c<0.35)) fin+=t+" "; /* descarta alucinação de silêncio */
+      } else parc+=t+" ";
     }
-    voz.sessao=(fin+" "+parc).trim();
+    voz.utter=(fin.trim()||parc.trim());
     const st=document.getElementById("gravStatus");
-    if(st){ const tudo=limparRepeticoes(voz.previo+" "+voz.sessao);
-      st.textContent=tudo? "..."+tudo.slice(-44) : "Gravando"; }
+    if(st){ const tudo=juntarSemEco(voz.texto,voz.utter); st.textContent=tudo? "..."+tudo.slice(-44) : "Gravando"; }
   };
   voz.rec.onerror=(e)=>{ if(e.error==="not-allowed"){ toast("Permita o microfone nas configurações."); encerrarVoz(false); } };
   voz.rec.onend=()=>{
-    voz.previo=limparRepeticoes(voz.previo+" "+voz.sessao); voz.sessao="";
-    if(voz.ativo&&!voz.pausado){ try{voz.rec.start();}catch(e){} }
+    voz.texto=juntarSemEco(voz.texto,voz.utter); voz.utter="";
+    if(voz.ativo&&!voz.pausado){ clearTimeout(voz.reinicio); voz.reinicio=setTimeout(()=>{ try{voz.rec.start();}catch(e){} },150); }
   };
   try{ voz.rec.start(); }catch(e){ toast("Falha ao iniciar o microfone."); voz.ativo=false; return; }
   voz.timer=setInterval(atualizarTempoVoz,500);
@@ -962,12 +979,12 @@ function atualizarTempoVoz(){
 }
 function pausarVoz(){
   if(!voz.ativo) return;
-  if(!voz.pausado){ voz.pausado=true; voz.acum+=Date.now()-voz.t0; try{voz.rec.stop();}catch(e){} }
+  if(!voz.pausado){ voz.pausado=true; voz.acum+=Date.now()-voz.t0; clearTimeout(voz.reinicio); try{voz.rec.stop();}catch(e){} }
   else { voz.pausado=false; voz.t0=Date.now(); try{voz.rec.start();}catch(e){} }
   renderGravador();
 }
 function concluirVoz(){
-  const txt=limparRepeticoes(voz.previo+" "+voz.sessao);
+  const txt=limparRepeticoes(juntarSemEco(voz.texto,voz.utter));
   const alvo=document.getElementById(voz.alvo);
   if(alvo&&txt){ alvo.value=(alvo.value?alvo.value.trimEnd()+"\n":"")+txt;
     if(voz.alvo==="nota"){ ci().nota=alvo.value.trim(); salvar(); } }
@@ -976,18 +993,19 @@ function concluirVoz(){
 }
 function encerrarVoz(ok){
   voz.ativo=false; voz.pausado=false;
+  clearTimeout(voz.reinicio);
   try{ voz.rec&&voz.rec.stop(); }catch(e){}
   clearInterval(voz.timer);
   const box=document.getElementById("grav-"+voz.alvo);
   if(box){ box.classList.remove("on"); box.innerHTML=""; }
-  voz.alvo=null; voz.previo=""; voz.sessao="";
+  voz.alvo=null; voz.texto=""; voz.utter="";
 }
 function renderGravador(){
   const box=document.getElementById("grav-"+voz.alvo); if(!box) return;
   box.classList.add("on");
   box.innerHTML='<div class="gravLinha"><span class="pontoGrav'+(voz.pausado?" pausado":"")+'"></span>'+
     '<span class="gravTempo" id="gravTempo">0:00</span>'+
-    '<span class="gravStatus">'+(voz.pausado?"Pausado":"Gravando")+'</span></div>'+
+    '<span class="gravStatus" id="gravStatus">'+(voz.pausado?"Pausado":"Gravando")+'</span></div>'+
     '<div class="gravBtns">'+
     '<button onclick="pausarVoz()">'+(voz.pausado?"Retomar":"Pausar")+'</button>'+
     '<button class="gravOk" onclick="concluirVoz()">Concluir ✓</button>'+
@@ -1528,7 +1546,7 @@ async function toggleNotif(){
     checarLembretes();
   } else { dados.config.notif=false; salvar(); renderAjustes(); toast("Notificações desativadas."); }
 }
-const BADGE_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAABZ0lEQVR4nO3cQW6DMBRAwVD1/lemaxYNhkCfTGfWhhA/kUhfgtcLAAD+3FJfwKzWdV331izLsru/X9dczv8ysvmj6wQ4aHTzR9cLcMDRzR85ToCYADEBYgLEBIgJEBMgJkBMgJgAMQFiAsS+6wu40+jwbGRuf5fH3gFHJpdnp5xXeGSAMxtaRXhcgE82sojwuACzESAmQEyAmAAxAWICxASICRATICZALB9HzzAyvlN6B8wyMr5TFmCmkfGdkgCzjYzv5E84JkBMgJgAMQFiAsQEiAkQEyAmQGx4GnrVyynYGroDrnw5BVu7Aa5+OQVbbwPc8XIKtvwJxwSICRATICZATICYADEBYgLEBIgJEBMgJkBMgJgAMQFiAsQEiAkQEyAmQEyAmAAxAWICxASICRATICZATICYALG3Ac4+crR33CePMs147nfH7d4BRz90dP2ZLzPjuffWD/0EVRc3+7k9tAgA8Jsf30pwrCKBvW4AAAAASUVORK5CYII=";
+const BADGE_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAABhklEQVR4nO3d0WrDMBAFUbn0/3/ZfTKUUFKt6e1Y2jmPiSOMx3JgIWQMSVJXB30CKzrP83x97TiOW9fSAAU/XfhX1RAf90+nl5mLXznuYoAJ1YtaOd4AMAP8onr3Vz9nAJgBYAaAGQBmAJgBYAaAGQBmAJgBYJ/0CaT95ew+YdsA72Yx13tPCLHlIyg1u0/YLkBydp+wXYDVbBUgPbtP2CrAigwAMwDMADADwAwAMwDMADADwAwAe9Q4+umz+4RHBFhldp+AP4JWmt0noAFWm90n4DugOyzAirP7BHcAzAAwA8AMADMAzAAwA8AMADMAzACw2+PojrP7hHKAzrP7hNIjqPvsPmE6gLP7DL+EYVMBnN3nuANgBoAZAGYAmAFgBoAZAGYAmAFgBoAZAGYAmAFgBoAZAGYAmAFgBoAZAGYAmAFgBoAZAGYAmAFgBoAZAGYA2FSA2/8W/eZzndf8zh0Amw5QvRNmju+85qW0A2YXrpxA5zXHGOP2j+kSv5LsvKYkSfpnX+HxnKxw8yIrAAAAAElFTkSuQmCC";
 async function mostrarNotif(titulo,corpo,tag){
   if(!("Notification" in window)) throw new Error("sem-suporte");
   if(Notification.permission!=="granted") throw new Error("sem-permissao");
