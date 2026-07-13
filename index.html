@@ -379,6 +379,15 @@ nav.baixo svg{width:21px;height:21px}
         <div><div class="ajTitulo">Sincronizar horários</div><div class="ajDesc" id="syncStatus">Os horários definidos acima valem também para o push.</div></div>
         <button class="btn btnGhost" style="width:auto;padding:10px 15px" onclick="sincronizarHorarios(true)">Enviar</button>
       </div>
+      <div class="ajLinha">
+        <div><div class="ajTitulo">Diagnóstico completo</div><div class="ajDesc">Confere cada elo da cadeia, do aparelho ao robô, e aponta onde está o problema.</div></div>
+        <button class="btn btnGhost" style="width:auto;padding:10px 15px" onclick="diagnosticar()">Executar</button>
+      </div>
+      <div id="diagBox" style="display:none;padding:4px 0 6px;border-bottom:1px solid var(--linha)"></div>
+      <div class="ajLinha">
+        <div><div class="ajTitulo">Testar robô (ponta a ponta)</div><div class="ajDesc">Dispara o robô do GitHub agora; o push de teste chega mesmo com o app fechado. Requer token com permissão Actions.</div></div>
+        <button class="btn btnGhost" style="width:auto;padding:10px 15px" onclick="testarRobo()">Disparar</button>
+      </div>
       <div class="hint">Roteiro completo no INSTRUCOES do pacote. O robô confere a cada 15 minutos; o aviso chega em poucos minutos do horário, com estado antiduplicação.</div>
     </div>
     <div class="card">
@@ -399,7 +408,7 @@ nav.baixo svg{width:21px;height:21px}
     </div>
     <div class="card">
       <div class="cardTitulo">Sobre</div>
-      <p class="texto">Forças 4.5 · PDI pessoal baseado no relatório CliftonStrengths 34 (Gallup) de Mateus Santos. Fase 1: forças 1 a 5. Fase 2: forças 6 a 10. Seus dados ficam apenas neste aparelho.</p>
+      <p class="texto">Forças 4.6 · PDI pessoal baseado no relatório CliftonStrengths 34 (Gallup) de Mateus Santos. Fase 1: forças 1 a 5. Fase 2: forças 6 a 10. Seus dados ficam apenas neste aparelho.</p>
     </div>
   </section>
 </div>
@@ -733,6 +742,10 @@ function adiarBackup(){ dados.config.backupAdiado=hoje(); salvar(); renderHoje()
 function renderAlertas(){
   const al=document.getElementById("cardAlerta"); if(!al) return;
   const avisos=[];
+  if(dados.config.notif && ("Notification" in window) && Notification.permission!=="granted")
+    avisos.push('<div class="ajTitulo">Notificações bloqueadas pelo Android</div>'+
+      '<div class="ajDesc">Acontece após reinstalar o app. Sem isto, nenhum lembrete aparece, nem do robô.</div>'+
+      '<button class="btn btnPrim" style="margin-top:10px" onclick="reativarPermissao()">Reativar agora</button>');
   if(pushDivergente) avisos.push('<div class="ajTitulo">Avisos com o app fechado inativos</div>'+
     '<div class="ajDesc">A assinatura push deste aparelho mudou (reinstalação ou limpeza do Chrome). Gere uma nova em Ajustes e atualize o secret PUSH_SUBSCRIPTION.</div>'+
     '<button class="btn btnGhost" style="margin-top:10px" onclick="irPara(\'ajustes\')">Abrir Ajustes</button>');
@@ -1525,6 +1538,78 @@ async function sincronizarHorarios(manual){
       if(manual) toast("Falha ao sincronizar. Token válido e com acesso ao repositório?");
     }
   }, manual?0:900);
+}
+async function reativarPermissao(){
+  if(!("Notification" in window)) return;
+  const p=await Notification.requestPermission();
+  if(p==="granted"){ toast("Notificações reativadas."); renderHoje(); renderAjustes(); verificarPush(); checarLembretes(); }
+  else toast("Bloqueada no sistema. Configurações do Android > Apps > Forças > Notificações.");
+}
+function linhaDiag(ok, msg){
+  return '<div style="display:flex;gap:10px;align-items:flex-start;padding:7px 0">'+
+    '<span style="font-weight:700;flex:none;color:'+(ok?"var(--ok)":"#D06A82")+'">'+(ok?"✓":"✕")+'</span>'+
+    '<span style="font-size:13.5px;line-height:1.5;color:var(--texto2)">'+msg+'</span></div>';
+}
+async function diagnosticar(){
+  const box=document.getElementById("diagBox");
+  box.style.display="block"; box.innerHTML='<div class="hint">Verificando os elos...</div>';
+  const L=[];
+  /* 1. permissao */
+  const perm=("Notification" in window)?Notification.permission:"sem suporte";
+  L.push(linhaDiag(perm==="granted","Permissão do Android: "+(perm==="granted"?"concedida":perm==="denied"?"negada. Libere nas configurações do sistema.":"não solicitada. Use Reativar ou o Testar acima.")));
+  /* 2. lembrete interno */
+  L.push(linhaDiag(!!dados.config.notif,"Lembrete interno (app aberto): "+(dados.config.notif?"ativado, "+dados.config.horaManha+" e "+dados.config.horaTarde:"desativado no switch acima.")));
+  /* 3. dia de hoje */
+  const ds=new Date().getDay(); const util=!(dados.config.diasUteis!==false&&(ds===0||ds===6));
+  L.push(linhaDiag(util,"Hoje ("+DIAS[ds]+"): "+(util?"dentro dos dias configurados.":"fora dos dias úteis; nenhum aviso é esperado hoje.")));
+  /* 4. assinatura push local */
+  let s=null;
+  try{ const reg=await navigator.serviceWorker.ready; s=await reg.pushManager.getSubscription(); }catch(e){}
+  if(!s) L.push(linhaDiag(false,"Assinatura push: inexistente neste aparelho. Toque em Gerar e atualize o secret PUSH_SUBSCRIPTION."));
+  else if(dados.config.pushEndpoint && s.endpoint!==dados.config.pushEndpoint)
+    L.push(linhaDiag(false,"Assinatura push: mudou desde o cadastro (reinstalação). Gere de novo e atualize o secret."));
+  else L.push(linhaDiag(true,"Assinatura push: ativa neste aparelho."));
+  const info=repoInfo();
+  /* 5. horarios que o robo enxerga */
+  if(info){ try{
+    const r=await fetch("https://raw.githubusercontent.com/"+info.owner+"/"+info.repo+"/main/horarios.json?v="+Date.now());
+    if(r.ok){ const hj=await r.json();
+      const igual=hj.manha===dados.config.horaManha&&hj.tarde===dados.config.horaTarde&&(!!hj.diasUteis)===(dados.config.diasUteis!==false);
+      L.push(linhaDiag(igual,"Horários no robô: "+hj.manha+" e "+hj.tarde+(hj.diasUteis?" · dias úteis":" · todos os dias")+(igual?".":" (difere do app: toque em Enviar na sincronização).")));
+    } else L.push(linhaDiag(false,"horarios.json não encontrado no repositório."));
+  }catch(e){ L.push(linhaDiag(false,"Sem acesso ao repositório agora (conexão?).")); } }
+  /* 6. ultima execucao do robo */
+  if(dados.config.ghToken && info){ try{
+    const r=await fetch("https://api.github.com/repos/"+info.owner+"/"+info.repo+"/actions/workflows/lembretes.yml/runs?per_page=1",
+      {headers:{Authorization:"Bearer "+dados.config.ghToken,Accept:"application/vnd.github+json"}});
+    if(r.status===403||r.status===404)
+      L.push(linhaDiag(false,"Execuções do robô: token sem permissão Actions. Edite o token no GitHub e adicione Actions: Read and write."));
+    else if(r.ok){ const j=await r.json(); const run=j.workflow_runs&&j.workflow_runs[0];
+      if(!run) L.push(linhaDiag(false,"Robô nunca executou. Confira a aba Actions do repositório e se o lembretes.yml existe."));
+      else{ const ok=run.conclusion==="success";
+        const dt=new Date(run.updated_at);
+        const quando=String(dt.getDate()).padStart(2,"0")+"/"+String(dt.getMonth()+1).padStart(2,"0")+" "+String(dt.getHours()).padStart(2,"0")+":"+String(dt.getMinutes()).padStart(2,"0");
+        L.push(linhaDiag(ok,"Última execução do robô: "+quando+" · "+(ok?"sucesso.":(run.conclusion||run.status)+". Provável assinatura expirada ou secret ausente; veja o log na aba Actions."))); }
+    } else L.push(linhaDiag(false,"Falha ao consultar o robô (HTTP "+r.status+")."));
+  }catch(e){ L.push(linhaDiag(false,"Não consegui consultar o robô (conexão?).")); } }
+  else L.push(linhaDiag(false,"Execuções do robô: informe o token para eu consultar o histórico."));
+  box.innerHTML=L.join("");
+}
+async function testarRobo(){
+  const token=dados.config.ghToken;
+  if(!token){ toast("Salve o token do GitHub primeiro."); return; }
+  const info=repoInfo();
+  if(!info){ toast("Disponível apenas no app publicado no GitHub Pages."); return; }
+  const url="https://api.github.com/repos/"+info.owner+"/"+info.repo+"/actions/workflows/lembretes.yml/dispatches";
+  const req=ref=>fetch(url,{method:"POST",headers:{Authorization:"Bearer "+token,Accept:"application/vnd.github+json"},
+    body:JSON.stringify({ref,inputs:{teste:"true"}})});
+  try{
+    let r=await req("main");
+    if(r.status===422) r=await req("master");
+    if(r.status===204){ toast("Robô acionado. Feche o app: o push de teste chega em 1 a 3 minutos."); return; }
+    if(r.status===403||r.status===404) toast("Token sem permissão Actions. Edite o token e adicione Actions: Read and write.");
+    else toast("Falha ao acionar o robô (HTTP "+r.status+").");
+  }catch(e){ toast("Sem conexão com o GitHub agora."); }
 }
 async function testarNotif(){
   if(!("Notification" in window)){ toast("Navegador sem suporte a notificações."); return; }
