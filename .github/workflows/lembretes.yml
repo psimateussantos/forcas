@@ -3,7 +3,12 @@ name: Lembretes Forcas
 on:
   schedule:
     - cron: "*/15 * * * *"
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      teste:
+        description: "Enviar push de teste imediato"
+        required: false
+        default: "false"
 
 permissions:
   contents: write
@@ -25,6 +30,7 @@ jobs:
         env:
           VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
           PUSH_SUBSCRIPTION: ${{ secrets.PUSH_SUBSCRIPTION }}
+          TESTE: ${{ github.event.inputs.teste }}
       - name: Salvar estado antiduplicacao
         run: |
           if [ -f .estado_mudou ]; then
