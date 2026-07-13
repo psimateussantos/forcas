@@ -12,6 +12,21 @@ const horarios = JSON.parse(fs.readFileSync("horarios.json", "utf8"));
 let estado = { manha: "", tarde: "" };
 try { estado = JSON.parse(fs.readFileSync("estado.json", "utf8")); } catch (e) {}
 
+/* Modo teste: disparado pelo app ou pelo Run workflow com teste=true */
+if (process.env.TESTE === "true") {
+  webpush.setVapidDetails("mailto:lembretes@forcas.app", VAPID_PUBLIC, VAPID_PRIVATE);
+  webpush.sendNotification(JSON.parse(SUB), JSON.stringify({
+    titulo: "Teste ponta a ponta ✓",
+    corpo: "O robô do GitHub alcançou este aparelho. Canal de push operacional.",
+    tag: "teste-robo"
+  }), { TTL: 600 })
+    .then(() => console.log("Push de teste enviado."))
+    .catch((e) => { console.error("Falha no teste:", e.statusCode || "", e.body || e.message);
+      if (e.statusCode === 404 || e.statusCode === 410) console.error("Assinatura expirada: gere nova no app e atualize o secret PUSH_SUBSCRIPTION.");
+      process.exitCode = 1; });
+  return;
+}
+
 /* Agora em Brasilia (UTC-3, sem horario de verao) */
 const agora = new Date(Date.now() - 3 * 3600 * 1000);
 const hojeBRT = agora.toISOString().slice(0, 10);
