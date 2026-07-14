@@ -2,7 +2,7 @@ name: Lembretes Forcas
 
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "*/5 * * * *"
   workflow_dispatch:
     inputs:
       teste:
