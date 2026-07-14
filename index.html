@@ -231,6 +231,16 @@ nav.baixo svg{width:21px;height:21px}
   #printArea .barra>span{position:absolute;left:0;top:0;bottom:0;border-radius:3pt}
   #printArea .rodape{margin-top:16pt;font-size:8pt;color:#777}
 }
+/* ===== Ajustes em acordeão ===== */
+#pg-ajustes .ajCard{padding:4px 18px}
+.ajCab{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:15px 0;background:none;border:0;cursor:pointer;text-align:left;font-family:inherit;color:inherit}
+.ajCab .cardTitulo{margin:0}
+.ajCab .seta{color:var(--mudo);font-size:20px;line-height:1;transition:transform .25s;flex:none}
+.ajCard.aberta .ajCab .seta{transform:rotate(90deg)}
+.ajCorpo{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s cubic-bezier(.2,.7,.3,1)}
+.ajCorpo>div{overflow:hidden;min-height:0}
+.ajCard.aberta .ajCorpo{grid-template-rows:1fr}
+.ajCorpo>div>*:last-child{margin-bottom:14px}
 </style>
 </head>
 <body>
@@ -388,7 +398,7 @@ nav.baixo svg{width:21px;height:21px}
         <div><div class="ajTitulo">Testar robô (ponta a ponta)</div><div class="ajDesc">Dispara o robô do GitHub agora; o push de teste chega mesmo com o app fechado. Requer token com permissão Actions.</div></div>
         <button class="btn btnGhost" style="width:auto;padding:10px 15px" onclick="testarRobo()">Disparar</button>
       </div>
-      <div class="hint">Roteiro completo no INSTRUCOES do pacote. O robô confere a cada 15 minutos; o aviso chega em poucos minutos do horário, com estado antiduplicação.</div>
+      <div class="hint">Roteiro completo no INSTRUCOES do pacote. O robô confere a cada 5 minutos e divide um único estado com o app: quem avisa primeiro registra, o outro silencia.</div>
     </div>
     <div class="card">
       <div class="cardTitulo">Dados</div>
@@ -408,7 +418,7 @@ nav.baixo svg{width:21px;height:21px}
     </div>
     <div class="card">
       <div class="cardTitulo">Sobre</div>
-      <p class="texto">Forças 4.6.1 · PDI pessoal baseado no relatório CliftonStrengths 34 (Gallup) de Mateus Santos. Fase 1: forças 1 a 5. Fase 2: forças 6 a 10. Seus dados ficam apenas neste aparelho.</p>
+      <p class="texto">Forças 4.7 · PDI pessoal baseado no relatório CliftonStrengths 34 (Gallup) de Mateus Santos. Fase 1: forças 1 a 5. Fase 2: forças 6 a 10. Seus dados ficam apenas neste aparelho.</p>
     </div>
   </section>
 </div>
@@ -775,7 +785,9 @@ function renderHoje(){
   renderCheckin();
   renderSemana();
 }
-function toggleAcao(){ const c=ci(); c.acaoFeita=!c.acaoFeita; salvar(); renderHoje(); pedirRender("progresso","historico"); checarMeta(); }
+function toggleAcao(){ const c=ci(); c.acaoFeita=!c.acaoFeita;
+  if(c.acaoFeita && dados.config.ultimoTarde!==hoje()){ dados.config.ultimoTarde=hoje(); gravarEstadoRobo("tarde"); }
+  salvar(); renderHoje(); pedirRender("progresso","historico"); checarMeta(); }
 
 function renderCheckin(){
   const c=ci(); const box=document.getElementById("cardCheckin");
@@ -814,12 +826,14 @@ function renderCheckin(){
 function togglePratica(id){ const c=ci();
   c.praticadas = c.praticadas.includes(id)? c.praticadas.filter(x=>x!==id) : [...c.praticadas,id];
   const n=document.getElementById("nota"); if(n) c.nota=n.value.trim();
+  if(c.praticadas.length>0 && dados.config.ultimoTarde!==hoje()){ dados.config.ultimoTarde=hoje(); gravarEstadoRobo("tarde"); }
   salvar(); renderCheckin(); renderSemana(); pedirRender("progresso","historico"); }
 function salvarCheckin(){
   const c=ci(); const n=document.getElementById("nota"); if(n) c.nota=n.value.trim();
   const ag=new Date();
   c.salvo=String(ag.getHours()).padStart(2,"0")+":"+String(ag.getMinutes()).padStart(2,"0");
   c.editando=false;
+  if(dados.config.ultimoTarde!==hoje()){ dados.config.ultimoTarde=hoje(); gravarEstadoRobo("tarde"); }
   salvar(); renderHoje(); pedirRender("progresso","historico"); checarMeta();
   toast("Check-in salvo às "+c.salvo+".");
 }
@@ -1539,6 +1553,49 @@ async function sincronizarHorarios(manual){
     }
   }, manual?0:900);
 }
+let estadoRoboCache={quando:0,dados:null};
+async function lerEstadoRobo(){
+  /* o que o robô já enviou hoje; API com token (sem cache) ou raw com cache-bust */
+  const info=repoInfo(); if(!info) return null;
+  if(Date.now()-estadoRoboCache.quando<60000) return estadoRoboCache.dados;
+  const ctrl=new AbortController(); const tm=setTimeout(()=>ctrl.abort(),4000);
+  try{
+    let r;
+    if(dados.config.ghToken)
+      r=await fetch("https://api.github.com/repos/"+info.owner+"/"+info.repo+"/contents/estado.json",
+        {headers:{Authorization:"Bearer "+dados.config.ghToken,Accept:"application/vnd.github.raw+json"},signal:ctrl.signal,cache:"no-store"});
+    else
+      r=await fetch("https://raw.githubusercontent.com/"+info.owner+"/"+info.repo+"/main/estado.json?v="+Date.now(),
+        {signal:ctrl.signal,cache:"no-store"});
+    clearTimeout(tm);
+    if(!r.ok) return null;
+    const e=await r.json();
+    estadoRoboCache={quando:Date.now(),dados:e};
+    return e;
+  }catch(err){ clearTimeout(tm); return null; }
+}
+async function gravarEstadoRobo(chave){
+  /* avisa o robô que este aparelho já cuidou do lembrete de hoje */
+  const token=dados.config.ghToken; const info=repoInfo();
+  if(!token||!info) return;
+  const url="https://api.github.com/repos/"+info.owner+"/"+info.repo+"/contents/estado.json";
+  const cab={Authorization:"Bearer "+token,Accept:"application/vnd.github+json"};
+  for(let tent=0;tent<2;tent++){
+    try{
+      const r1=await fetch(url,{headers:cab,cache:"no-store"});
+      if(!r1.ok) return;
+      const j=await r1.json();
+      const atual=JSON.parse(atob(j.content.replace(/\n/g,"")));
+      if(atual[chave]===hoje()){ estadoRoboCache={quando:Date.now(),dados:atual}; return; }
+      atual[chave]=hoje();
+      const r2=await fetch(url,{method:"PUT",headers:cab,body:JSON.stringify({
+        message:"Sincroniza lembrete ("+chave+") via app",
+        content:btoa(JSON.stringify(atual,null,2)),sha:j.sha})});
+      if(r2.ok){ estadoRoboCache={quando:Date.now(),dados:atual}; return; }
+      if(r2.status!==409) return; /* 409 = corrida com o robô: repete com sha novo */
+    }catch(e){ return; }
+  }
+}
 async function reativarPermissao(){
   if(!("Notification" in window)) return;
   const p=await Notification.requestPermission();
@@ -1578,6 +1635,12 @@ async function diagnosticar(){
       L.push(linhaDiag(igual,"Horários no robô: "+hj.manha+" e "+hj.tarde+(hj.diasUteis?" · dias úteis":" · todos os dias")+(igual?".":" (difere do app: toque em Enviar na sincronização).")));
     } else L.push(linhaDiag(false,"horarios.json não encontrado no repositório."));
   }catch(e){ L.push(linhaDiag(false,"Sem acesso ao repositório agora (conexão?).")); } }
+  /* 5b. o que o robô já enviou hoje (fonte única entre canais) */
+  if(info){ estadoRoboCache={quando:0,dados:null};
+    const er=await lerEstadoRobo();
+    if(er) L.push(linhaDiag(true,"Robô hoje: manhã "+(er.manha===hoje()?"enviada":"pendente")+" · tarde "+(er.tarde===hoje()?"enviada":"pendente")+"."));
+    else L.push(linhaDiag(false,"estado.json inacessível agora (conexão?)."));
+  }
   /* 6. ultima execucao do robo */
   if(dados.config.ghToken && info){ try{
     const r=await fetch("https://api.github.com/repos/"+info.owner+"/"+info.repo+"/actions/workflows/lembretes.yml/runs?per_page=1",
@@ -1643,22 +1706,59 @@ async function checarLembretes(){
   if(!dados.config.notif || !("Notification" in window) || Notification.permission!=="granted") return;
   if(dados.config.diasUteis!==false){ const ds=new Date().getDay(); if(ds===0||ds===6) return; }
   const agora=new Date();
-  const hm=String(agora.getHours()).padStart(2,"0")+":"+String(agora.getMinutes()).padStart(2,"0");
+  const minAgora=agora.getHours()*60+agora.getMinutes();
+  const paraMin=h=>{ const p=(h||"0:0").split(":"); return (+p[0])*60+(+p[1]); };
+  const JANELA=180; /* mesmo limite do robô: aviso com mais de 3h de atraso vira ruído */
   const c=dados.checkins[hoje()];
   const feito=c&&((c.praticadas&&c.praticadas.length>0)||c.acaoFeita);
-  if(hm>=dados.config.horaManha && dados.config.ultimoManha!==hoje()){
-    try{ const {f,a}=acaoDoDia(); await mostrarNotif("Ação do dia · "+f.nome, a, "acao-do-dia");
-      dados.config.ultimoManha=hoje(); salvar(); }catch(e){}
+  const mManha=paraMin(dados.config.horaManha), mTarde=paraMin(dados.config.horaTarde);
+  const querManha = dados.config.ultimoManha!==hoje() && minAgora>=mManha;
+  const querTarde = dados.config.ultimoTarde!==hoje() && !feito && minAgora>=mTarde;
+  if(!querManha && !querTarde) return;
+  /* fonte única da verdade: antes de disparar, confere o que o robô já enviou hoje */
+  const er=await lerEstadoRobo();
+  if(er){
+    let mudou=false;
+    if(er.manha===hoje() && dados.config.ultimoManha!==hoje()){ dados.config.ultimoManha=hoje(); mudou=true; }
+    if(er.tarde===hoje() && dados.config.ultimoTarde!==hoje()){ dados.config.ultimoTarde=hoje(); mudou=true; }
+    if(mudou) salvar();
   }
-  if(hm>=dados.config.horaTarde && !feito && dados.config.ultimoTarde!==hoje()){
-    const streak=calcStreak();
-    const corpo = streak>=3 ? "Sua sequência de "+streak+" dias termina hoje sem o check-in."
-      : "Registre o que você praticou hoje antes de encerrar o dia.";
-    try{ await mostrarNotif("Hora do check-in",corpo,"checkin-diario");
-      dados.config.ultimoTarde=hoje(); salvar(); }catch(e){}
+  if(dados.config.ultimoManha!==hoje() && minAgora>=mManha){
+    if(minAgora<=mManha+JANELA){
+      try{ const {f,a}=acaoDoDia(); await mostrarNotif("Ação do dia · "+f.nome, a, "acao-do-dia");
+        dados.config.ultimoManha=hoje(); salvar(); gravarEstadoRobo("manha"); }catch(e){}
+    } else { dados.config.ultimoManha=hoje(); salvar(); } /* janela perdida: sem replay tardio */
+  }
+  const c2=dados.checkins[hoje()];
+  const feito2=c2&&((c2.praticadas&&c2.praticadas.length>0)||c2.acaoFeita);
+  if(dados.config.ultimoTarde!==hoje() && !feito2 && minAgora>=mTarde){
+    if(minAgora<=mTarde+JANELA){
+      const streak=calcStreak();
+      const corpo = streak>=3 ? "Sua sequência de "+streak+" dias termina hoje sem o check-in."
+        : "Registre o que você praticou hoje antes de encerrar o dia.";
+      try{ await mostrarNotif("Hora do check-in",corpo,"checkin-diario");
+        dados.config.ultimoTarde=hoje(); salvar(); gravarEstadoRobo("tarde"); }catch(e){}
+    } else { dados.config.ultimoTarde=hoje(); salvar(); }
   }
 }
 setInterval(checarLembretes,30000);
+
+/* ===== Ajustes em acordeão (todas as categorias fechadas por padrão) ===== */
+(function(){
+  document.querySelectorAll("#pg-ajustes > .card").forEach(card=>{
+    const t=card.querySelector(".cardTitulo"); if(!t) return;
+    const cab=document.createElement("button"); cab.className="ajCab"; cab.type="button";
+    cab.innerHTML='<span class="cardTitulo" style="margin:0">'+t.textContent+'</span><span class="seta">›</span>';
+    const corpo=document.createElement("div"); corpo.className="ajCorpo";
+    const interno=document.createElement("div");
+    t.remove();
+    while(card.firstChild) interno.appendChild(card.firstChild);
+    corpo.appendChild(interno);
+    card.classList.add("ajCard");
+    card.appendChild(cab); card.appendChild(corpo);
+    cab.onclick=()=>card.classList.toggle("aberta");
+  });
+})();
 
 /* ===== Backup ===== */
 function registrarBackup(){ dados.config.ultimoBackup=hoje(); dados.config.backupAdiado=""; salvar(); renderHoje(); }
